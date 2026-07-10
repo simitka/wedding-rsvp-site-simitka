@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@600;700&family=Neucha&family=Oswald:wght@500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Rubik+Mono+One&family=Unbounded:wght@700;900&family=Yeseva+One&display=swap" />
 <style>
   html, body { margin: 0; padding: 0; background: #3B4A20; overflow-x: hidden; }
-  body { -webkit-font-smoothing: antialiased; }
-  img { display: block; max-width: 100%; }
+  body { -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none; }
+  img { display: block; max-width: 100%; -webkit-user-drag: none; -webkit-touch-callout: none; }
   a { color: #A31D4E; }
   a:hover { color: #E2588E; }
   ::selection { background: #EBDF7E; color: #33291F; }
@@ -28,8 +28,13 @@
   @keyframes wiggle { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(1.6deg); } }
   @keyframes bounceDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(9px); } }
   @keyframes pulseStar { from { transform: scale(1); } to { transform: scale(1.08); } }
+  @keyframes rockTub { from { transform: rotate(-5deg) translateY(2px); } to { transform: rotate(4deg) translateY(-4px); } }
+  @keyframes swayPeek { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2deg); } }
+  .btn-map-g:active { transform: translate(5px, 6px) rotate(-1.5deg); box-shadow: 0 0 0 #33291F; }
+  .btn-map-y:active { transform: translate(5px, 8px) rotate(1.8deg); box-shadow: 0 0 0 #33291F; }
   .rsvp-btn:hover { background: #EBDF7E; }
   .rsvp-btn:active { transform: translate(7px, 8px); box-shadow: 0 0 0 #33291F; }
+  .credit-link:hover { color: #E2588E; text-decoration-color: #EBDF7E; }
 </style>
 </head>
 <body>
@@ -50,10 +55,10 @@
         <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg);">внимание, внимание!</div>
 
         <h1 style="margin: 10px 0 0; line-height: 0.98; font-weight: 400;">
-          <span style="display: block;">
+          <span data-fitline="1" style="display: block; white-space: nowrap;">
             <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(40px, 13vw, 62px); background: #A31D4E; color: #F2EDE2; padding: 4px 12px 2px; transform: rotate(-3deg);">Н</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(40px, 13vw, 62px); background: #EBDF7E; color: #33291F; padding: 3px 10px; transform: rotate(2.5deg) translateY(3px); margin-left: 2px;">и</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(30px, 10vw, 48px); background: #6C7ED6; color: #FFFFFF; padding: 12px 10px; border-radius: 50%; transform: rotate(-4deg) translateY(-2px); margin-left: 2px;">К</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(40px, 13vw, 62px); background: #F7F3E8; color: #A31D4E; border: 3px solid #A31D4E; padding: 2px 10px; transform: rotate(3deg) translateY(2px); margin-left: 2px;">и</span><span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(34px, 11vw, 54px); background: #3B4A20; color: #EBDF7E; padding: 8px 10px 6px; transform: rotate(-5deg) translateY(-3px); margin-left: 2px;">т</span><span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(40px, 13vw, 62px); background: #E2588E; color: #4B3227; padding: 4px 12px 2px; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); transform: rotate(2deg) translateY(4px); margin-left: 2px;">а</span>
           </span>
-          <span style="display: block; margin-top: 6px;">
+          <span data-fitline="1" style="display: block; margin-top: 6px; white-space: nowrap;">
             <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(30px, 9vw, 44px); color: #A31D4E; background: #FBF8EF; border-radius: 50%; padding: 6px 16px; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); transform: rotate(-9deg); margin-right: 8px;">и</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(40px, 13vw, 62px); background: #ECA02B; color: #33291F; padding: 3px 11px; transform: rotate(3deg);">У</span><span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(34px, 11vw, 54px); background: #B49BE0; color: #33291F; padding: 8px 10px 6px; transform: rotate(-2deg) translateY(-3px); margin-left: 2px;">л</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(40px, 13vw, 62px); background: #F7F3E8; color: #6C7ED6; border: 3px dashed #6C7ED6; padding: 2px 9px; transform: rotate(5deg) translateY(3px); margin-left: 2px;">ь</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(30px, 10vw, 48px); background: #E2588E; color: #FFFFFF; padding: 8px 9px; transform: rotate(-4deg); margin-left: 2px;">я</span><span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(40px, 13vw, 62px); background: #A2A845; color: #F2EDE2; padding: 4px 12px 2px; transform: rotate(2deg) translateY(2px); margin-left: 2px;">н</span><span style="display: inline-block; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: clamp(44px, 14vw, 68px); background: #A31D4E; color: #F2EDE2; padding: 0 12px 2px; transform: rotate(-3deg) translateY(3px); margin-left: 2px;">а</span>
           </span>
         </h1>
@@ -68,12 +73,12 @@
       <div style="position: relative; height: clamp(300px, 84vw, 430px); margin-top: 6px; z-index: 2;">
         <div style="position: absolute; left: -4px; bottom: -12px; width: 55%; max-width: 265px; transform: rotate(-5deg); z-index: 2;">
           <div id="photo-n" style="will-change: transform;">
-            <img src="assets/nikita.png" alt="Никита в детстве, в ковбойской шляпе" class="photo-spin" style="width: 100%; height: auto; animation: bobA 4.6s ease-in-out infinite alternate; transform-origin: 50% 12%; filter: drop-shadow(6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
+            <img src="assets/nikita-outlined.png" alt="Никита в детстве, в ковбойской шляпе" class="photo-spin" style="width: 100%; height: auto; animation: bobA 4.6s ease-in-out infinite alternate; transform-origin: 50% 12%; filter: drop-shadow(6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
           </div>
         </div>
         <div style="position: absolute; right: 2px; bottom: 26px; width: 39%; max-width: 190px; transform: rotate(5deg); z-index: 3;">
           <div id="photo-u" style="will-change: transform;">
-            <img src="assets/ulyana.png" alt="Ульяна в детстве, в красном платье" class="photo-spin" style="width: 100%; height: auto; animation: bobB 5.4s ease-in-out infinite alternate; transform-origin: 50% 10%; filter: drop-shadow(-6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
+            <img src="assets/ulyana-outlined.png" alt="Ульяна в детстве, в красном платье" class="photo-spin" style="width: 100%; height: auto; animation: bobB 5.4s ease-in-out infinite alternate; transform-origin: 50% 10%; filter: drop-shadow(-6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
           </div>
         </div>
 
@@ -133,30 +138,31 @@
           <div style="display: inline-block; margin-top: 16px; font-family: 'Caveat', cursive; font-weight: 700; font-size: 24px; color: #A31D4E; border: 3px solid #E2588E; border-radius: 50% 45% 55% 40% / 55% 40% 60% 45%; padding: 6px 20px; transform: rotate(-3deg);">пятница, 16:00</div>
         </div>
         <div style="position: absolute; top: -12px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg);"></div>
+
       </div>
 
       <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
         <div data-reveal="slap" data-reveal-delay="0" style="display: inline-block;">
           <div style="width: 76px; background: #6C7ED6; color: #FFFFFF; text-align: center; padding: 10px 0 8px; transform: rotate(-3deg); box-shadow: 4px 5px 0 #33291F;">
-            <div id="cd-d" style="font-family: 'Rubik Mono One', monospace; font-size: 24px;">—</div>
+            <div style="font-family: 'Rubik Mono One', monospace; font-size: 24px;"><span id="cd-d">–</span></div>
             <div style="font-family: 'Neucha', cursive; font-size: 14px;">дней</div>
           </div>
         </div>
         <div data-reveal="slap" data-reveal-delay="90" style="display: inline-block;">
           <div style="width: 76px; background: #E2588E; color: #FFFFFF; text-align: center; padding: 10px 0 8px; transform: rotate(2deg) translateY(6px); box-shadow: 4px 5px 0 #33291F;">
-            <div id="cd-h" style="font-family: 'Rubik Mono One', monospace; font-size: 24px;">—</div>
+            <div style="font-family: 'Rubik Mono One', monospace; font-size: 24px;"><span id="cd-h">–</span></div>
             <div style="font-family: 'Neucha', cursive; font-size: 14px;">часов</div>
           </div>
         </div>
         <div data-reveal="slap" data-reveal-delay="180" style="display: inline-block;">
           <div style="width: 76px; background: #ECA02B; color: #33291F; text-align: center; padding: 10px 0 8px; transform: rotate(-2deg); box-shadow: 4px 5px 0 #33291F;">
-            <div id="cd-m" style="font-family: 'Rubik Mono One', monospace; font-size: 24px;">—</div>
+            <div style="font-family: 'Rubik Mono One', monospace; font-size: 24px;"><span id="cd-m">–</span></div>
             <div style="font-family: 'Neucha', cursive; font-size: 14px;">минут</div>
           </div>
         </div>
         <div data-reveal="slap" data-reveal-delay="270" style="display: inline-block;">
           <div style="width: 76px; background: #A2A845; color: #33291F; text-align: center; padding: 10px 0 8px; transform: rotate(3deg) translateY(4px); box-shadow: 4px 5px 0 #33291F;">
-            <div id="cd-s" style="font-family: 'Rubik Mono One', monospace; font-size: 24px;">—</div>
+            <div style="font-family: 'Rubik Mono One', monospace; font-size: 24px;"><span id="cd-s">–</span></div>
             <div style="font-family: 'Neucha', cursive; font-size: 14px;">секунд</div>
           </div>
         </div>
@@ -189,10 +195,17 @@
         </div>
         <div style="position: absolute; top: -10px; left: -12px; width: 84px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-38deg);"></div>
         <div style="position: absolute; top: -10px; right: -12px; width: 84px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(38deg);"></div>
+        <div style="position: absolute; right: 4px; bottom: 44px; width: 128px; z-index: 3; transform: rotate(5deg);">
+          <div id="photo-m" style="will-change: transform;">
+            <img src="assets/mushroom.png" alt="Жених в детстве сидит на грибах — уже на месте" class="photo-spin" style="width: 100%; height: auto; animation: bobB 5s ease-in-out infinite alternate; transform-origin: 50% 82%; filter: drop-shadow(4px 8px 8px rgba(51,41,31,0.35)); cursor: pointer;" />
+          </div>
+          <div style="position: absolute; top: -16px; left: 50%; transform: translateX(-50%) rotate(3deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap;">уже на месте!</div>
+        </div>
       </div>
 
-      <div data-reveal="slap" data-reveal-delay="120" style="text-align: center; margin-top: 26px;">
-        <a href="https://www.google.com/maps/search/?api=1&query=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 12px 20px; transform: rotate(-1.5deg);">открыть в картах →</a>
+      <div data-reveal="slap" data-reveal-delay="120" style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 26px;">
+        <a class="btn-map-g" href="https://www.google.com/maps/search/?api=1&query=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(-1.5deg);">google maps →</a>
+        <a class="btn-map-y" href="https://yandex.ru/maps/?text=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(1.8deg) translateY(2px);">яндекс карты →</a>
       </div>
 
       <div data-reveal="right" data-reveal-delay="200" style="display: flex; justify-content: flex-end; margin-top: 28px;">
@@ -216,8 +229,14 @@
         </h2>
       </div>
 
-      <div data-reveal="drop" style="position: relative;">
-        <div style="background: #FBF8EF; background-image: linear-gradient(90deg, transparent 0 34px, rgba(226,88,142,0.45) 34px 36px, transparent 36px), repeating-linear-gradient(to bottom, transparent 0 29px, rgba(108,126,214,0.35) 29px 31px); padding: 34px 16px 26px 14px; transform: rotate(0.8deg); box-shadow: 5px 7px 0 rgba(51,41,31,0.22);">
+      <div data-reveal="drop" style="position: relative; margin-top: 118px;">
+        <div id="peek-wrap" style="position: absolute; top: -128px; left: 7%; width: 112px; transform: translateY(160px); will-change: transform;">
+          <div style="animation: swayPeek 3.4s ease-in-out infinite; transform-origin: 50% 100%;">
+            <img src="assets/ulyana-peek.png" alt="Ульяна в детстве в боа выглядывает из-за плана дня" style="width: 100%; height: auto; filter: drop-shadow(0 -2px 6px rgba(51,41,31,0.18));" />
+          </div>
+          <div style="position: absolute; right: -74px; top: 44px; transform: rotate(6deg); background: #EBDF7E; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 4px 12px; font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap;">всё видит!</div>
+        </div>
+        <div style="background: #FBF8EF; background-image: linear-gradient(90deg, transparent 0 34px, rgba(226,88,142,0.45) 34px 36px, transparent 36px), repeating-linear-gradient(to bottom, transparent 0 29px, rgba(108,126,214,0.35) 29px 31px); padding: 34px 16px 26px 14px; transform: rotate(0.8deg); box-shadow: 5px 7px 0 rgba(51,41,31,0.22); position: relative;">
 
           <div data-reveal="left" data-reveal-delay="0" style="display: flex; align-items: flex-start; gap: 12px; padding: 0 0 14px 34px;">
             <span style="flex: none; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 17px; background: #6C7ED6; color: #FFFFFF; padding: 4px 9px 2px; transform: rotate(-2deg);">15:00</span>
@@ -244,8 +263,8 @@
             <span style="font-family: 'Neucha', cursive; font-size: 19px; line-height: 1.35;">торт и медленный танец под звёздами ♥</span>
           </div>
         </div>
-        <div style="position: absolute; top: -11px; right: 26px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(5deg);"></div>
-        <div style="position: absolute; bottom: -10px; left: 22px; width: 84px; height: 24px; background: rgba(180,155,224,0.5); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-6deg);"></div>
+        <div style="position: absolute; top: -11px; right: 26px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(5deg); z-index: 2;"></div>
+        <div style="position: absolute; bottom: -10px; left: 22px; width: 84px; height: 24px; background: rgba(180,155,224,0.5); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-6deg); z-index: 2;"></div>
       </div>
     </section>
 
@@ -327,6 +346,36 @@
 
     <div style="width: 110%; margin: 10px 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(226,88,142,0.45) 0 14px, rgba(226,88,142,0.2) 14px 28px); transform: rotate(0.9deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
 
+    <!-- ============ POOL ============ -->
+    <section style="position: relative; padding: 44px 20px 40px;">
+      <div data-reveal="right" style="text-align: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; font-weight: 400; line-height: 1;">
+          <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(24px, 7vw, 34px); background: #6C7ED6; color: #FFFFFF; padding: 9px 12px 7px; transform: rotate(-2deg);">бас</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #EBDF7E; color: #33291F; padding: 5px 13px 3px; transform: rotate(2deg) translateY(4px); margin-left: 3px;">сейн!</span>
+        </h2>
+      </div>
+
+      <div data-reveal="slap" style="text-align: center; font-family: 'Caveat', cursive; font-weight: 700; font-size: 25px; color: #33291F; transform: rotate(-1deg); margin-bottom: 22px;">на территории есть настоящий бассейн</div>
+
+      <div data-reveal="drop" style="position: relative; max-width: 430px; margin: 0 auto;">
+        <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 24px 24px 20px; transform: rotate(-1deg); text-align: center; font-family: 'Neucha', cursive; font-size: 19px; line-height: 1.4; filter: drop-shadow(4px 6px 0 rgba(51,41,31,0.22));">
+          так что берите <span style="background: #EBDF7E; padding: 0 5px;">купальник и полотенце</span> — после пары тостов открываем заплывы прямо среди виноградников.
+        </div>
+        <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">Это не шутка</div>
+      </div>
+
+      <div style="position: relative; height: 140px; margin: 12px -20px 0;">
+        <div style="position: absolute; left: 14px; right: 14px; top: 102px; border-top: 3px dashed rgba(108,126,214,0.45);"></div>
+        <div id="tub-wrap" style="position: absolute; left: 0; top: 12px; width: 170px; transform: translate3d(-260px, 0, 0); will-change: transform;">
+          <div style="animation: rockTub 2.6s ease-in-out infinite alternate; transform-origin: 50% 70%;">
+            <img src="assets/bath.png" alt="Малыш в ванночке с уточками тренируется перед бассейном" class="photo-spin" style="width: 100%; height: auto; filter: drop-shadow(0 10px 10px rgba(51,41,31,0.3)); cursor: pointer;" />
+          </div>
+          <div style="position: absolute; left: 50%; bottom: -18px; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap;">уже тренируется!</div>
+        </div>
+      </div>
+    </section>
+
+    <div style="width: 110%; margin: 0 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(108,126,214,0.45) 0 14px, rgba(108,126,214,0.2) 14px 28px); transform: rotate(-0.8deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
+
     <!-- ============ FAQ ============ -->
     <section style="position: relative; padding: 44px 20px 30px;">
       <div data-reveal="left" style="text-align: center; margin-bottom: 26px;">
@@ -370,7 +419,7 @@
     </section>
 
     <!-- ============ RSVP ============ -->
-    <section style="position: relative; padding: 40px 20px 64px; text-align: center;">
+    <section style="position: relative; padding: 40px 20px 150px; text-align: center;">
       <div data-reveal="slap" style="margin-bottom: 8px;">
         <h2 style="margin: 0; font-weight: 400; line-height: 1;">
           <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(30px, 9vw, 44px); background: #FBF8EF; color: #33291F; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); transform: rotate(-3deg);">ты</span><span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(1.5deg) translateY(3px); margin-left: 6px;">придёшь</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(24px, 7vw, 34px); background: #ECA02B; color: #33291F; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 4px;">?</span>
@@ -380,49 +429,100 @@
       <div data-reveal="drop" data-reveal-delay="100" style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 24px; color: #4B3227; transform: rotate(-1deg); margin: 18px 0 26px;">очень ждём! заполни анкету —<br />это займёт две минуты, честно</div>
 
       <div data-reveal="slap" data-reveal-delay="200" style="position: relative; display: inline-block;">
-        <a href="https://forms.gle/" target="_blank" rel="noopener" class="rsvp-btn" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(16px, 5vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px 28px; animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
+        <a class="rsvp-btn" href="https://forms.gle/" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(16px, 5vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px 28px; animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
         <span style="position: absolute; top: -22px; right: -30px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 1<br />августа!</span>
       </div>
 
       <div data-reveal="slap" data-reveal-delay="300" style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 22px; transform: rotate(1deg);">не заполнишь — мы всё равно позвоним (мы такие)</div>
+
+      <div id="axe-wrap" style="position: absolute; right: 7%; bottom: -12px; width: 150px; z-index: 1; transform: translateY(200px); will-change: transform;">
+        <div style="animation: wiggle 2.8s ease-in-out infinite; transform-origin: 50% 95%;">
+          <img src="assets/axe.png" alt="Жених в детстве с игрушечным топориком" class="photo-spin" style="width: 100%; height: auto; filter: drop-shadow(-5px 8px 9px rgba(51,41,31,0.32)); cursor: pointer;" />
+        </div>
+        <div style="position: absolute; left: -104px; top: 26px; transform: rotate(-6deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap;">…или придём сами</div>
+      </div>
     </section>
 
     <!-- ============ FOOTER ============ -->
-    <footer style="background: #33291F; color: #F2EDE2; text-align: center; padding: 30px 20px 36px; position: relative;">
+    <footer style="background: #33291F; color: #F2EDE2; text-align: center; padding: 30px 20px 36px; position: relative; z-index: 2;">
       <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: 4px; text-transform: uppercase;">Н <span style="color: #E2588E;">♥</span> У · 11.09.2026 · Кахетия</div>
-      <div style="font-family: 'Neucha', cursive; font-size: 15px; opacity: 0.65; margin-top: 10px;">сделано с любовью, ножницами и клеем</div>
+      <div style="font-family: 'Neucha', cursive; font-size: 15px; margin-top: 10px; color: rgba(242,237,226,0.72);">сделано <a class="credit-link" href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #EBDF7E; text-decoration: underline wavy #E2588E 2px; text-underline-offset: 4px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никитой</a> — с любовью, ножницами, клеем и клодкодиком</div>
       <div style="position: absolute; top: -12px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-3deg);"></div>
     </footer>
   </div>
 </div>
 
+
 <script>
 (function () {
   var root = document.getElementById('wed-root');
   if (!root) return;
-  var motionOn = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  if (!motionOn) root.setAttribute('data-motion', 'off');
 
-  // ---- countdown ----
+  // --- motion contract ---
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function motionOn() { return !reduce; }
+  root.setAttribute('data-motion', motionOn() ? 'on' : 'off');
+
+  // --- countdown -> 16:00 Georgia time (UTC+4) on 11.09.2026 ---
   var elD = document.getElementById('cd-d'), elH = document.getElementById('cd-h'),
       elM = document.getElementById('cd-m'), elS = document.getElementById('cd-s');
+  var target = Date.UTC(2026, 8, 11, 12, 0, 0);
   function p2(n) { return String(n).padStart(2, '0'); }
   function tick() {
-    var target = Date.UTC(2026, 8, 11, 12, 0, 0); // 16:00 Georgia time (UTC+4)
     var diff = Math.max(0, target - Date.now());
-    var d = Math.floor(diff / 86400000);
-    var h = Math.floor(diff / 3600000) % 24;
-    var m = Math.floor(diff / 60000) % 60;
-    var s = Math.floor(diff / 1000) % 60;
-    if (elD) elD.textContent = String(d);
-    if (elH) elH.textContent = p2(h);
-    if (elM) elM.textContent = p2(m);
-    if (elS) elS.textContent = p2(s);
+    if (elD) elD.textContent = String(Math.floor(diff / 86400000));
+    if (elH) elH.textContent = p2(Math.floor(diff / 3600000) % 24);
+    if (elM) elM.textContent = p2(Math.floor(diff / 60000) % 60);
+    if (elS) elS.textContent = p2(Math.floor(diff / 1000) % 60);
   }
   tick();
   setInterval(tick, 1000);
 
-  // ---- scroll reveals ----
+  // --- click-spin photos ---
+  function spin(e) {
+    var img = e.currentTarget;
+    if (!img.dataset.idle) img.dataset.idle = img.style.animation;
+    img.style.animation = 'none';
+    void img.offsetWidth;
+    img.style.animation = 'spinOnce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    img.onanimationend = function () { img.style.animation = img.dataset.idle; img.onanimationend = null; };
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.photo-spin'), function (img) {
+    img.addEventListener('click', spin);
+  });
+
+  // --- refs ---
+  var photoN = document.getElementById('photo-n'),
+      photoU = document.getElementById('photo-u'),
+      photoM = document.getElementById('photo-m'),
+      tubWrap = document.getElementById('tub-wrap'),
+      peekWrap = document.getElementById('peek-wrap'),
+      axeWrap = document.getElementById('axe-wrap');
+
+  function applyStaticPoses() {
+    if (tubWrap) { var band = tubWrap.parentElement; var x = Math.max(0, band.clientWidth / 2 - 85); tubWrap.style.transform = 'translate3d(' + x + 'px,0,0)'; }
+    if (peekWrap) peekWrap.style.transform = 'translateY(30px)';
+    if (axeWrap) axeWrap.style.transform = 'translateY(50px)';
+    if (photoN) photoN.style.transform = 'none';
+    if (photoU) photoU.style.transform = 'none';
+    if (photoM) photoM.style.transform = 'none';
+  }
+
+  // --- autoscale header lines to fit width ---
+  function fitLines() {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-fitline]'), function (el) {
+      el.style.transform = 'none';
+      var avail = el.parentElement.clientWidth;
+      var w = el.scrollWidth;
+      el.style.transformOrigin = '50% 50%';
+      el.style.transform = w > avail ? 'scale(' + (avail / w) + ')' : 'none';
+    });
+  }
+  fitLines();
+  window.addEventListener('resize', fitLines);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLines);
+
+  // --- scroll reveals ---
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
       if (!en.isIntersecting) return;
@@ -432,31 +532,33 @@
     });
   }, { threshold: 0.12 });
 
-  root.querySelectorAll('[data-reveal]').forEach(function (el) {
-    var r = el.getBoundingClientRect();
-    if (r.top < window.innerHeight * 0.85) return; // already on screen
-    var kind = el.getAttribute('data-reveal') || 'slap';
-    var delay = el.getAttribute('data-reveal-delay') || '0';
-    el.style.opacity = '0';
-    el.style.transform =
-      kind === 'left' ? 'translateX(-70px) rotate(-5deg)' :
-      kind === 'right' ? 'translateX(70px) rotate(5deg)' :
-      kind === 'drop' ? 'translateY(-56px) rotate(-3deg)' :
-      'scale(1.45) rotate(6deg)';
-    el.style.transition = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
-    io.observe(el);
-  });
+  if (motionOn()) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-reveal]'), function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.85) return;
+      var kind = el.getAttribute('data-reveal') || 'slap';
+      var delay = el.getAttribute('data-reveal-delay') || '0';
+      el.style.opacity = '0';
+      el.style.transform =
+        kind === 'left' ? 'translateX(-70px) rotate(-5deg)' :
+        kind === 'right' ? 'translateX(70px) rotate(5deg)' :
+        kind === 'drop' ? 'translateY(-56px) rotate(-3deg)' :
+        'scale(1.45) rotate(6deg)';
+      el.style.transition = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
+      io.observe(el);
+    });
+  }
 
-  // ---- parallax + photo tilt on scroll ----
-  var photoN = document.getElementById('photo-n'), photoU = document.getElementById('photo-u');
-  var paraEls = Array.prototype.slice.call(root.querySelectorAll('[data-para]')).map(function (el) {
+  // --- parallax + photo tilt + scroll gags ---
+  var paraEls = Array.prototype.map.call(root.querySelectorAll('[data-para]'), function (el) {
     return { el: el, speed: parseFloat(el.getAttribute('data-para')) || 0 };
   });
-  var last = window.scrollY, vel = 0;
+  var last = window.scrollY, vel = 0, raf;
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   function loop() {
-    requestAnimationFrame(loop);
-    if (!motionOn) return;
+    raf = requestAnimationFrame(loop);
+    if (!motionOn()) { applyStaticPoses(); return; }
+    var vh = window.innerHeight;
     var y = window.scrollY;
     var dv = y - last;
     last = y;
@@ -466,27 +568,34 @@
     var lift = clamp(vel * -1.3, -26, 26);
     if (photoN) photoN.style.transform = 'rotate(' + tilt + 'deg) translateY(' + lift + 'px)';
     if (photoU) photoU.style.transform = 'rotate(' + (-tilt) + 'deg) translateY(' + lift + 'px)';
-    paraEls.forEach(function (p) {
-      p.el.style.transform = 'translate3d(0,' + (y * p.speed) + 'px,0)';
-    });
-  }
-  requestAnimationFrame(loop);
+    if (photoM) photoM.style.transform = 'rotate(' + (tilt * 0.7) + 'deg)';
+    paraEls.forEach(function (p) { p.el.style.transform = 'translate3d(0,' + (y * p.speed) + 'px,0)'; });
 
-  // ---- spin photo on click ----
-  function spin(e) {
-    var img = e.currentTarget;
-    if (!img.dataset.idle) img.dataset.idle = img.style.animation;
-    img.style.animation = 'none';
-    void img.offsetWidth;
-    img.style.animation = 'spinOnce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1)';
-    img.onanimationend = function () {
-      img.style.animation = img.dataset.idle;
-      img.onanimationend = null;
-    };
+    if (tubWrap) {
+      var band = tubWrap.parentElement;
+      var rb = band.getBoundingClientRect();
+      var pb = clamp((vh - rb.top) / (vh + rb.height), 0, 1);
+      var x = -230 + pb * (rb.width + 300);
+      tubWrap.style.transform = 'translate3d(' + x + 'px,0,0)';
+    }
+    if (peekWrap) {
+      var wrap = peekWrap.parentElement;
+      var rp = wrap.getBoundingClientRect();
+      var pp = clamp((vh - rp.top) / (vh + rp.height), 0, 1);
+      var t = clamp((pp - 0.2) / 0.6, 0, 1);
+      var peek = Math.sin(t * Math.PI);
+      peekWrap.style.transform = 'translateY(' + (160 - peek * 160) + 'px)';
+    }
+    if (axeWrap) {
+      var doc = document.documentElement;
+      var dist = Math.max(0, doc.scrollHeight - (y + vh));
+      var t2 = clamp(1 - dist / 340, 0, 1);
+      var e = 1 - Math.pow(1 - t2, 3);
+      axeWrap.style.transform = 'translateY(' + (200 - e * 200) + 'px)';
+    }
   }
-  Array.prototype.slice.call(document.querySelectorAll('.photo-spin')).forEach(function (img) {
-    img.addEventListener('click', spin);
-  });
+  if (motionOn()) raf = requestAnimationFrame(loop);
+  else applyStaticPoses();
 })();
 </script>
 </body>
