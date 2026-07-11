@@ -104,6 +104,8 @@
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
   .rsvp-btn:hover { background: #EBDF7E !important; }
   .rsvp-btn:active { transform: translate(7px, 8px) !important; box-shadow: 0 0 0 #33291F !important; }
+  /* на узких экранах прижимаем бейджик «до 1 августа!» к кнопке, чтобы не резался краем экрана */
+  @media (max-width: 460px) { .rsvp-badge { right: -10px !important; top: -28px !important; } }
   .credit-link:hover { color: #E2588E !important; text-decoration-color: #EBDF7E !important; }
   .faq-link:hover { color: #6C7ED6 !important; text-decoration-color: #ECA02B !important; }
   /* фото-кнопки: без синей обводки/выделения при тапе */
@@ -757,8 +759,8 @@
       <div data-reveal="drop" data-reveal-delay="100" style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 24px; color: #4B3227; transform: rotate(-1deg); margin: 18px 0 26px;">очень ждём! заполни анкету —<br />это займёт две минуты, честно</div>
 
       <div data-reveal="slap" data-reveal-delay="200" style="position: relative; display: inline-block;">
-        <a class="rsvp-btn" href="https://forms.gle/" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(16px, 5vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px 28px; animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
-        <span style="position: absolute; top: -22px; right: -30px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 1<br />августа!</span>
+        <a class="rsvp-btn" href="https://forms.gle/" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.6vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px clamp(14px, 4.5vw, 28px); animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
+        <span class="rsvp-badge" style="position: absolute; top: -22px; right: -30px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 1<br />августа!</span>
       </div>
 
       <div data-reveal="slap" data-reveal-delay="300" style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 22px; transform: rotate(1deg);">не заполнишь — мы всё равно позвоним (мы такие)</div>
@@ -2094,7 +2096,8 @@
       var cr = carWrap.parentElement.getBoundingClientRect();
       var cp = clamp((vh - cr.top) / (vh + cr.height), 0, 1);
       cp = clamp((cp - 0.3) / 0.55, 0, 1);
-      var cx = cp * Math.max(0, cr.width - 240);
+      // запас 8px по краям: наклон rockCar выносит углы фото за габарит блока
+      var cx = 8 + cp * Math.max(0, cr.width - 240 - 16);
       carWrap.style.transform = 'translate3d(' + easeTo('car', cx) + 'px,0,0)';
     }
     if (peekWrap) {
