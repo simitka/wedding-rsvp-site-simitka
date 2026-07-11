@@ -1094,28 +1094,40 @@
   window.addEventListener('resize', fitLines);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLines);
 
-  // --- scroll reveals ---
+  // --- scroll reveals (reversible: same animation plays backwards on scroll up) ---
+  function hiddenPose(kind) {
+    return kind === 'left' ? 'translateX(-70px) rotate(-5deg)' :
+      kind === 'right' ? 'translateX(70px) rotate(5deg)' :
+      kind === 'drop' ? 'translateY(-56px) rotate(-3deg)' :
+      'scale(1.45) rotate(6deg)';
+    }
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
-      if (!en.isIntersecting) return;
-      en.target.style.opacity = '1';
-      en.target.style.transform = 'none';
-      io.unobserve(en.target);
+      var el = en.target;
+      if (en.isIntersecting) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      } else {
+        el.style.opacity = '0';
+        el.style.transform = el._revealHidden;
+      }
     });
   }, { threshold: 0.12 });
 
   if (motionOn()) {
     Array.prototype.forEach.call(root.querySelectorAll('[data-reveal]'), function (el) {
-      var r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.85) return;
       var kind = el.getAttribute('data-reveal') || 'slap';
       var delay = el.getAttribute('data-reveal-delay') || '0';
-      el.style.opacity = '0';
-      el.style.transform =
-        kind === 'left' ? 'translateX(-70px) rotate(-5deg)' :
-        kind === 'right' ? 'translateX(70px) rotate(5deg)' :
-        kind === 'drop' ? 'translateY(-56px) rotate(-3deg)' :
-        'scale(1.45) rotate(6deg)';
+      el._revealHidden = hiddenPose(kind);
+      var r = el.getBoundingClientRect();
+      // элементы, уже видимые при загрузке, показываем без начального прятанья
+      if (r.top < window.innerHeight * 0.85) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      } else {
+        el.style.opacity = '0';
+        el.style.transform = el._revealHidden;
+      }
       el.style.transition = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
       io.observe(el);
     });
