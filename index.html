@@ -55,6 +55,7 @@
   .rsvp-btn:hover { background: #EBDF7E; }
   .rsvp-btn:active { transform: translate(7px, 8px); box-shadow: 0 0 0 #33291F; }
   .credit-link:hover { color: #E2588E; text-decoration-color: #EBDF7E; }
+  .faq-link:hover { color: #6C7ED6; text-decoration-color: #ECA02B; }
   /* фото-кнопки: без синей обводки/выделения при тапе */
   .photo-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
   .photo-spin:focus, .photo-spin:focus-visible { outline: none; }
@@ -549,7 +550,7 @@
         <div data-reveal="left" style="position: relative;">
           <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 18px 20px 16px; transform: rotate(-1.4deg);">
             <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #E2588E;">остались вопросы?</div>
-            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">напишите Никите или Ульяне в телеграм — ответим быстрее, чем закончится тост.</div>
+            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">напишите <a class="faq-link" href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 4px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a class="faq-link" href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 4px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> в телеграм — ответим быстрее, чем закончится тост.</div>
           </div>
         </div>
       </div>
@@ -935,7 +936,7 @@
       setTimeout(function () { phase = 'gate'; applyPoses(); }, 650);
       setTimeout(function () { elBoot.style.display = 'none'; applyPoses(); lockScroll(false); startIdle(); }, 1750);
     } else {
-      var ci = Math.floor(el / 1500);
+      var ci = Math.floor(el / 2000);
       if (np !== pct || ci !== capI) {
         pct = np; capI = ci;
         elBootPct.textContent = String(pct);
@@ -1024,7 +1025,7 @@
       l2Iv = setInterval(function () {
         var e2 = Date.now() - t0;
         var p = Math.min(100, Math.round(e2 / barMs * 100));
-        var ci = Math.floor(e2 / 1500);
+        var ci = Math.floor(e2 / 2000);
         elL2Pct.textContent = String(p);
         elL2Cap.textContent = l2Caps[ci % l2Caps.length];
         if (p >= 100) clearInterval(l2Iv);
