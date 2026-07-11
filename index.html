@@ -596,7 +596,7 @@
       <div style="position: absolute; left: 0; right: 0; top: 0; height: 8px; background: repeating-linear-gradient(45deg, #A31D4E 0px 14px, #EBDF7E 14px 28px);"></div>
       <div id="cd-fill" style="position: absolute; left: 0; top: 8px; bottom: 0; width: 0%; background: rgba(163,29,78,0.5); transition: width 1s linear;"></div>
       <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 12px;">
-        <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1.15; color: #F2EDE2; text-align: right;">сложный выбор? понимаем.<br />кот в наушниках победит через</span>
+        <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1.15; color: #F2EDE2; text-align: right;">сложный выбор? понимаем.<br />тихий котик победит через</span>
         <span id="cd-num" style="flex: none; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #A31D4E; color: #F2EDE2; font-family: 'Rubik Mono One', monospace; font-size: 22px; transform: rotate(6deg); animation: cdThump 1s cubic-bezier(0.2, 1.3, 0.4, 1) infinite;"></span>
       </div>
     </div>
@@ -935,7 +935,7 @@
       setTimeout(function () { phase = 'gate'; applyPoses(); }, 650);
       setTimeout(function () { elBoot.style.display = 'none'; applyPoses(); lockScroll(false); startIdle(); }, 1750);
     } else {
-      var ci = Math.floor(el / 650);
+      var ci = Math.floor(el / 1500);
       if (np !== pct || ci !== capI) {
         pct = np; capI = ci;
         elBootPct.textContent = String(pct);
@@ -961,13 +961,15 @@
       showCountdown();
       cdIv = window.__nuCd = setInterval(function () {
         var c = (countdown == null ? 1 : countdown) - 1;
-        if (c <= 0) { clearInterval(cdIv); choose('on'); }
+        if (c <= 0) { clearInterval(cdIv); choose('off', true); }
         else { countdown = c; showCountdown(); }
       }, 1000);
     }, Math.max(3000, IDLE_MS));
   }
 
-  function choose(val) {
+  // isAuto = выбор сделал таймер, а не пользователь (по бездействию берём «без звука» —
+  // браузер всё равно не даст стартовать музыку без жеста)
+  function choose(val, isAuto) {
     if (chosen) return;
     clearTimeout(idleT); clearInterval(cdIv);
     try { clearTimeout(window.__nuIdle); clearInterval(window.__nuCd); } catch (e) {}
@@ -976,14 +978,16 @@
     elCdBadge.style.display = 'none';
     var on = val === 'on';
     elStampText.textContent = on ? 'звук: вкл' : 'звук: выкл';
-    elStampNote.textContent = on ? 'антоний уже наливает! кот одобряет' : 'уважаем. идём в благородной тишине';
+    elStampNote.textContent = on ? 'антоний уже наливает! кот одобряет'
+      : (isAuto ? 'тишина так тишина. передумаешь — кнопка звука внизу справа'
+                : 'уважаем. идём в благородной тишине');
     elChosen.style.display = 'flex';
-    if (!on) { setTimeout(startL2, 1300); return; }
+    if (!on) { setTimeout(startL2, isAuto ? 2000 : 1300); return; }
     var advanced = false;
     function advance(delay) { if (advanced) return; advanced = true; setTimeout(startL2, delay); }
     startMusic(function (okPlay) {
       if (okPlay) { advance(2400); return; }
-      // жеста ещё не было (авто-выбор по таймеру) — браузер не даёт стартовать звук.
+      // жеста ещё не было — браузер не даёт стартовать звук.
       // Держим штамп и ждём первый тап: он же и запустит музыку (armAutoStart уже слушает).
       elStampNote.textContent = 'тапни в любом месте — и поехали!';
       onAutoStarted = function () { advance(900); };
@@ -1020,7 +1024,7 @@
       l2Iv = setInterval(function () {
         var e2 = Date.now() - t0;
         var p = Math.min(100, Math.round(e2 / barMs * 100));
-        var ci = Math.floor(e2 / 620);
+        var ci = Math.floor(e2 / 1500);
         elL2Pct.textContent = String(p);
         elL2Cap.textContent = l2Caps[ci % l2Caps.length];
         if (p >= 100) clearInterval(l2Iv);
