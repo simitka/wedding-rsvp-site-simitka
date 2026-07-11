@@ -55,6 +55,9 @@
   .rsvp-btn:hover { background: #EBDF7E; }
   .rsvp-btn:active { transform: translate(7px, 8px); box-shadow: 0 0 0 #33291F; }
   .credit-link:hover { color: #E2588E; text-decoration-color: #EBDF7E; }
+  /* фото-кнопки: без синей обводки/выделения при тапе */
+  .photo-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
+  .photo-spin:focus, .photo-spin:focus-visible { outline: none; }
 </style>
 </head>
 <body>
@@ -651,7 +654,7 @@
         <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 12px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; white-space: nowrap; z-index: 2;">ой, фото легло боком</div>
         <div id="boot-done" style="display: none; position: absolute; left: 50%; top: 44%; margin-left: -86px; z-index: 3; border: 3px dashed #A31D4E; color: #A31D4E; background: rgba(251,248,239,0.92); font-family: 'Rubik Mono One', monospace; font-size: 19px; letter-spacing: 2px; padding: 9px 15px; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">готово!!!</div>
       </div>
-      <div style="margin-top: 34px; width: 250px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+      <div style="margin-top: 34px; width: 233px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
         <div id="boot-bar" style="height: 18px; width: 0px; background: repeating-linear-gradient(90deg, #A31D4E 0 12px, transparent 12px 17px);"></div>
       </div>
       <div style="margin-top: 12px; font-family: 'Rubik Mono One', monospace; font-size: 13px; color: #33291F; letter-spacing: 1px;">LOVE.EXE · <span id="boot-pct">0</span>%</div>
@@ -666,6 +669,7 @@
 (function () {
   // ===== v3 wrapper: настройки (дефолты из дизайна) =====
   var LOADER1_MIN_MS = 5000;   // минимум показа бут-лоудера
+  var LOADER1_MAX_MS = 22000;  // страховка: даже если ассет завис — не держим лоудер дольше
   var LOADER2_MIN_MS = 6000;   // минимум показа лоудера-перехода
   var IDLE_MS = 30000;         // через сколько появляется плашка авто-выбора
   var COUNTDOWN_MS = 10000;    // длительность обратного отсчёта авто-выбора
@@ -714,14 +718,14 @@
     w.__nuAudio.loop = true;
     return w.__nuAudio;
   }
-  var audio = null, fadeIv = null, musicPlaying = false, audioPrimed = false, pausedByHidden = false;
+  var audio = null, fadeIv = null, musicPlaying = false, audioPrimed = false, pausedByHidden = false, pendingStart = false;
   try { audio = getAudio(); audio.preload = 'auto'; audio.loop = true; } catch (e) {}
 
   // ---- «прогрев» аудио первым жестом пользователя ----
   // Браузеры блокируют play() без user-gesture, поэтому авто-выбор по таймеру не может
   // сам стартовать музыку. На первом же касании/клике/скролле «благословляем» элемент
   // (короткий play на нулевой громкости), после чего play() из таймера уже разрешён.
-  var primeEvents = ['pointerdown', 'touchstart', 'mousedown', 'keydown', 'click', 'scroll'];
+  var primeEvents = ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'keydown', 'click', 'scroll'];
   function detachPrime() {
     primeEvents.forEach(function (ev) { document.removeEventListener(ev, primeAudio, true); });
   }
@@ -753,6 +757,26 @@
     elMuteBtn.setAttribute('aria-label', label);
     elMuteBtn.setAttribute('title', label);
   }
+  // если play() без жеста заблокирован (напр. автовыбор по таймеру) — стартуем при первом касании
+  function armAutoStart() {
+    if (pendingStart) return;
+    pendingStart = true;
+    var evs = ['pointerup', 'touchend', 'click', 'mousedown', 'keydown'];
+    function go() {
+      evs.forEach(function (e) { document.removeEventListener(e, go, true); });
+      if (!pendingStart) return;
+      pendingStart = false;
+      if (musicPlaying) startMusic();   // уже внутри пользовательского жеста → play() разрешён
+    }
+    evs.forEach(function (e) { document.addEventListener(e, go, { capture: true, passive: true }); });
+  }
+  function fadeUp(a) {
+    clearInterval(fadeIv);
+    fadeIv = setInterval(function () {
+      a.volume = Math.min(1, a.volume + 0.04);
+      if (a.volume >= 1) clearInterval(fadeIv);
+    }, 80);
+  }
   function startMusic() {
     var a = getAudio(); audio = a; a.loop = true;
     audioPrimed = true; detachPrime();   // реальный play идёт — прогрев больше не нужен
@@ -760,12 +784,9 @@
     a.volume = 0;
     try { a.currentTime = 0; } catch (e) {}
     var pr = a.play();
-    if (pr && pr.catch) pr.catch(function () {});
     musicPlaying = true; setMuteIcon();
-    fadeIv = setInterval(function () {
-      a.volume = Math.min(1, a.volume + 0.04);
-      if (a.volume >= 1) clearInterval(fadeIv);
-    }, 80);
+    if (pr && pr.then) pr.then(function () {}, function () { clearInterval(fadeIv); armAutoStart(); });
+    fadeUp(a);
   }
   // возобновление после паузы по сворачиванию вкладки — продолжаем с того же места
   function resumeMusic() {
@@ -773,15 +794,12 @@
     clearInterval(fadeIv);
     a.volume = 0;
     var pr = a.play();
-    if (pr && pr.catch) pr.catch(function () {});
     musicPlaying = true; setMuteIcon();
-    fadeIv = setInterval(function () {
-      a.volume = Math.min(1, a.volume + 0.04);
-      if (a.volume >= 1) clearInterval(fadeIv);
-    }, 80);
+    if (pr && pr.then) pr.then(function () {}, function () { clearInterval(fadeIv); armAutoStart(); });
+    fadeUp(a);
   }
   function toggleMusic() {
-    pausedByHidden = false;   // выбор пользователя важнее авто-восстановления
+    pausedByHidden = false; pendingStart = false;   // выбор пользователя важнее авто-восстановления
     if (musicPlaying) {
       clearInterval(fadeIv);
       if (audio) audio.pause();
@@ -849,21 +867,29 @@
     elGate.style.transform = phase === 'boot' ? 'translateY(38px) scale(0.985)' : (bootVisible ? 'translateY(0)' : 'none');
   }
 
+  // ширина полосы = целое число прямоугольников; правый край ровно по грани последнего
+  // (шаг ячейки 17px = прямоугольник 12px + зазор 5px; всего 14 ячеек = 233px)
+  function bootBarWidth(p) {
+    var filled = Math.floor(p / 100 * 14);
+    return (filled > 0 ? filled * 17 - 5 : 0) + 'px';
+  }
+
   function bootTick() {
     var el = Date.now() - bootT0;
     var minMs = Math.max(400, LOADER1_MIN_MS);
     var real = loadedN / loadTotal;
     smooth += (real - smooth) * 0.13;
-    // до 100% доходим только когда реально всё скачано и прошёл минимум показа
-    var ready = loadDone && el >= minMs;
+    // до 100% доходим, когда всё скачано (или сработала страховка) и прошёл минимум показа
+    var ready = (loadDone || el >= LOADER1_MAX_MS) && el >= minMs;
     var shown = Math.min(smooth + 0.005, el / minMs) * 100;
-    if (!ready) shown = Math.min(shown, 99);
+    if (ready) shown = Math.max(shown, pct + 2.5);   // при готовности активно домотаем до 100
+    else shown = Math.min(shown, 99);
     var np = Math.max(pct, Math.min(ready ? 100 : 99, Math.floor(shown)));
     if (ready && np >= 100) {
       clearInterval(bootIv);
       pct = 100; bootDone = true;
       elBootPct.textContent = '100';
-      elBootBar.style.width = (14 * 17) + 'px';
+      elBootBar.style.width = bootBarWidth(100);
       elBootCap.textContent = 'готово!';
       elBootDone.style.display = 'block';
       setTimeout(function () { phase = 'gate'; applyPoses(); }, 650);
@@ -873,7 +899,7 @@
       if (np !== pct || ci !== capI) {
         pct = np; capI = ci;
         elBootPct.textContent = String(pct);
-        elBootBar.style.width = (Math.floor(pct / 100 * 14) * 17) + 'px';
+        elBootBar.style.width = bootBarWidth(pct);
         elBootCap.textContent = bootCaps[capI % bootCaps.length];
       }
     }
