@@ -30,6 +30,20 @@
   @keyframes pulseStar { from { transform: scale(1); } to { transform: scale(1.08); } }
   @keyframes rockTub { from { transform: rotate(-5deg) translateY(2px); } to { transform: rotate(4deg) translateY(-4px); } }
   @keyframes swayPeek { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2deg); } }
+  /* v4: дорога (ROAD) и ночёвка (STAY) */
+  @keyframes roadDash { from { transform: translate3d(-46px, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+  @keyframes rockCar { from { transform: rotate(-1.6deg) translateY(0); } to { transform: rotate(1.2deg) translateY(-4px); } }
+  @keyframes vanIdle { from { transform: rotate(-1.4deg) translateY(1px) scale(1); } to { transform: rotate(1deg) translateY(-4px) scale(1.02); } }
+  @keyframes sleepBreathe { from { transform: rotate(-2deg) scale(1); } to { transform: rotate(-1.1deg) scale(1.035); } }
+  @keyframes vanDash {
+    0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1); animation-timing-function: cubic-bezier(0.6, -0.24, 0.82, 0.4); }
+    14% { transform: translate3d(24px, 2px, 0) rotate(2.4deg) scale(0.95, 1.06); animation-timing-function: cubic-bezier(0.16, 0.84, 0.24, 1); }
+    46% { transform: translate3d(max(-168px, -46vw), -5px, 0) rotate(-4.5deg) scale(1.1, 0.92); animation-timing-function: cubic-bezier(0.5, -0.3, 0.2, 1); }
+    62% { transform: translate3d(-138px, -1px, 0) rotate(-1.6deg) scale(0.97, 1.04); animation-timing-function: cubic-bezier(0.3, 1.65, 0.36, 1); }
+    100% { transform: translate3d(0, 0, 0) rotate(0.001deg) scale(1, 1); }
+  }
+  @keyframes vanFire { 0%, 9% { opacity: 0; } 15%, 55% { opacity: 1; } 70%, 100% { opacity: 0; } }
+  @keyframes flick { from { transform: scale(1, 1); } to { transform: scale(1.3, 0.75); } }
   /* v3 wrapper: boot / gate / loader / music */
   @keyframes bobCardA { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(-2.2deg) translateY(-5px); } }
   @keyframes bobCardB { 0%, 100% { transform: rotate(2.6deg) translateY(-4px); } 50% { transform: rotate(1.8deg) translateY(3px); } }
@@ -76,17 +90,22 @@
   @keyframes eggBob { from { transform: translateY(-14px) rotate(-4deg); } to { transform: translateY(14px) rotate(4deg); } }
   @keyframes eggBadgeOut { from { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 30% { opacity: 1; transform: translateY(-14px) rotate(-6deg) scale(1.06); } to { opacity: 0; transform: translateY(110px) rotate(22deg) scale(0.85); } }
   @keyframes eggPlaneDive { from { opacity: 1; } 25% { transform: translateY(-4vh) rotate(-6deg); } to { transform: translateY(125vh) rotate(46deg); opacity: 0; } }
-  .gate-btn-a:active .gc-inner { transform: translate(5px, 6px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
-  .gate-btn-b:active .gc-inner { transform: translate(-5px, 6px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
-  .spotify-btn:hover { color: #F2EDE2; }
-  .spotify-btn:active { transform: translate(5px, 6px) rotate(-1.5deg); box-shadow: 0 0 0 #33291F; }
-  .mute-btn:active { transform: rotate(-4deg) translate(2px, 3px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
-  .btn-map-g:active { transform: translate(5px, 6px) rotate(-1.5deg); box-shadow: 0 0 0 #33291F; }
-  .btn-map-y:active { transform: translate(5px, 8px) rotate(1.8deg); box-shadow: 0 0 0 #33291F; }
-  .rsvp-btn:hover { background: #EBDF7E; }
-  .rsvp-btn:active { transform: translate(7px, 8px); box-shadow: 0 0 0 #33291F; }
-  .credit-link:hover { color: #E2588E; text-decoration-color: #EBDF7E; }
-  .faq-link:hover { color: #6C7ED6; text-decoration-color: #ECA02B; }
+  /* hover/active перекрывают инлайн-стили кнопок, поэтому всюду !important */
+  .gate-btn-a:active .gc-inner { transform: translate(5px, 6px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
+  .gate-btn-b:active .gc-inner { transform: translate(-5px, 6px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
+  .spotify-btn:hover { color: #F2EDE2 !important; }
+  .spotify-btn:active { transform: translate(5px, 6px) rotate(-1.5deg) !important; box-shadow: 0 0 0 #33291F !important; }
+  .mute-btn:active { transform: rotate(-4deg) translate(2px, 3px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
+  .btn-map-g:active { transform: translate(5px, 6px) rotate(-1.5deg) !important; box-shadow: 0 0 0 #33291F !important; }
+  .btn-map-y:active { transform: translate(5px, 8px) rotate(1.8deg) !important; box-shadow: 0 0 0 #33291F !important; }
+  .btn-rsvp-road:hover { color: #EBDF7E !important; }
+  .btn-rsvp-road:active { transform: translate(5px, 6px) rotate(-1.5deg) !important; box-shadow: 0 0 0 #33291F !important; }
+  /* плавный доезд до якоря #rsvp по кнопкам «отметить в анкете» */
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  .rsvp-btn:hover { background: #EBDF7E !important; }
+  .rsvp-btn:active { transform: translate(7px, 8px) !important; box-shadow: 0 0 0 #33291F !important; }
+  .credit-link:hover { color: #E2588E !important; text-decoration-color: #EBDF7E !important; }
+  .faq-link:hover { color: #6C7ED6 !important; text-decoration-color: #ECA02B !important; }
   /* фото-кнопки: без синей обводки/выделения при тапе */
   .photo-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
   .photo-spin:focus, .photo-spin:focus-visible { outline: none; }
@@ -381,6 +400,77 @@
 
     <div style="width: 110%; margin: 0 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(162,168,69,0.5) 0 14px, rgba(162,168,69,0.22) 14px 28px); transform: rotate(-1.1deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
 
+    <!-- ============ ROAD ============ -->
+    <section id="road" style="position: relative; padding: 46px 20px 42px;">
+      <div style="position: absolute; top: 34px; right: 8%; z-index: 1;">
+        <span style="display: inline-block; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 36px; color: #6C7ED6; transform: rotate(12deg); animation: pulseStar 1.8s ease-in-out infinite alternate;">★</span>
+      </div>
+
+      <div data-reveal="left" style="text-align: center; margin-bottom: 16px; position: relative; z-index: 2;">
+        <h2 style="margin: 0; font-weight: 400; line-height: 1;">
+          <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(26px, 8vw, 38px); background: #ECA02B; color: #33291F; padding: 8px 12px 6px; transform: rotate(-2deg);">доро</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(28px, 8.5vw, 42px); background: #6C7ED6; color: #FFFFFF; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">га!</span>
+        </h2>
+        <div style="margin-top: 14px; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(22px, 6.5vw, 26px); color: #33291F; transform: rotate(-1deg);">спойлер: долго, зато <span style="text-decoration: underline wavy #E2588E 3px; text-underline-offset: 6px; text-decoration-skip-ink: none;">красиво</span></div>
+      </div>
+
+      <div data-reveal="slap" style="position: relative; z-index: 2;">
+        <div style="position: relative; width: calc(108% - 32px); margin-left: -4%; transform: rotate(-1.6deg); background: #33291F; padding: 15px 16px; box-shadow: 0 6px 14px rgba(51,41,31,0.3);">
+          <div style="display: flex; align-items: center; gap: clamp(6px, 2.6vw, 12px); padding: 0 min(calc(4% + 14px), 6vw);">
+            <span style="flex: none; display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(10px, 3.2vw, 13px); letter-spacing: clamp(1px, 0.5vw, 2px); text-transform: uppercase; background: #6C7ED6; color: #FFFFFF; padding: 5px clamp(6px, 2.6vw, 10px) 4px; transform: rotate(-2deg);">Тбилиси</span>
+            <span style="flex: 1; position: relative; height: 5px; overflow: hidden;"><span style="position: absolute; left: 0; top: 0; height: 100%; width: calc(100% + 46px); background: repeating-linear-gradient(90deg, #EBDF7E 0 18px, transparent 18px 46px); animation: roadDash 1.1s linear infinite; will-change: transform;"></span></span>
+            <span style="flex: none; display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(10px, 3.2vw, 13px); letter-spacing: clamp(1px, 0.5vw, 2px); text-transform: uppercase; background: #ECA02B; color: #33291F; padding: 5px clamp(6px, 2.6vw, 10px) 4px; transform: rotate(2deg);">винодельня</span>
+          </div>
+          <span style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 12px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px; white-space: nowrap;">≈2,5 часа в пути</span>
+        </div>
+        <div style="text-align: center; font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 12px; transform: rotate(-0.5deg);">по ощущениям — полтора фильма или один очень хороший сон</div>
+      </div>
+
+      <div data-reveal="drop" style="position: relative; margin-top: 168px;">
+        <div id="car-wrap" style="position: absolute; bottom: calc(100% - 38px); left: 0; width: 240px; z-index: 1; transform: translate3d(-300px, 0, 0); will-change: transform;">
+          <img src="assets/car-roof.png" alt="Жених в детстве едет на крыше машины" style="width: 100%; height: auto; animation: rockCar 0.95s ease-in-out infinite alternate; transform-origin: 50% 88%; filter: drop-shadow(0 8px 9px rgba(51,41,31,0.28)); pointer-events: none;" />
+          <span style="position: absolute; top: -14px; left: -4px; transform: rotate(-6deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap; pointer-events: none;">место на крыше уже занято!</span>
+        </div>
+
+        <div style="position: relative; z-index: 2; background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 26px 20px 22px; transform: rotate(0.8deg); filter: drop-shadow(4px 6px 0 rgba(51,41,31,0.22)); font-family: 'Neucha', cursive; font-size: 18px; line-height: 1.45;">
+          <div style="float: right; width: 46%; max-width: 200px; margin: 2px -6px 4px 12px;">
+            <div id="van-go" style="position: relative; cursor: pointer; will-change: transform; -webkit-tap-highlight-color: transparent;">
+              <span id="van-fire" style="position: absolute; right: -32px; bottom: 22%; width: 44px; height: 22px; opacity: 0; pointer-events: none;">
+                <span style="position: absolute; left: 0; top: 50%; margin-top: -11px; width: 44px; height: 22px; background: #E2588E; clip-path: polygon(0 50%, 16% 10%, 52% 0, 100% 24%, 76% 50%, 100% 76%, 52% 100%, 16% 90%); transform-origin: 0 50%; animation: flick 0.13s linear infinite alternate;"></span>
+                <span style="position: absolute; left: 2px; top: 50%; margin-top: -7px; width: 32px; height: 14px; background: #ECA02B; clip-path: polygon(0 50%, 16% 10%, 52% 0, 100% 24%, 76% 50%, 100% 76%, 52% 100%, 16% 90%); transform-origin: 0 50%; animation: flick 0.11s linear 0.04s infinite alternate;"></span>
+                <span style="position: absolute; left: 3px; top: 50%; margin-top: -4px; width: 19px; height: 8px; background: #EBDF7E; clip-path: polygon(0 50%, 16% 10%, 52% 0, 100% 24%, 76% 50%, 100% 76%, 52% 100%, 16% 90%); transform-origin: 0 50%; animation: flick 0.09s linear 0.07s infinite alternate;"></span>
+                <span style="position: absolute; right: -7px; top: 2px; width: 5px; height: 5px; border-radius: 50%; background: #ECA02B; transform-origin: 0 50%; animation: flick 0.15s linear infinite alternate;"></span>
+                <span style="position: absolute; right: -11px; bottom: 1px; width: 4px; height: 4px; border-radius: 50%; background: #EBDF7E; transform-origin: 0 50%; animation: flick 0.12s linear 0.05s infinite alternate;"></span>
+              </span>
+              <img src="assets/car-van.png" alt="Серебристый бусик — примерно такой приедет за гостями" style="width: 100%; height: auto; animation: vanIdle 2.8s ease-in-out infinite alternate; transform-origin: 50% 85%; filter: drop-shadow(3px 7px 8px rgba(51,41,31,0.3)); pointer-events: none;" />
+            </div>
+            <div style="text-align: center; margin-top: 2px; transform: rotate(2deg);">
+              <span style="display: inline-block; background: #FBF8EF; padding: 2px 9px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1.2;">за вами приедет примерно такой бусик</span>
+            </div>
+          </div>
+          выезжаем из Тбилиси — и на <span style="background: #EBDF7E; padding: 0 5px;">два с половиной часа</span> прилипаем к окну: холмы, виноградники, и горы всё ближе.
+          <div style="height: 12px;"></div>
+          в середине пути будет <span style="text-decoration: underline wavy #6C7ED6 3px; text-underline-offset: 5px; text-decoration-skip-ink: none;">небольшой серпантин</span>. если укачивает — киньте в сумку таблетку <span style="display: inline-block; width: 32px; height: 14px; border: 2.5px solid #33291F; border-radius: 999px; background: linear-gradient(90deg, #E2588E 0 50%, #FBF8EF 50%); transform: rotate(-14deg) translateY(2px); box-shadow: 2px 2px 0 rgba(51,41,31,0.35); margin: 0 3px;"></span> — скажете ей спасибо.
+          <div style="clear: both;"></div>
+        </div>
+        <div style="position: absolute; top: -12px; left: 18px; width: 84px; height: 24px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-7deg); z-index: 3;"></div>
+      </div>
+
+      <div data-reveal="left" data-reveal-delay="80" style="position: relative; max-width: 440px; margin: 30px auto 0;">
+        <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 20px 20px 18px; transform: rotate(1.2deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45;">
+          <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E;">пс-с, про трансфер:</span><br />
+          мы хотим помочь вам — <span style="background: #EBDF7E; padding: 0 5px;">соберём гостей в Тбилиси</span>,&nbsp; рассадим по машинкам, отвезём на винодельню, а после — обратно. отметьте в анкете, что нужны места, и ближе к свадьбе мы всё расскажем.
+        </div>
+        <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">довезём!!!</div>
+      </div>
+
+      <div data-reveal="slap" data-reveal-delay="160" style="text-align: center; margin-top: 28px;">
+        <a class="btn-rsvp-road" href="#rsvp" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 12px 18px; transform: rotate(-1.5deg);">отметить в анкете ↓</a>
+        <div style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 14px; transform: rotate(1deg);">тосты и руль сочетаются так себе — берите трансфер :)</div>
+      </div>
+    </section>
+
+    <div style="width: 110%; margin: 0 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(236,160,43,0.5) 0 14px, rgba(236,160,43,0.22) 14px 28px); transform: rotate(0.9deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
+
     <!-- ============ PROGRAM ============ -->
     <section style="position: relative; padding: 44px 20px 34px;">
       <div data-reveal="left" style="text-align: center; margin-bottom: 24px;">
@@ -536,6 +626,84 @@
 
     <div style="width: 110%; margin: 0 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(108,126,214,0.45) 0 14px, rgba(108,126,214,0.2) 14px 28px); transform: rotate(-0.8deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
 
+    <!-- ============ STAY ============ -->
+    <section id="stay" style="position: relative; padding: 46px 20px 44px;">
+      <div style="position: absolute; top: 40px; left: 7%; z-index: 1;">
+        <span style="display: inline-block; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 38px; color: #E2588E; transform: rotate(-14deg); animation: pulseStar 2s ease-in-out infinite alternate;">♥</span>
+      </div>
+
+      <div data-reveal="right" style="text-align: center; margin-bottom: 18px; position: relative; z-index: 2;">
+        <h2 style="margin: 0; font-weight: 400; line-height: 1;">
+          <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #B49BE0; color: #33291F; padding: 6px 14px 4px; transform: rotate(-1.5deg);">ночу</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(2deg) translateY(4px); margin-left: 5px;">ем!</span>
+        </h2>
+        <div style="margin-top: 14px; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(22px, 6.5vw, 26px); color: #33291F; transform: rotate(-1deg);">вечеринка не обязана заканчиваться</div>
+      </div>
+
+      <div data-reveal="drop" style="position: relative; max-width: 430px; margin: 122px auto 0;">
+        <div style="position: absolute; bottom: calc(100% - 50px); left: 10px; width: 140px; z-index: 1;">
+          <img src="assets/glasses-kid.png" alt="Невеста в детстве в солнечных очках — уже заняла лучший номер" style="width: 100%; height: auto; animation: wiggle 3.4s ease-in-out infinite; transform-origin: 50% 96%; filter: drop-shadow(0 6px 8px rgba(51,41,31,0.25)); pointer-events: none;" />
+          <span style="position: absolute; top: -14px; left: 38px; transform: rotate(4deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap; pointer-events: none;">лучший номер уже занят!</span>
+        </div>
+        <div style="position: absolute; bottom: calc(100% + 4px); right: 14px; width: 130px; height: 74px; z-index: 1; pointer-events: none; font-family: 'Amatic SC', cursive; font-weight: 700; line-height: 1;">
+          <span style="position: absolute; right: 4px; top: -4px; font-size: 44px; color: #E2588E; transform: rotate(14deg); animation: pulseStar 1.7s ease-in-out infinite alternate;">♥</span>
+          <span style="position: absolute; left: 22px; top: 12px; font-size: 32px; color: #6C7ED6; transform: rotate(-14deg); animation: wiggle 2.6s ease-in-out infinite;">★</span>
+          <span style="position: absolute; left: 0; bottom: 2px; width: 13px; height: 13px; border-radius: 50%; background: #A2A845; animation: pulseStar 2.1s ease-in-out 0.4s infinite alternate;"></span>
+          <span style="position: absolute; right: 34px; bottom: -2px; font-size: 24px; color: #ECA02B; transform: rotate(10deg); animation: pulseStar 2.4s ease-in-out 0.8s infinite alternate;">★</span>
+        </div>
+        <div style="position: relative; z-index: 2; background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 30px 18px 26px; transform: rotate(-1.2deg); text-align: center; filter: drop-shadow(4px 6px 0 rgba(51,41,31,0.22));">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">
+            <span style="font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(64px, 20vw, 92px); color: #A31D4E; line-height: 0.9;">20</span>
+            <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 7px;">
+              <span style="font-family: 'Yeseva One', serif; font-size: clamp(22px, 7vw, 30px); color: #33291F;">номеров</span>
+              <span style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; background: #33291F; color: #F2EDE2; padding: 4px 8px; transform: rotate(2deg);">прямо на винодельне</span>
+            </span>
+          </div>
+          <div style="display: inline-block; margin-top: 16px; font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #A31D4E; border: 3px solid #B49BE0; border-radius: 50% 45% 55% 40% / 55% 40% 60% 45%; padding: 5px 18px; transform: rotate(-2deg);">такси в ночи отменяется</div>
+        </div>
+        <div style="position: absolute; top: -12px; right: 20px; width: 84px; height: 24px; background: rgba(180,155,224,0.5); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(5deg); z-index: 2;"></div>
+      </div>
+
+      <div data-reveal="left" data-reveal-delay="60" style="position: relative; max-width: 460px; margin: 28px auto 0;">
+        <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 22px 20px 18px; transform: rotate(-0.8deg); font-family: 'Neucha', cursive; font-size: 18px; line-height: 1.45;">
+          <div style="float: left; width: 48%; max-width: 215px; margin: 2px 14px 4px -4px; position: relative;">
+            <img src="assets/sleep-kid.png" alt="Гость спит звёздочкой после свадьбы — реконструкция" class="photo-spin" style="width: 100%; height: auto; animation: sleepBreathe 3.8s ease-in-out infinite alternate; transform-origin: 50% 55%; filter: drop-shadow(4px 8px 9px rgba(51,41,31,0.3)); cursor: pointer;" />
+            <span style="position: absolute; left: 4px; bottom: -6px; transform: rotate(-4deg); background: #FBF8EF; padding: 2px 9px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(12px, 4vw, 15px); white-space: nowrap; pointer-events: none;">вы · примерно в 02:47</span>
+          </div>
+          оставайтесь на ночь — мы очень приглашаем! после торта веселье <span style="background: #EBDF7E; padding: 0 5px;">только разгоняется</span>: звёзды, танцы и разговоры до утра.
+          <div style="height: 12px;"></div>
+          а с утра никто никуда не спешит — и это лучшая часть плана.
+          <div style="clear: both;"></div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 26px;">
+        <div data-reveal="slap" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #33291F; transform: rotate(-1deg);">а утром по плану:</div>
+        <div style="display: flex; justify-content: center; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-top: 14px;">
+          <div data-reveal="slap" data-reveal-delay="60" style="display: inline-block;">
+            <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; background: #ECA02B; color: #33291F; padding: 8px 12px 7px; transform: rotate(-3deg); box-shadow: 4px 5px 0 #33291F;">завтрак</span>
+          </div>
+          <div data-reveal="slap" data-reveal-delay="150" style="display: inline-block;">
+            <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; background: #6C7ED6; color: #FFFFFF; padding: 8px 12px 7px; transform: rotate(2deg) translateY(5px); box-shadow: 4px 5px 0 #33291F;">бассейн</span>
+          </div>
+          <div data-reveal="slap" data-reveal-delay="240" style="display: inline-block;">
+            <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; background: #B49BE0; color: #33291F; padding: 8px 12px 7px; transform: rotate(-2deg); box-shadow: 4px 5px 0 #33291F;">досыпание</span>
+          </div>
+        </div>
+        <div data-reveal="slap" data-reveal-delay="330" style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 14px; transform: rotate(0.5deg);">(порядок любой, можно по кругу)</div>
+      </div>
+
+      <div data-reveal="right" data-reveal-delay="100" style="position: relative; max-width: 440px; margin: 30px auto 0;">
+        <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 20px 20px 18px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45;">
+          <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #E2588E;">как остаться:</span><br />
+          отметьте в анкете внизу, что <span style="background: #EBDF7E; padding: 0 5px;">остаётесь на ночь</span>, — и мы закрепим за вами номер. утром — завтрак и заплыв в бассейне.
+        </div>
+        <div style="position: absolute; top: -16px; right: -4px; transform: rotate(7deg); border: 2.5px dashed #E2588E; color: #E2588E; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">оставайтесь!!!</div>
+      </div>
+
+    </section>
+
+    <div style="width: 110%; margin: 0 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(235,223,126,0.6) 0 14px, rgba(235,223,126,0.3) 14px 28px); transform: rotate(-1deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
+
     <!-- ============ FAQ ============ -->
     <section style="position: relative; padding: 44px 20px 30px;">
       <div data-reveal="left" style="text-align: center; margin-bottom: 26px;">
@@ -579,7 +747,7 @@
     </section>
 
     <!-- ============ RSVP ============ -->
-    <section style="position: relative; padding: 40px 20px 150px; text-align: center;">
+    <section id="rsvp" style="position: relative; padding: 40px 20px 150px; text-align: center;">
       <div data-reveal="slap" style="margin-bottom: 8px;">
         <h2 style="margin: 0; font-weight: 400; line-height: 1;">
           <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(30px, 9vw, 44px); background: #FBF8EF; color: #33291F; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); transform: rotate(-3deg);">ты</span><span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(1.5deg) translateY(3px); margin-left: 6px;">придёшь</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(24px, 7vw, 34px); background: #ECA02B; color: #33291F; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 4px;">?</span>
@@ -1552,7 +1720,8 @@
   function preload() {
     var imgs = ['assets/computer-kid.png', 'assets/cat-sound.gif', 'assets/cat-silence.gif',
       'assets/nikita-outlined.png', 'assets/ulyana-outlined.png', 'assets/mushroom.png',
-      'assets/ulyana-peek.png', 'assets/palette.jpg', 'assets/bath.png', 'assets/axe.png'];
+      'assets/ulyana-peek.png', 'assets/palette.jpg', 'assets/bath.png', 'assets/axe.png',
+      'assets/car-roof.png', 'assets/car-van.png', 'assets/sleep-kid.png', 'assets/glasses-kid.png'];
     loadTotal = imgs.length + 2; // + шрифты + песня
     function bump() { loadedN++; if (loadedN >= loadTotal) loadDone = true; }
     imgs.forEach(function (src) { var im = new Image(); im.onload = bump; im.onerror = bump; im.src = src; });
@@ -1685,8 +1854,12 @@
     elL2.style.transform = 'translateY(106%) rotate(2.5deg)';
     setTimeout(function () { elL2.style.transform = 'translateY(0)'; }, 80);
     setTimeout(function () {
+      // сброс строго мгновенный: html { scroll-behavior: smooth } иначе растянет его,
+      // и initMain замерит reveal-элементы по ещё не доехавшему скроллу
+      document.documentElement.style.scrollBehavior = 'auto';
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
+      document.documentElement.style.scrollBehavior = '';
       phase = 'l2';
       elGate.style.display = 'none';
       elChosen.style.display = 'none';
@@ -1777,17 +1950,36 @@
     img.addEventListener('click', spin);
   });
 
+  // --- бусик: вместо photo-spin по клику рвёт вперёд с огнём из выхлопной ---
+  var vanGo = document.getElementById('van-go');
+  if (vanGo) vanGo.addEventListener('click', function () {
+    if (vanGo.dataset.busy) return;
+    vanGo.dataset.busy = '1';
+    var fire = document.getElementById('van-fire');
+    vanGo.style.animation = 'vanDash 1.9s linear both';
+    if (fire) fire.style.animation = 'vanFire 1.9s linear both';
+    vanGo.addEventListener('animationend', function h(ev) {
+      if (ev.target !== vanGo) return;
+      vanGo.style.animation = '';
+      if (fire) fire.style.animation = '';
+      delete vanGo.dataset.busy;
+      vanGo.removeEventListener('animationend', h);
+    });
+  });
+
   // --- refs ---
   var photoN = document.getElementById('photo-n'),
       photoU = document.getElementById('photo-u'),
       photoM = document.getElementById('photo-m'),
       tubWrap = document.getElementById('tub-wrap'),
       peekWrap = document.getElementById('peek-wrap'),
-      axeWrap = document.getElementById('axe-wrap');
+      axeWrap = document.getElementById('axe-wrap'),
+      carWrap = document.getElementById('car-wrap');
 
   function applyStaticPoses() {
-    smoothPos.tub = smoothPos.peek = smoothPos.axe = null;
+    smoothPos.tub = smoothPos.peek = smoothPos.axe = smoothPos.car = null;
     if (tubWrap) { var band = tubWrap.parentElement; var x = Math.max(0, band.clientWidth / 2 - 85); tubWrap.style.transform = 'translate3d(' + x + 'px,0,0)'; }
+    if (carWrap) { var cb = carWrap.parentElement; carWrap.style.transform = 'translate3d(' + Math.max(0, (cb.clientWidth - 240) / 2) + 'px,0,0)'; }
     if (peekWrap) peekWrap.style.transform = 'translateY(30px)';
     if (axeWrap) axeWrap.style.transform = 'translateY(50px)';
     if (photoN) photoN.style.transform = 'none';
@@ -1865,7 +2057,7 @@
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   // сглаживание скролл-гэгов: на Android инерционный скролл идёт на компоузиторе,
   // основной поток отстаёт, и при остановке позиция прилетает скачком — лерп догоняет плавно
-  var smoothPos = { tub: null, peek: null, axe: null };
+  var smoothPos = { tub: null, peek: null, axe: null, car: null };
   function easeTo(key, target) {
     var cur = smoothPos[key];
     cur = cur === null ? target : cur + (target - cur) * 0.22;
@@ -1895,6 +2087,15 @@
       var pb = clamp((vh - rb.top) / (vh + rb.height), 0, 1);
       var x = -230 + pb * (rb.width + 300);
       tubWrap.style.transform = 'translate3d(' + easeTo('tub', x) + 'px,0,0)';
+    }
+    // машина ездит строго в пределах карточки (края фото обрезаны):
+    // при скролле вниз — слева направо
+    if (carWrap) {
+      var cr = carWrap.parentElement.getBoundingClientRect();
+      var cp = clamp((vh - cr.top) / (vh + cr.height), 0, 1);
+      cp = clamp((cp - 0.3) / 0.55, 0, 1);
+      var cx = cp * Math.max(0, cr.width - 240);
+      carWrap.style.transform = 'translate3d(' + easeTo('car', cx) + 'px,0,0)';
     }
     if (peekWrap) {
       var wrap = peekWrap.parentElement;
