@@ -30,6 +30,26 @@
   @keyframes pulseStar { from { transform: scale(1); } to { transform: scale(1.08); } }
   @keyframes rockTub { from { transform: rotate(-5deg) translateY(2px); } to { transform: rotate(4deg) translateY(-4px); } }
   @keyframes swayPeek { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2deg); } }
+  /* v3 wrapper: boot / gate / loader / music */
+  @keyframes bobCardA { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(-2.2deg) translateY(-5px); } }
+  @keyframes bobCardB { 0%, 100% { transform: rotate(2.6deg) translateY(-4px); } 50% { transform: rotate(1.8deg) translateY(3px); } }
+  @keyframes stampIn { 0% { opacity: 0; transform: scale(2.6) rotate(18deg); } 55% { opacity: 1; transform: scale(0.92) rotate(-5deg); } 75% { transform: scale(1.06) rotate(-5deg); } 100% { opacity: 1; transform: scale(1) rotate(-5deg); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes eqBar { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+  @keyframes dripFall { 0% { transform: translateY(-6px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(26px); opacity: 0; } }
+  @keyframes kFix { 0%, 22% { transform: rotate(0deg) scale(1); } 42%, 62% { transform: rotate(-90deg) scale(0.74); } 82%, 100% { transform: rotate(0deg) scale(1); } }
+  @keyframes kInA { from { opacity: 0; transform: scale(2.1) rotate(14deg); } 65% { opacity: 1; transform: scale(0.94) rotate(-4deg); } to { opacity: 1; transform: scale(1) rotate(-4deg); } }
+  @keyframes kInB { from { opacity: 0; transform: scale(2.1) rotate(-12deg); } 65% { opacity: 1; transform: scale(0.94) rotate(3deg); } to { opacity: 1; transform: scale(1) rotate(3deg); } }
+  @keyframes kInC { from { opacity: 0; transform: scale(2.1) rotate(10deg); } 65% { opacity: 1; transform: scale(0.94) rotate(-2.5deg); } to { opacity: 1; transform: scale(1) rotate(-2.5deg); } }
+  @keyframes kInD { from { opacity: 0; transform: scale(1.8) rotate(-10deg); } to { opacity: 1; transform: scale(1) rotate(2deg); } }
+  @keyframes kBarOnce { from { width: 0%; } to { width: 100%; } }
+  @keyframes slideUpIn { from { transform: translateY(110%); } to { transform: translateY(0); } }
+  @keyframes cdThump { 0% { transform: rotate(6deg) scale(1.35); } 40%, 100% { transform: rotate(6deg) scale(1); } }
+  .gate-btn-a:active .gc-inner { transform: translate(5px, 6px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
+  .gate-btn-b:active .gc-inner { transform: translate(-5px, 6px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
+  .spotify-btn:hover { color: #F2EDE2; }
+  .spotify-btn:active { transform: translate(5px, 6px) rotate(-1.5deg); box-shadow: 0 0 0 #33291F; }
+  .mute-btn:active { transform: rotate(-4deg) translate(2px, 3px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
   .btn-map-g:active { transform: translate(5px, 6px) rotate(-1.5deg); box-shadow: 0 0 0 #33291F; }
   .btn-map-y:active { transform: translate(5px, 8px) rotate(1.8deg); box-shadow: 0 0 0 #33291F; }
   .rsvp-btn:hover { background: #EBDF7E; }
@@ -39,6 +59,132 @@
 </head>
 <body>
 
+<div id="app" data-motion="on" style="min-height: 100dvh; background: #3B4A20; font-family: 'Neucha', cursive; color: #33291F;">
+
+  <!-- ============ GATE (выбор музыки) ============ -->
+  <div id="gate-outer" style="width: 100%; display: flex; flex-direction: column; align-items: center; transform: translateY(38px) scale(0.985); transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.12s; will-change: transform;">
+    <div style="width: 100%; max-width: 600px; min-height: 100dvh; display: flex; flex-direction: column; background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.5); overflow: clip; position: relative;">
+
+      <section style="position: relative; padding: 16px 16px 30px; flex: 1; display: flex; flex-direction: column;">
+
+        <div style="position: absolute; top: 12px; right: -8px; z-index: 7;">
+          <div style="transform: rotate(7deg); border: 2.5px dashed #A31D4E; color: #A31D4E; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 22px 7px 12px; text-transform: uppercase; background: rgba(247,243,232,0.6);">Вы по адресу</div>
+        </div>
+        <div style="position: absolute; top: -8px; left: 50%; margin-left: -110px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+
+        <div style="text-align: center; padding-top: 46px; position: relative; z-index: 3;">
+          <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg);">тук-тук! это свадьба</div>
+          <div style="margin-top: 8px;">
+            <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; background: #33291F; color: #F2EDE2; padding: 6px 12px; transform: rotate(-1.5deg);">Никиты <span style="color: #E2588E;">♥</span> и Ульяны</span>
+          </div>
+
+          <h1 style="margin: 14px 0 0; line-height: 1; font-weight: 400;">
+            <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(26px, 8vw, 38px); background: #3B4A20; color: #EBDF7E; padding: 8px 12px 6px; transform: rotate(-2deg);">вот-вот</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(28px, 8.5vw, 42px); background: #EBDF7E; color: #33291F; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">начнётся!</span>
+          </h1>
+
+          <div style="margin-top: 16px; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(22px, 6.5vw, 27px); color: #33291F; transform: rotate(-1deg);">остался один <span style="text-decoration: underline wavy #E2588E 3px; text-underline-offset: 6px; text-decoration-skip-ink: none;">судьбоносный</span> вопрос:</div>
+
+          <h2 style="margin: 14px 0 0; line-height: 1; font-weight: 400;">
+            <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(-1.5deg);">музыку</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(28px, 8.5vw, 42px); background: #ECA02B; color: #33291F; padding: 6px 14px 4px; transform: rotate(2deg) translateY(4px); margin-left: 5px;">включать</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(22px, 6.5vw, 32px); background: #6C7ED6; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+          </h2>
+
+          <div style="margin-top: 18px; position: relative; z-index: 5;">
+            <span style="display: inline-block; background: #EBDF7E; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 8px 20px; font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; transform: rotate(-2deg); animation: wiggle 2.4s ease-in-out infinite;">жми на котика — он кнопка!!!</span>
+            <div style="display: flex; justify-content: center; gap: 130px; margin-top: 2px;">
+              <span style="display: inline-block; animation: bounceDown 1.3s ease-in-out infinite; font-size: 22px; color: #A31D4E; transform: rotate(-14deg);">↙</span>
+              <span style="display: inline-block; animation: bounceDown 1.3s ease-in-out 0.4s infinite; font-size: 22px; color: #A31D4E; transform: rotate(14deg);">↘</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: flex-start; gap: 14px; padding: 10px 2px 0; position: relative; z-index: 4;">
+
+          <button type="button" id="gate-silence" class="gate-btn-a" aria-label="Без музыки" style="all: unset; box-sizing: border-box; cursor: pointer; width: calc(50% - 7px); max-width: 240px; animation: bobCardA 4.2s ease-in-out infinite; -webkit-tap-highlight-color: transparent;">
+            <div class="gc-inner" style="background: #FBF8EF; padding: 9px 9px 10px; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); border: 3px solid #33291F; position: relative;">
+              <div style="position: relative; overflow: hidden;">
+                <img src="assets/cat-silence.gif" alt="Коту на голову льётся вода — он выбрал тишину" style="width: 100%; aspect-ratio: 1; object-fit: cover;" />
+                <span style="position: absolute; top: 6px; left: 8px; width: 3px; height: 14px; border-radius: 3px; background: rgba(108,126,214,0.85); animation: dripFall 1.1s linear infinite;"></span>
+                <span style="position: absolute; top: 6px; left: 16px; width: 3px; height: 10px; border-radius: 3px; background: rgba(108,126,214,0.7); animation: dripFall 1.4s linear 0.5s infinite;"></span>
+              </div>
+              <div style="text-align: center; margin-top: 9px;">
+                <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(13px, 3.8vw, 16px); letter-spacing: 2px; text-transform: uppercase; background: #6C7ED6; color: #FFFFFF; padding: 5px 10px 4px; transform: rotate(-2deg);">без звука</span>
+                <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(16px, 4.6vw, 19px); color: #4B3227; margin-top: 6px; transform: rotate(-1.5deg);">мне и водички хватит</div>
+              </div>
+              <span style="position: absolute; top: -12px; right: -10px; background: #FBF8EF; border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 7px; transform: rotate(6deg);">тык</span>
+            </div>
+          </button>
+
+          <button type="button" id="gate-sound" class="gate-btn-b" aria-label="Со звуком" style="all: unset; box-sizing: border-box; cursor: pointer; width: calc(50% - 7px); max-width: 240px; animation: bobCardB 4.8s ease-in-out infinite; -webkit-tap-highlight-color: transparent;">
+            <div class="gc-inner" style="background: #FBF8EF; padding: 9px 9px 10px; box-shadow: -5px 6px 0 rgba(51,41,31,0.85); border: 3px solid #33291F; position: relative;">
+              <div style="position: relative; overflow: hidden;">
+                <img src="assets/cat-sound.gif" alt="Котёнок в наушниках дрыгает головой под музыку" style="width: 100%; aspect-ratio: 1; object-fit: cover;" />
+                <span style="position: absolute; left: 6px; bottom: 5px; display: flex; align-items: flex-end; gap: 3px; height: 18px;">
+                  <span style="width: 4px; height: 100%; background: #EBDF7E; transform-origin: bottom; animation: eqBar 0.5s ease-in-out infinite; box-shadow: 1px 1px 0 rgba(51,41,31,0.6);"></span>
+                  <span style="width: 4px; height: 100%; background: #E2588E; transform-origin: bottom; animation: eqBar 0.42s ease-in-out 0.12s infinite; box-shadow: 1px 1px 0 rgba(51,41,31,0.6);"></span>
+                  <span style="width: 4px; height: 100%; background: #ECA02B; transform-origin: bottom; animation: eqBar 0.58s ease-in-out 0.24s infinite; box-shadow: 1px 1px 0 rgba(51,41,31,0.6);"></span>
+                </span>
+              </div>
+              <div style="text-align: center; margin-top: 9px;">
+                <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(13px, 3.8vw, 16px); letter-spacing: 2px; text-transform: uppercase; background: #A31D4E; color: #F2EDE2; padding: 5px 10px 4px; transform: rotate(2deg);">со звуком!</span>
+                <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(16px, 4.6vw, 19px); color: #4B3227; margin-top: 6px; transform: rotate(1.5deg);">туц-туц-туц</div>
+              </div>
+              <span style="position: absolute; top: -12px; left: -10px; background: #FBF8EF; border: 2.5px dashed #A31D4E; color: #A31D4E; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 7px; transform: rotate(-6deg);">тык</span>
+            </div>
+          </button>
+        </div>
+
+        <div style="text-align: center; font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 16px; transform: rotate(-0.5deg);">(неправильного ответа нет. но кот в наушниках будет рад)</div>
+
+        <div style="position: relative; max-width: 430px; margin: 26px auto 0; padding-bottom: 26px;">
+          <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 22px 22px 20px; transform: rotate(-1deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45; filter: drop-shadow(4px 6px 0 rgba(51,41,31,0.22)); text-align: center;">
+            <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E;">пс-с, важное:</span><br />
+            музыку на фоне написал <span style="background: #EBDF7E; padding: 0 5px;">Антоний — лучший друг жениха</span>. он крутой, и трек крутой, а прослушиваний — <span style="font-family: 'Rubik Mono One', monospace; font-size: 15px; color: #A31D4E;">8</span> в месяц. поднимаем?
+          </div>
+          <div style="position: absolute; top: -12px; left: 50%; margin-left: -42px; width: 84px; height: 24px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(3deg);"></div>
+
+          <div style="text-align: center; margin-top: 20px; position: relative; display: flex; justify-content: center;">
+            <div style="position: relative; display: inline-block;">
+              <a class="spotify-btn" href="https://open.spotify.com/track/4sPucQ55oTOLKe1wClaJE1?si=55037e60f0d24376" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 10px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #3B4A20; color: #EBDF7E; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 12px 18px; transform: rotate(-1.5deg);">
+                <span style="display: inline-flex; align-items: flex-end; gap: 2.5px; height: 15px;">
+                  <span style="width: 3.5px; height: 100%; background: #EBDF7E; transform-origin: bottom; animation: eqBar 0.5s ease-in-out infinite;"></span>
+                  <span style="width: 3.5px; height: 100%; background: #EBDF7E; transform-origin: bottom; animation: eqBar 0.44s ease-in-out 0.15s infinite;"></span>
+                  <span style="width: 3.5px; height: 100%; background: #EBDF7E; transform-origin: bottom; animation: eqBar 0.6s ease-in-out 0.3s infinite;"></span>
+                </span>
+                трек в spotify →
+              </a>
+              <span style="position: absolute; top: -26px; right: -34px; display: flex; align-items: center; justify-content: center; width: 66px; height: 66px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; line-height: 1.05; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">спасём<br />стримы!</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- плашка отсчёта авто-выбора -->
+      <div id="cd-badge" style="display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; justify-content: center; pointer-events: none; animation: slideUpIn 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+        <div style="width: 100%; max-width: 600px; position: relative; background: #33291F; padding: 12px 16px 14px; box-shadow: 0 -12px 30px rgba(51,41,31,0.35);">
+          <div style="position: absolute; left: 0; right: 0; top: 0; height: 8px; background: repeating-linear-gradient(45deg, #A31D4E 0px 14px, #EBDF7E 14px 28px);"></div>
+          <div id="cd-fill" style="position: absolute; left: 0; top: 8px; bottom: 0; width: 0%; background: rgba(163,29,78,0.5); transition: width 1s linear;"></div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 12px;">
+            <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1.15; color: #F2EDE2; text-align: right;">сложный выбор? понимаем.<br />кот в наушниках победит через</span>
+            <span id="cd-num" style="flex: none; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #A31D4E; color: #F2EDE2; font-family: 'Rubik Mono One', monospace; font-size: 22px; transform: rotate(6deg); animation: cdThump 1s cubic-bezier(0.2, 1.3, 0.4, 1) infinite;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- модалка подтверждения выбора -->
+      <div id="chosen-modal" style="display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; background: rgba(51,41,31,0.55); animation: fadeIn 0.25s ease;">
+        <div style="background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; padding: 34px 30px 30px; text-align: center; transform: rotate(-2deg); box-shadow: 8px 10px 0 rgba(51,41,31,0.9); border: 3px solid #33291F; max-width: 320px; margin: 0 20px;">
+          <div id="stamp-text" style="display: inline-block; border: 3px dashed #A31D4E; color: #A31D4E; font-family: 'Rubik Mono One', monospace; font-size: 22px; letter-spacing: 2px; padding: 10px 16px; text-transform: uppercase; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;"></div>
+          <div id="stamp-note" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 24px; color: #33291F; margin-top: 16px; transform: rotate(-1deg);"></div>
+          <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 10px;">открываем приглашение…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ MAIN (v2, основное приглашение) ============ -->
+  <div id="main-wrap" style="display: none; width: 100%; transform: translateY(40px) scale(0.99); transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.12s; will-change: transform;">
 <div id="wed-root" data-motion="on" style="min-height: 100dvh; background: #3B4A20; display: flex; flex-direction: column; align-items: center; font-family: 'Neucha', cursive; color: #33291F;">
   <div style="width: 100%; max-width: 600px; background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.5); overflow: clip; position: relative;">
 
@@ -451,10 +597,309 @@
     </footer>
   </div>
 </div>
+  </div><!-- /main-wrap -->
+
+  <!-- ============ КНОПКА МЬЮТА ============ -->
+  <div id="mute-wrap" style="display: none; position: fixed; right: 14px; bottom: 14px; z-index: 45; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) 0.6s both;">
+    <button type="button" id="mute-btn" class="mute-btn" aria-label="Выключить музыку" title="Выключить музыку" style="all: unset; box-sizing: border-box; cursor: pointer; width: 56px; height: 56px; border-radius: 50%; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); display: flex; align-items: center; justify-content: center; transform: rotate(-4deg); -webkit-tap-highlight-color: transparent;">
+      <span style="position: relative; display: flex; align-items: flex-end; gap: 3px; height: 20px;">
+        <span id="mute-eq" style="display: flex; align-items: flex-end; gap: 3px; height: 100%;">
+          <span style="width: 4.5px; height: 100%; background: #A31D4E; transform-origin: bottom; animation: eqBar 0.5s ease-in-out infinite;"></span>
+          <span style="width: 4.5px; height: 100%; background: #E2588E; transform-origin: bottom; animation: eqBar 0.42s ease-in-out 0.12s infinite;"></span>
+          <span style="width: 4.5px; height: 100%; background: #ECA02B; transform-origin: bottom; animation: eqBar 0.58s ease-in-out 0.24s infinite;"></span>
+        </span>
+        <span id="mute-off" style="display: none; align-items: flex-end; gap: 3px; height: 100%; position: relative;">
+          <span style="width: 4.5px; height: 30%; background: #8C837A;"></span>
+          <span style="width: 4.5px; height: 55%; background: #8C837A;"></span>
+          <span style="width: 4.5px; height: 40%; background: #8C837A;"></span>
+          <span style="position: absolute; left: -7px; top: 8px; width: 34px; height: 4px; background: #A31D4E; transform: rotate(-38deg); box-shadow: 1px 1px 0 rgba(51,41,31,0.35);"></span>
+        </span>
+      </span>
+    </button>
+  </div>
+
+  <!-- ============ ЛОУДЕР 2 (после выбора) ============ -->
+  <div id="l2" style="display: none; position: fixed; inset: 0; z-index: 70; justify-content: center; transform: translateY(106%) rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform;">
+    <div style="width: 100%; max-width: 600px; height: 100%; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.55); overflow: clip; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <div id="l2-play" style="display: none; flex-direction: column; align-items: center;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 78px; line-height: 1; background: #A31D4E; color: #F2EDE2; padding: 10px 20px 6px; animation: kInA 0.6s cubic-bezier(0.2, 1.3, 0.4, 1) 0.1s both;">Н</span>
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 74px; height: 74px; border-radius: 50%; background: #E2588E; color: #FFFFFF; font-size: 40px; animation: kInB 0.6s cubic-bezier(0.2, 1.3, 0.4, 1) 0.5s both;">♥</span>
+          <span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: 78px; line-height: 1; background: #EBDF7E; color: #33291F; padding: 10px 18px 6px; animation: kInC 0.6s cubic-bezier(0.2, 1.3, 0.4, 1) 0.9s both;">У</span>
+        </div>
+        <div style="margin-top: 22px; animation: kInD 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) 1.3s both;">
+          <span style="display: inline-block; background: #FBF8EF; padding: 4px 16px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 27px; transform: rotate(-2deg);">женятся!!!</span>
+        </div>
+        <div style="margin-top: 56px; width: 210px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px; animation: fadeIn 0.4s ease 0.2s both;">
+          <div id="l2-bar" style="height: 14px; width: 0%; background: #A31D4E;"></div>
+        </div>
+        <div style="margin-top: 14px; display: flex; align-items: center; gap: 10px; animation: fadeIn 0.4s ease 0.3s both;">
+          <span id="l2-cap" style="font-family: 'Neucha', cursive; font-size: 18px; color: #4B3227;"></span>
+          <span style="font-family: 'Rubik Mono One', monospace; font-size: 14px; background: #33291F; color: #F2EDE2; padding: 3px 8px; transform: rotate(2deg);"><span id="l2-pct">0</span>%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ БУТ-ЛОУДЕР (LOVE.EXE) ============ -->
+  <div id="boot" style="position: fixed; inset: 0; z-index: 80; display: flex; justify-content: center; transform: translateY(0); transition: transform 0.95s cubic-bezier(0.7, 0, 0.25, 1); will-change: transform;">
+    <div style="width: 100%; max-width: 600px; height: 100%; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.55); overflow: clip; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <div style="position: relative; width: 250px; display: flex; flex-direction: column; align-items: center;">
+        <div style="animation: kFix 5.2s cubic-bezier(0.5, 1.4, 0.4, 1) infinite; transform-origin: 50% 50%;">
+          <img src="assets/computer-kid.png" alt="Никита в детстве за первым компьютером, фото легло боком" style="width: 225px; height: auto; filter: drop-shadow(4px 8px 9px rgba(51,41,31,0.3));" />
+        </div>
+        <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 12px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; white-space: nowrap; z-index: 2;">ой, фото легло боком</div>
+        <div id="boot-done" style="display: none; position: absolute; left: 50%; top: 44%; margin-left: -86px; z-index: 3; border: 3px dashed #A31D4E; color: #A31D4E; background: rgba(251,248,239,0.92); font-family: 'Rubik Mono One', monospace; font-size: 19px; letter-spacing: 2px; padding: 9px 15px; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">готово!!!</div>
+      </div>
+      <div style="margin-top: 34px; width: 250px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+        <div id="boot-bar" style="height: 18px; width: 0px; background: repeating-linear-gradient(90deg, #A31D4E 0 12px, transparent 12px 17px);"></div>
+      </div>
+      <div style="margin-top: 12px; font-family: 'Rubik Mono One', monospace; font-size: 13px; color: #33291F; letter-spacing: 1px;">LOVE.EXE · <span id="boot-pct">0</span>%</div>
+      <div id="boot-cap" style="margin-top: 10px; font-family: 'Neucha', cursive; font-size: 18px; color: #4B3227;">love.exe запускается…</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
 
 
 <script>
 (function () {
+  // ===== v3 wrapper: настройки (дефолты из дизайна) =====
+  var LOADER1_MIN_MS = 5000;   // минимум показа бут-лоудера
+  var LOADER2_MIN_MS = 6000;   // минимум показа лоудера-перехода
+  var IDLE_MS = 30000;         // через сколько появляется плашка авто-выбора
+  var COUNTDOWN_MS = 10000;    // длительность обратного отсчёта авто-выбора
+  var AUDIO_URL = 'assets/music.mp3';
+
+  var app = document.getElementById('app');
+  var reduceW = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  app.setAttribute('data-motion', reduceW ? 'off' : 'on');
+
+  var elBoot = document.getElementById('boot'),
+      elBootBar = document.getElementById('boot-bar'),
+      elBootPct = document.getElementById('boot-pct'),
+      elBootCap = document.getElementById('boot-cap'),
+      elBootDone = document.getElementById('boot-done'),
+      elGate = document.getElementById('gate-outer'),
+      elCdBadge = document.getElementById('cd-badge'),
+      elCdNum = document.getElementById('cd-num'),
+      elCdFill = document.getElementById('cd-fill'),
+      elChosen = document.getElementById('chosen-modal'),
+      elStampText = document.getElementById('stamp-text'),
+      elStampNote = document.getElementById('stamp-note'),
+      elMainWrap = document.getElementById('main-wrap'),
+      elMuteWrap = document.getElementById('mute-wrap'),
+      elMuteBtn = document.getElementById('mute-btn'),
+      elMuteEq = document.getElementById('mute-eq'),
+      elMuteOff = document.getElementById('mute-off'),
+      elL2 = document.getElementById('l2'),
+      elL2Play = document.getElementById('l2-play'),
+      elL2Bar = document.getElementById('l2-bar'),
+      elL2Cap = document.getElementById('l2-cap'),
+      elL2Pct = document.getElementById('l2-pct');
+
+  var bootCaps = ['love.exe запускается…', 'модем шипит…', 'дискета крутится…', 'ну почти…'];
+  var l2Caps = ['клеим стикеры…', 'режем бумагу…', 'ищем клей-карандаш…', 'посыпаем блёстками…'];
+
+  function lockScroll(on) {
+    document.documentElement.style.overflow = on ? 'hidden' : '';
+    document.body.style.overflow = on ? 'hidden' : '';
+  }
+
+  // ---- аудио: один элемент на всё окно, чтобы никогда не играло два трека ----
+  function getAudio() {
+    var w = window;
+    if (w.__nuAudio && w.__nuAudioUrl !== AUDIO_URL) { try { w.__nuAudio.pause(); } catch (e) {} w.__nuAudio = null; }
+    if (!w.__nuAudio) { w.__nuAudio = new Audio(AUDIO_URL); w.__nuAudioUrl = AUDIO_URL; }
+    w.__nuAudio.loop = true;
+    return w.__nuAudio;
+  }
+  var audio = null, fadeIv = null, musicPlaying = false;
+  try { audio = getAudio(); audio.preload = 'auto'; audio.loop = true; } catch (e) {}
+
+  function setMuteIcon() {
+    elMuteEq.style.display = musicPlaying ? 'flex' : 'none';
+    elMuteOff.style.display = musicPlaying ? 'none' : 'flex';
+    var label = musicPlaying ? 'Выключить музыку' : 'Включить музыку';
+    elMuteBtn.setAttribute('aria-label', label);
+    elMuteBtn.setAttribute('title', label);
+  }
+  function startMusic() {
+    var a = getAudio(); audio = a; a.loop = true;
+    if (!a.paused) { musicPlaying = true; setMuteIcon(); return; }
+    a.volume = 0;
+    try { a.currentTime = 0; } catch (e) {}
+    a.play().catch(function () {});
+    musicPlaying = true; setMuteIcon();
+    clearInterval(fadeIv);
+    fadeIv = setInterval(function () {
+      a.volume = Math.min(1, a.volume + 0.04);
+      if (a.volume >= 1) clearInterval(fadeIv);
+    }, 80);
+  }
+  function toggleMusic() {
+    if (musicPlaying) {
+      clearInterval(fadeIv);
+      if (audio) audio.pause();
+      musicPlaying = false; setMuteIcon();
+    } else {
+      var a = getAudio(); audio = a;
+      try { a.pause(); a.currentTime = 0; } catch (e) {}
+      startMusic();
+    }
+  }
+  elMuteBtn.addEventListener('click', toggleMusic);
+
+  // ---- предзагрузка ----
+  var loadedN = 0, loadTotal = 1, smooth = 0;
+  function preload() {
+    var imgs = ['assets/computer-kid.png', 'assets/cat-sound.gif', 'assets/cat-silence.gif',
+      'assets/nikita-outlined.png', 'assets/ulyana-outlined.png', 'assets/mushroom.png',
+      'assets/ulyana-peek.png', 'assets/palette.jpg', 'assets/bath.png', 'assets/axe.png'];
+    loadTotal = imgs.length + 1; // + шрифты
+    function bump() { loadedN++; }
+    imgs.forEach(function (src) { var im = new Image(); im.onload = bump; im.onerror = bump; im.src = src; });
+    try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(bump, bump); else bump(); } catch (e) { bump(); }
+  }
+
+  // ---- состояние оркестрации ----
+  var phase = 'boot';   // boot | gate | l2 | main
+  var pct = 0, capI = -1, bootDone = false;
+  var chosen = null, countdown = null, mainStarted = false;
+  var idleT, cdIv, bootIv, bootT0, l2Iv;
+
+  function cdSec() { return Math.max(3, Math.round(COUNTDOWN_MS / 1000)); }
+
+  function applyPoses() {
+    elBoot.style.transform = phase === 'boot' ? 'translateY(0)' : 'translateY(-112%) rotate(-2.5deg)';
+    var bootVisible = elBoot.style.display !== 'none';
+    elGate.style.transform = phase === 'boot' ? 'translateY(38px) scale(0.985)' : (bootVisible ? 'translateY(0)' : 'none');
+  }
+
+  function bootTick() {
+    var el = Date.now() - bootT0;
+    var minMs = Math.max(400, LOADER1_MIN_MS);
+    var real = el > 9000 ? 1 : loadedN / loadTotal;
+    smooth += (real - smooth) * 0.13;
+    var shown = Math.min(smooth + 0.005, el / minMs) * 100;
+    var np = Math.max(pct, Math.min(100, Math.floor(shown)));
+    if (np >= 100) {
+      clearInterval(bootIv);
+      pct = 100; bootDone = true;
+      elBootPct.textContent = '100';
+      elBootBar.style.width = (14 * 17) + 'px';
+      elBootCap.textContent = 'готово!';
+      elBootDone.style.display = 'block';
+      setTimeout(function () { phase = 'gate'; applyPoses(); }, 650);
+      setTimeout(function () { elBoot.style.display = 'none'; applyPoses(); lockScroll(false); startIdle(); }, 1750);
+    } else {
+      var ci = Math.floor(el / 650);
+      if (np !== pct || ci !== capI) {
+        pct = np; capI = ci;
+        elBootPct.textContent = String(pct);
+        elBootBar.style.width = (Math.floor(pct / 100 * 14) * 17) + 'px';
+        elBootCap.textContent = bootCaps[capI % bootCaps.length];
+      }
+    }
+  }
+
+  function showCountdown() {
+    var on = countdown != null && !chosen;
+    elCdBadge.style.display = on ? 'flex' : 'none';
+    if (on) {
+      elCdNum.textContent = String(countdown);
+      elCdFill.style.width = Math.round((1 - countdown / cdSec()) * 100) + '%';
+    }
+  }
+  function startIdle() {
+    clearTimeout(window.__nuIdle); clearInterval(window.__nuCd);
+    idleT = window.__nuIdle = setTimeout(function () {
+      if (chosen || phase !== 'gate') return;
+      countdown = cdSec();
+      showCountdown();
+      cdIv = window.__nuCd = setInterval(function () {
+        var c = (countdown == null ? 1 : countdown) - 1;
+        if (c <= 0) { clearInterval(cdIv); choose('on'); }
+        else { countdown = c; showCountdown(); }
+      }, 1000);
+    }, Math.max(3000, IDLE_MS));
+  }
+
+  function choose(val) {
+    if (chosen) return;
+    clearTimeout(idleT); clearInterval(cdIv);
+    try { clearTimeout(window.__nuIdle); clearInterval(window.__nuCd); } catch (e) {}
+    try { localStorage.setItem('nu-music', val); } catch (e) {}
+    if (val === 'on') startMusic();
+    chosen = val; countdown = null;
+    elCdBadge.style.display = 'none';
+    var on = val === 'on';
+    elStampText.textContent = on ? 'звук: вкл' : 'звук: выкл';
+    elStampNote.textContent = on ? 'антоний уже наливает! кот одобряет' : 'уважаем. идём в благородной тишине';
+    elChosen.style.display = 'flex';
+    setTimeout(startL2, on ? 2400 : 1300);
+  }
+  document.getElementById('gate-sound').addEventListener('click', function () { choose('on'); });
+  document.getElementById('gate-silence').addEventListener('click', function () { choose('off'); });
+
+  function l2PlayMs() { return Math.max(600, LOADER2_MIN_MS); }
+  function startL2() {
+    lockScroll(true);
+    elL2.style.display = 'flex';
+    elL2.style.transform = 'translateY(106%) rotate(2.5deg)';
+    setTimeout(function () { elL2.style.transform = 'translateY(0)'; }, 80);
+    setTimeout(function () {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      phase = 'l2';
+      elGate.style.display = 'none';
+      elChosen.style.display = 'none';
+      elMainWrap.style.display = 'block';
+      if (!mainStarted) { mainStarted = true; initMain(); }
+      elL2Play.style.display = 'flex';
+      var barMs = l2PlayMs() - 450;
+      elL2Bar.style.transition = 'none';
+      elL2Bar.style.width = '0%';
+      requestAnimationFrame(function () {
+        elL2Bar.style.transition = 'width ' + (barMs / 1000) + 's steps(12, end)';
+        elL2Bar.style.width = '100%';
+      });
+      var t0 = Date.now();
+      l2Iv = setInterval(function () {
+        var e2 = Date.now() - t0;
+        var p = Math.min(100, Math.round(e2 / barMs * 100));
+        var ci = Math.floor(e2 / 620);
+        elL2Pct.textContent = String(p);
+        elL2Cap.textContent = l2Caps[ci % l2Caps.length];
+        if (p >= 100) clearInterval(l2Iv);
+      }, 50);
+    }, 990);
+    setTimeout(function () {
+      phase = 'main';
+      elL2.style.transform = 'translateY(-112%) rotate(-2.5deg)';
+      elMainWrap.style.transform = 'translateY(0)';
+      elMuteWrap.style.display = 'block';
+      setMuteIcon();
+    }, 990 + l2PlayMs());
+    setTimeout(function () {
+      elL2.style.display = 'none';
+      elMainWrap.style.transform = 'none';
+      lockScroll(false);
+    }, 990 + l2PlayMs() + 1000);
+  }
+
+  // ---- старт бут-лоудера ----
+  try { clearTimeout(window.__nuIdle); clearInterval(window.__nuCd); } catch (e) {}
+  lockScroll(true);
+  preload();
+  bootT0 = Date.now();
+  applyPoses();
+  bootIv = setInterval(bootTick, 50);
+
+  // ======================================================================
+  // ==== ОСНОВНОЕ ПРИГЛАШЕНИЕ (v2) — инициализируется при показе main ====
+  // ======================================================================
+  function initMain() {
   var root = document.getElementById('wed-root');
   if (!root) return;
 
@@ -596,6 +1041,7 @@
   }
   if (motionOn()) raf = requestAnimationFrame(loop);
   else applyStaticPoses();
+  }
 })();
 </script>
 </body>
