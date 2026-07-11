@@ -159,18 +159,6 @@
 
       </section>
 
-      <!-- плашка отсчёта авто-выбора -->
-      <div id="cd-badge" style="display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; justify-content: center; pointer-events: none; animation: slideUpIn 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
-        <div style="width: 100%; max-width: 600px; position: relative; background: #33291F; padding: 12px 16px 14px; box-shadow: 0 -12px 30px rgba(51,41,31,0.35);">
-          <div style="position: absolute; left: 0; right: 0; top: 0; height: 8px; background: repeating-linear-gradient(45deg, #A31D4E 0px 14px, #EBDF7E 14px 28px);"></div>
-          <div id="cd-fill" style="position: absolute; left: 0; top: 8px; bottom: 0; width: 0%; background: rgba(163,29,78,0.5); transition: width 1s linear;"></div>
-          <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 12px;">
-            <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1.15; color: #F2EDE2; text-align: right;">сложный выбор? понимаем.<br />кот в наушниках победит через</span>
-            <span id="cd-num" style="flex: none; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #A31D4E; color: #F2EDE2; font-family: 'Rubik Mono One', monospace; font-size: 22px; transform: rotate(6deg); animation: cdThump 1s cubic-bezier(0.2, 1.3, 0.4, 1) infinite;"></span>
-          </div>
-        </div>
-      </div>
-
       <!-- модалка подтверждения выбора -->
       <div id="chosen-modal" style="display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; background: rgba(51,41,31,0.55); animation: fadeIn 0.25s ease;">
         <div style="background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; padding: 34px 30px 30px; text-align: center; transform: rotate(-2deg); box-shadow: 8px 10px 0 rgba(51,41,31,0.9); border: 3px solid #33291F; max-width: 320px; margin: 0 20px;">
@@ -351,7 +339,7 @@
 
       <div data-reveal="slap" data-reveal-delay="120" style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 26px;">
         <a class="btn-map-g" href="https://www.google.com/maps/search/?api=1&query=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(-1.5deg);">google maps →</a>
-        <a class="btn-map-y" href="https://yandex.ru/maps/?text=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(1.8deg) translateY(2px);">яндекс карты →</a>
+        <a class="btn-map-y" href="https://yandex.com/maps/org/chubini_winery_cabins/113326001656" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(1.8deg) translateY(2px);">яндекс карты →</a>
       </div>
 
       <div data-reveal="right" data-reveal-delay="200" style="display: flex; justify-content: flex-end; margin-top: 28px;">
@@ -599,6 +587,18 @@
 </div>
   </div><!-- /main-wrap -->
 
+  <!-- плашка отсчёта авто-выбора (вне трансформированного #gate-outer, чтобы fixed крепился к вьюпорту) -->
+  <div id="cd-badge" style="display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 46; justify-content: center; pointer-events: none; animation: slideUpIn 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+    <div style="width: 100%; max-width: 600px; position: relative; background: #33291F; padding: 12px 16px 14px; box-shadow: 0 -12px 30px rgba(51,41,31,0.35);">
+      <div style="position: absolute; left: 0; right: 0; top: 0; height: 8px; background: repeating-linear-gradient(45deg, #A31D4E 0px 14px, #EBDF7E 14px 28px);"></div>
+      <div id="cd-fill" style="position: absolute; left: 0; top: 8px; bottom: 0; width: 0%; background: rgba(163,29,78,0.5); transition: width 1s linear;"></div>
+      <div style="position: relative; display: flex; align-items: center; justify-content: center; gap: 12px;">
+        <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1.15; color: #F2EDE2; text-align: right;">сложный выбор? понимаем.<br />кот в наушниках победит через</span>
+        <span id="cd-num" style="flex: none; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #A31D4E; color: #F2EDE2; font-family: 'Rubik Mono One', monospace; font-size: 22px; transform: rotate(6deg); animation: cdThump 1s cubic-bezier(0.2, 1.3, 0.4, 1) infinite;"></span>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ КНОПКА МЬЮТА ============ -->
   <div id="mute-wrap" style="display: none; position: fixed; right: 14px; bottom: 14px; z-index: 45; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) 0.6s both;">
     <button type="button" id="mute-btn" class="mute-btn" aria-label="Выключить музыку" title="Выключить музыку" style="all: unset; box-sizing: border-box; cursor: pointer; width: 56px; height: 56px; border-radius: 50%; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); display: flex; align-items: center; justify-content: center; transform: rotate(-4deg); -webkit-tap-highlight-color: transparent;">
@@ -714,8 +714,37 @@
     w.__nuAudio.loop = true;
     return w.__nuAudio;
   }
-  var audio = null, fadeIv = null, musicPlaying = false;
+  var audio = null, fadeIv = null, musicPlaying = false, audioPrimed = false, pausedByHidden = false;
   try { audio = getAudio(); audio.preload = 'auto'; audio.loop = true; } catch (e) {}
+
+  // ---- «прогрев» аудио первым жестом пользователя ----
+  // Браузеры блокируют play() без user-gesture, поэтому авто-выбор по таймеру не может
+  // сам стартовать музыку. На первом же касании/клике/скролле «благословляем» элемент
+  // (короткий play на нулевой громкости), после чего play() из таймера уже разрешён.
+  var primeEvents = ['pointerdown', 'touchstart', 'mousedown', 'keydown', 'click', 'scroll'];
+  function detachPrime() {
+    primeEvents.forEach(function (ev) { document.removeEventListener(ev, primeAudio, true); });
+  }
+  function primeAudio() {
+    if (audioPrimed) { detachPrime(); return; }
+    var a = getAudio();
+    try {
+      var prevVol = a.volume;
+      a.volume = 0;
+      var pr = a.play();
+      if (pr && pr.then) {
+        pr.then(function () {
+          // не глушим реально играющую музыку (если выбор «со звуком» уже сделан)
+          if (!musicPlaying) { try { a.pause(); a.currentTime = 0; } catch (e) {} a.volume = prevVol; }
+          audioPrimed = true; detachPrime();
+        }, function () { a.volume = prevVol; });
+      } else {
+        if (!musicPlaying) { try { a.pause(); } catch (e) {} a.volume = prevVol; }
+        audioPrimed = true; detachPrime();
+      }
+    } catch (e) {}
+  }
+  primeEvents.forEach(function (ev) { document.addEventListener(ev, primeAudio, { passive: true, capture: true }); });
 
   function setMuteIcon() {
     elMuteEq.style.display = musicPlaying ? 'flex' : 'none';
@@ -726,18 +755,33 @@
   }
   function startMusic() {
     var a = getAudio(); audio = a; a.loop = true;
-    if (!a.paused) { musicPlaying = true; setMuteIcon(); return; }
+    audioPrimed = true; detachPrime();   // реальный play идёт — прогрев больше не нужен
+    clearInterval(fadeIv);
     a.volume = 0;
     try { a.currentTime = 0; } catch (e) {}
-    a.play().catch(function () {});
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () {});
     musicPlaying = true; setMuteIcon();
+    fadeIv = setInterval(function () {
+      a.volume = Math.min(1, a.volume + 0.04);
+      if (a.volume >= 1) clearInterval(fadeIv);
+    }, 80);
+  }
+  // возобновление после паузы по сворачиванию вкладки — продолжаем с того же места
+  function resumeMusic() {
+    var a = getAudio(); audio = a; a.loop = true;
     clearInterval(fadeIv);
+    a.volume = 0;
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () {});
+    musicPlaying = true; setMuteIcon();
     fadeIv = setInterval(function () {
       a.volume = Math.min(1, a.volume + 0.04);
       if (a.volume >= 1) clearInterval(fadeIv);
     }, 80);
   }
   function toggleMusic() {
+    pausedByHidden = false;   // выбор пользователя важнее авто-восстановления
     if (musicPlaying) {
       clearInterval(fadeIv);
       if (audio) audio.pause();
@@ -750,16 +794,45 @@
   }
   elMuteBtn.addEventListener('click', toggleMusic);
 
-  // ---- предзагрузка ----
-  var loadedN = 0, loadTotal = 1, smooth = 0;
+  // пауза музыки при сворачивании/уходе с вкладки, возврат при возвращении.
+  // Если музыка выключена (не выбрана или нажат мьют) — ничего не восстанавливаем.
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      if (musicPlaying && audio && !audio.paused) {
+        pausedByHidden = true;
+        clearInterval(fadeIv);
+        try { audio.pause(); } catch (e) {}
+      }
+    } else if (pausedByHidden) {
+      pausedByHidden = false;
+      if (musicPlaying) resumeMusic();
+    }
+  });
+
+  // ---- предзагрузка (картинки + шрифты + песня; дальше не пускаем, пока всё не скачано) ----
+  var loadedN = 0, loadTotal = 1, smooth = 0, loadDone = false;
   function preload() {
     var imgs = ['assets/computer-kid.png', 'assets/cat-sound.gif', 'assets/cat-silence.gif',
       'assets/nikita-outlined.png', 'assets/ulyana-outlined.png', 'assets/mushroom.png',
       'assets/ulyana-peek.png', 'assets/palette.jpg', 'assets/bath.png', 'assets/axe.png'];
-    loadTotal = imgs.length + 1; // + шрифты
-    function bump() { loadedN++; }
+    loadTotal = imgs.length + 2; // + шрифты + песня
+    function bump() { loadedN++; if (loadedN >= loadTotal) loadDone = true; }
     imgs.forEach(function (src) { var im = new Image(); im.onload = bump; im.onerror = bump; im.src = src; });
     try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(bump, bump); else bump(); } catch (e) { bump(); }
+    // песня: тянем целиком через fetch и подсовываем как blob, чтобы гарантированно докачать
+    var fetched = false;
+    try {
+      fetch(AUDIO_URL).then(function (r) { return r.blob(); }).then(function (b) {
+        try {
+          var url = URL.createObjectURL(b);
+          var a = getAudio();
+          a.src = url; a.load();
+        } catch (e) {}
+        fetched = true; bump();
+      }).catch(function () { fetched = true; bump(); });
+    } catch (e) { fetched = true; bump(); }
+    // страховка на случай зависшего fetch: не держим лоудер вечно
+    setTimeout(function () { if (!fetched) { fetched = true; bump(); } }, 20000);
   }
 
   // ---- состояние оркестрации ----
@@ -779,11 +852,14 @@
   function bootTick() {
     var el = Date.now() - bootT0;
     var minMs = Math.max(400, LOADER1_MIN_MS);
-    var real = el > 9000 ? 1 : loadedN / loadTotal;
+    var real = loadedN / loadTotal;
     smooth += (real - smooth) * 0.13;
+    // до 100% доходим только когда реально всё скачано и прошёл минимум показа
+    var ready = loadDone && el >= minMs;
     var shown = Math.min(smooth + 0.005, el / minMs) * 100;
-    var np = Math.max(pct, Math.min(100, Math.floor(shown)));
-    if (np >= 100) {
+    if (!ready) shown = Math.min(shown, 99);
+    var np = Math.max(pct, Math.min(ready ? 100 : 99, Math.floor(shown)));
+    if (ready && np >= 100) {
       clearInterval(bootIv);
       pct = 100; bootDone = true;
       elBootPct.textContent = '100';
