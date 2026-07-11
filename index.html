@@ -194,15 +194,6 @@
 
       </section>
 
-      <!-- модалка подтверждения выбора -->
-      <div id="chosen-modal" style="display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; background: rgba(51,41,31,0.55); animation: fadeIn 0.25s ease;">
-        <div style="background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; padding: 34px 30px 30px; text-align: center; transform: rotate(-2deg); box-shadow: 8px 10px 0 rgba(51,41,31,0.9); border: 3px solid #33291F; max-width: 320px; margin: 0 20px;">
-          <div id="stamp-text" style="display: inline-block; border: 3px dashed #A31D4E; color: #A31D4E; font-family: 'Rubik Mono One', monospace; font-size: 22px; letter-spacing: 2px; padding: 10px 16px; text-transform: uppercase; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;"></div>
-          <div id="stamp-note" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 24px; color: #33291F; margin-top: 16px; transform: rotate(-1deg);"></div>
-          <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 10px;">открываем приглашение…</div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -621,6 +612,15 @@
   </div>
 </div>
   </div><!-- /main-wrap -->
+
+  <!-- модалка подтверждения выбора (вне трансформированного #gate-outer, чтобы fixed крепился к вьюпорту) -->
+  <div id="chosen-modal" style="display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; background: rgba(51,41,31,0.55); animation: fadeIn 0.25s ease;">
+    <div style="background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; padding: 34px 30px 30px; text-align: center; transform: rotate(-2deg); box-shadow: 8px 10px 0 rgba(51,41,31,0.9); border: 3px solid #33291F; max-width: 320px; margin: 0 20px;">
+      <div id="stamp-text" style="display: inline-block; border: 3px dashed #A31D4E; color: #A31D4E; font-family: 'Rubik Mono One', monospace; font-size: 22px; letter-spacing: 2px; padding: 10px 16px; text-transform: uppercase; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;"></div>
+      <div id="stamp-note" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 24px; color: #33291F; margin-top: 16px; transform: rotate(-1deg);"></div>
+      <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 10px;">открываем приглашение…</div>
+    </div>
+  </div>
 
   <!-- плашка отсчёта авто-выбора (вне трансформированного #gate-outer, чтобы fixed крепился к вьюпорту) -->
   <div id="cd-badge" style="display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 46; justify-content: center; pointer-events: none; animation: slideUpIn 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
