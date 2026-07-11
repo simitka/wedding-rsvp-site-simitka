@@ -757,16 +757,31 @@
     elMuteBtn.setAttribute('aria-label', label);
     elMuteBtn.setAttribute('title', label);
   }
-  // если play() без жеста заблокирован (напр. автовыбор по таймеру) — стартуем при первом касании
+  // если play() без жеста заблокирован (напр. автовыбор по таймеру) — держим слушатели
+  // до первого жеста, при котором play() реально проходит. Скролл на Android даёт
+  // touchend БЕЗ user activation, поэтому неудачная попытка не снимает слушатели —
+  // ждём настоящий тап/клик/клавишу.
   function armAutoStart() {
     if (pendingStart) return;
     pendingStart = true;
-    var evs = ['pointerup', 'touchend', 'click', 'mousedown', 'keydown'];
-    function go() {
-      evs.forEach(function (e) { document.removeEventListener(e, go, true); });
-      if (!pendingStart) return;
-      pendingStart = false;
-      if (musicPlaying) startMusic();   // уже внутри пользовательского жеста → play() разрешён
+    var evs = ['pointerdown', 'pointerup', 'touchend', 'click', 'mousedown', 'keydown'];
+    function off() { evs.forEach(function (e) { document.removeEventListener(e, go, true); }); }
+    function go(ev) {
+      if (!pendingStart) { off(); return; }
+      // тап по кнопке звука обрабатывает toggleMusic — иначе музыка стартанёт на
+      // pointerdown и тут же выключится кликом
+      if (ev && ev.target && elMuteWrap.contains(ev.target)) return;
+      var a = getAudio(); audio = a; a.loop = true;
+      clearInterval(fadeIv);
+      a.volume = 0;
+      var pr = a.play();
+      function ok() {
+        if (!pendingStart) return;
+        pendingStart = false; off();
+        musicPlaying = true; setMuteIcon(); fadeUp(a);
+      }
+      if (pr && pr.then) pr.then(ok, function () {});
+      else ok();
     }
     evs.forEach(function (e) { document.addEventListener(e, go, { capture: true, passive: true }); });
   }
@@ -785,7 +800,13 @@
     try { a.currentTime = 0; } catch (e) {}
     var pr = a.play();
     musicPlaying = true; setMuteIcon();
-    if (pr && pr.then) pr.then(function () {}, function () { clearInterval(fadeIv); armAutoStart(); });
+    if (pr && pr.then) pr.then(function () {}, function () {
+      // автостарт заблокирован браузером: честно показываем «выкл» и ждём первый жест
+      clearInterval(fadeIv);
+      musicPlaying = false; setMuteIcon();
+      if (elChosen.style.display !== 'none') elStampNote.textContent = 'тапни в любом месте — и заиграет музыка';
+      armAutoStart();
+    });
     fadeUp(a);
   }
   // возобновление после паузы по сворачиванию вкладки — продолжаем с того же места
@@ -795,7 +816,11 @@
     a.volume = 0;
     var pr = a.play();
     musicPlaying = true; setMuteIcon();
-    if (pr && pr.then) pr.then(function () {}, function () { clearInterval(fadeIv); armAutoStart(); });
+    if (pr && pr.then) pr.then(function () {}, function () {
+      clearInterval(fadeIv);
+      musicPlaying = false; setMuteIcon();
+      armAutoStart();
+    });
     fadeUp(a);
   }
   function toggleMusic() {
@@ -840,7 +865,7 @@
     // песня: тянем целиком через fetch и подсовываем как blob, чтобы гарантированно докачать
     var fetched = false;
     try {
-      fetch(AUDIO_URL).then(function (r) { return r.blob(); }).then(function (b) {
+      fetch(AUDIO_URL).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.blob(); }).then(function (b) {
         try {
           var url = URL.createObjectURL(b);
           var a = getAudio();
