@@ -45,6 +45,37 @@
   @keyframes kBarOnce { from { width: 0%; } to { width: 100%; } }
   @keyframes slideUpIn { from { transform: translateY(110%); } to { transform: translateY(0); } }
   @keyframes cdThump { 0% { transform: rotate(6deg) scale(1.35); } 40%, 100% { transform: rotate(6deg) scale(1); } }
+  /* пасхалка №1 (зажатая кнопка музыки) */
+  @keyframes eggWiggle { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(-2.6deg); } }
+  @keyframes eggOverIn { from { opacity: 0; transform: scale(1.07); } to { opacity: 1; transform: scale(1); } }
+  @keyframes eggSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes eggSpinBack { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+  @keyframes eggNumIn { 0% { opacity: 0; transform: scale(2.7) rotate(5deg); } 55% { opacity: 1; transform: scale(0.9) rotate(-2.5deg); } 78% { transform: scale(1.07) rotate(-2deg); } 100% { opacity: 1; transform: scale(1) rotate(-2deg); } }
+  @keyframes eggGrow1 { from { transform: scale(1) rotate(-2deg); } to { transform: scale(1.26) rotate(-0.5deg); } }
+  @keyframes eggVib { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(2.5px, -2px) rotate(0.7deg); } 50% { transform: translate(-2px, 2.5px) rotate(-0.7deg); } 75% { transform: translate(2px, 2px) rotate(0.4deg); } 100% { transform: translate(-2.5px, -2px) rotate(-0.4deg); } }
+  @keyframes eggRing { from { transform: scale(0.22); opacity: 0.95; } to { transform: scale(2.8); opacity: 0; } }
+  @keyframes eggFlash { from { opacity: 0.3; } to { opacity: 0; } }
+  @keyframes eggFlashHard { from { opacity: 0.7; } to { opacity: 0; } }
+  @keyframes eggPhraseIn { 0% { opacity: 0; transform: translateY(-48px) rotate(5deg) scale(1.25); } 60% { opacity: 1; transform: translateY(4px) rotate(-2deg) scale(0.98); } 100% { opacity: 1; transform: translateY(0) rotate(-2deg) scale(1); } }
+  @keyframes eggShake3 { 0% { transform: translate(0, 0); } 25% { transform: translate(2px, -1.5px); } 50% { transform: translate(-2px, 1.5px); } 75% { transform: translate(1.5px, 2px); } 100% { transform: translate(-1.5px, -2px); } }
+  @keyframes eggShake2 { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(4px, -3px) rotate(0.3deg); } 50% { transform: translate(-4px, 3px) rotate(-0.3deg); } 75% { transform: translate(3px, 4px) rotate(0.2deg); } 100% { transform: translate(-3px, -4px) rotate(-0.2deg); } }
+  @keyframes eggShake1 { 0% { transform: translate(0, 0) rotate(0deg); } 20% { transform: translate(7px, -5px) rotate(0.6deg); } 40% { transform: translate(-6px, 5px) rotate(-0.6deg); } 60% { transform: translate(5px, 6px) rotate(0.4deg); } 80% { transform: translate(-7px, -4px) rotate(-0.5deg); } 100% { transform: translate(4px, -6px) rotate(0.3deg); } }
+  @keyframes eggPanicBg { from { opacity: 0.45; } to { opacity: 0.85; } }
+  @keyframes eggStripes { from { background-position: 0 0; } to { background-position: 45.25px 0; } }
+  @keyframes eggArm { 0% { transform: scale(2) rotate(0deg); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(1.03) rotate(300deg); opacity: 1; } }
+  @keyframes eggFlyL { 0% { transform: translate(0, 0) rotate(-12deg); } 50% { transform: translate(calc(50vw + 140px), -9vh) rotate(5deg); } 100% { transform: translate(calc(100vw + 580px), 3vh) rotate(16deg); } }
+  @keyframes eggFlyR { 0% { transform: translate(0, 0) rotate(10deg); } 50% { transform: translate(calc(-50vw - 140px), -7vh) rotate(-6deg); } 100% { transform: translate(calc(-100vw - 580px), 4vh) rotate(-16deg); } }
+  @keyframes eggPeek { 0% { transform: translateY(108%) rotate(0deg); } 16% { transform: translateY(5%) rotate(-5deg); } 28% { transform: translateY(1%) rotate(-3deg); } 80% { transform: translateY(3%) rotate(-4deg); } 100% { transform: translateY(110%) rotate(2deg); } }
+  @keyframes eggDvd { 0% { transform: translate(-28vw, 34vh) rotate(0deg); } 15% { transform: translate(16vw, 72vh) rotate(-13deg); } 32% { transform: translate(66vw, 56vh) rotate(9deg); } 50% { transform: translate(28vw, 8vh) rotate(-9deg); } 68% { transform: translate(74vw, 28vh) rotate(12deg); } 84% { transform: translate(36vw, 64vh) rotate(-11deg); } 100% { transform: translate(112vw, 10vh) rotate(18deg); } }
+  @keyframes eggBlanket { 0% { transform: translateY(108%) rotate(2deg); } 28% { transform: translateY(9%) rotate(-2deg); } 46% { transform: translateY(5%) rotate(-1deg); } 76% { transform: translateY(8%) rotate(1deg); } 100% { transform: translateY(112%) rotate(4deg); } }
+  @keyframes eggTg { 0% { opacity: 0; transform: scale(2.4) rotate(-16deg); } 12% { opacity: 1; transform: scale(0.94) rotate(5deg); } 19% { transform: scale(1.05) rotate(3deg); } 45% { transform: scale(1) rotate(6deg); } 72% { opacity: 1; transform: scale(1) rotate(2deg); } 100% { opacity: 0; transform: scale(0.6) rotate(14deg); } }
+  @keyframes eggBear { 0% { transform: translateX(118%) rotate(24deg); } 18% { transform: translateX(4%) rotate(-4deg); } 36% { transform: translateX(0%) rotate(3deg); } 58% { transform: translateX(2%) rotate(-3deg); } 80% { transform: translateX(3%) rotate(0deg); } 100% { transform: translateX(122%) rotate(20deg); } }
+  @keyframes eggPort { 0% { transform: translateY(114%) rotate(7deg); } 16% { transform: translateY(3%) rotate(-3deg); } 50% { transform: translateY(0%) rotate(-1deg); } 84% { transform: translateY(3%) rotate(-3deg); } 100% { transform: translateY(117%) rotate(9deg); } }
+  @keyframes eggPlaneL { from { transform: translateX(0); } to { transform: translateX(calc(100vw + 720px)); } }
+  @keyframes eggPlaneR { from { transform: translateX(0); } to { transform: translateX(calc(-100vw - 720px)); } }
+  @keyframes eggBob { from { transform: translateY(-14px) rotate(-4deg); } to { transform: translateY(14px) rotate(4deg); } }
+  @keyframes eggBadgeOut { from { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 30% { opacity: 1; transform: translateY(-14px) rotate(-6deg) scale(1.06); } to { opacity: 0; transform: translateY(110px) rotate(22deg) scale(0.85); } }
+  @keyframes eggPlaneDive { from { opacity: 1; } 25% { transform: translateY(-4vh) rotate(-6deg); } to { transform: translateY(125vh) rotate(46deg); opacity: 0; } }
   .gate-btn-a:active .gc-inner { transform: translate(5px, 6px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
   .gate-btn-b:active .gc-inner { transform: translate(-5px, 6px); box-shadow: 0 0 0 rgba(51,41,31,0.85); }
   .spotify-btn:hover { color: #F2EDE2; }
@@ -604,8 +635,12 @@
   </div>
 
   <!-- ============ КНОПКА МЬЮТА ============ -->
-  <div id="mute-wrap" style="display: none; position: fixed; right: 14px; bottom: 14px; z-index: 45; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) 0.6s both;">
-    <button type="button" id="mute-btn" class="mute-btn" aria-label="Выключить музыку" title="Выключить музыку" style="all: unset; box-sizing: border-box; cursor: pointer; width: 56px; height: 56px; border-radius: 50%; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); display: flex; align-items: center; justify-content: center; transform: rotate(-4deg); -webkit-tap-highlight-color: transparent;">
+  <div id="mute-wrap" style="display: none; position: fixed; right: 14px; bottom: 14px; z-index: 60; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) 0.6s both;">
+    <div id="egg-arm" style="display: none;">
+      <span style="position: absolute; inset: -9px; border: 3px dashed #EBDF7E; border-radius: 50%; pointer-events: none; animation: eggArm 1000ms linear both;"></span>
+      <div style="position: absolute; right: 0; bottom: 68px; width: max-content; background: #FBF8EF; padding: 4px 12px; box-shadow: 3px 4px 0 rgba(51,41,31,0.7); font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px; color: #33291F; transform: rotate(-3deg); animation: fadeIn 0.25s ease 0.25s both; pointer-events: none;">э? ты чего задумал?</div>
+    </div>
+    <button type="button" id="mute-btn" class="mute-btn" aria-label="Выключить музыку" title="Выключить музыку" style="all: unset; box-sizing: border-box; cursor: pointer; width: 56px; height: 56px; border-radius: 50%; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); display: flex; align-items: center; justify-content: center; transform: rotate(-4deg); -webkit-tap-highlight-color: transparent; touch-action: none; -webkit-touch-callout: none; position: relative;">
       <span style="position: relative; display: flex; align-items: flex-end; gap: 3px; height: 20px;">
         <span id="mute-eq" style="display: flex; align-items: flex-end; gap: 3px; height: 100%;">
           <span style="width: 4.5px; height: 100%; background: #A31D4E; transform-origin: bottom; animation: eqBar 0.5s ease-in-out infinite;"></span>
@@ -620,6 +655,107 @@
         </span>
       </span>
     </button>
+  </div>
+
+  <!-- ============ ПАСХАЛКА №1 (зажми кнопку музыки) ============ -->
+  <!-- самолётики авиарежима -->
+  <div id="egg-planes" style="display: none; position: fixed; inset: 0; z-index: 55; pointer-events: none; overflow: hidden;"></div>
+
+  <!-- бейдж «авиарежим: вкл» -->
+  <div id="egg-badge" style="display: none; position: fixed; right: 16px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); z-index: 61; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) 0.2s both; pointer-events: none;">
+    <div style="background: #FBF8EF; border: 3px solid #33291F; box-shadow: 4px 5px 0 rgba(51,41,31,0.6); padding: 8px 13px; transform: rotate(-4deg); text-align: center;">
+      <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #6C7ED6;">✈ авиарежим: вкл</div>
+      <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; color: #4B3227; margin-top: 2px;">тык по кнопке — и всё как раньше</div>
+    </div>
+  </div>
+
+  <!-- тост после отмены отсчёта -->
+  <div id="egg-toast" style="display: none; position: fixed; right: 16px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); z-index: 61; animation: stampIn 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) both; pointer-events: none;">
+    <div id="egg-toast-text" style="background: #FBF8EF; border: 3px dashed #6C7ED6; box-shadow: 4px 5px 0 rgba(51,41,31,0.5); padding: 7px 14px; transform: rotate(-3deg); font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #33291F;"></div>
+  </div>
+
+  <!-- оверлей обратного отсчёта -->
+  <div id="egg-ov" style="display: none; position: fixed; inset: 0; z-index: 200; overflow: hidden; background-color: #1E150D; background-image: radial-gradient(rgba(242,237,226,0.05) 1.1px, transparent 1.5px), radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 38%, rgba(0,0,0,0.6) 100%); background-size: 24px 24px, 100% 100%; pointer-events: auto;">
+    <div id="egg-shake" style="position: absolute; inset: 0;">
+
+      <!-- пульс паники (последние 3 секунды) -->
+      <div id="egg-panic" style="display: none;">
+        <div style="position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 45%, rgba(163,29,78,0.6), rgba(74,8,26,0.8)); animation: eggPanicBg 0.85s ease-in-out infinite alternate;"></div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 16px; z-index: 5; background: repeating-linear-gradient(45deg, #EBDF7E 0 16px, #33291F 16px 32px); animation: eggStripes 0.55s linear infinite; box-shadow: 0 3px 0 rgba(0,0,0,0.35);"></div>
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 16px; z-index: 5; background: repeating-linear-gradient(-45deg, #EBDF7E 0 16px, #33291F 16px 32px); animation: eggStripes 0.55s linear infinite; box-shadow: 0 -3px 0 rgba(0,0,0,0.35);"></div>
+      </div>
+      <div id="egg-final1" style="display: none; position: absolute; inset: 0; z-index: 1; background: rgba(163,29,78,0.4); animation: eggPanicBg 0.32s ease-in-out infinite alternate;"></div>
+
+      <!-- величественные круги -->
+      <div style="position: absolute; left: 50%; top: 50%; width: 92vmin; height: 92vmin; margin: -46vmin 0 0 -46vmin; border: 3px dashed rgba(242,237,226,0.16); border-radius: 50%; z-index: 1; animation: eggSpin 26s linear infinite;"></div>
+      <div style="position: absolute; left: 50%; top: 50%; width: 64vmin; height: 64vmin; margin: -32vmin 0 0 -32vmin; border: 2px dashed rgba(235,223,126,0.2); border-radius: 50%; z-index: 1; animation: eggSpinBack 18s linear infinite;"></div>
+
+      <!-- шапка -->
+      <div style="position: absolute; top: 24px; left: 0; right: 0; text-align: center; z-index: 6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: rgba(242,237,226,0.6);">⚠ обратный отсчёт непонятно чего ⚠</div>
+
+      <!-- фраза-отговорка (контент пересобирается скриптом) -->
+      <div id="egg-phrase"></div>
+
+      <!-- человек в одеяле (за цифрой) -->
+      <div id="egg-m-blanket" style="display: none; position: absolute; left: 50%; bottom: -8px; margin-left: -128px; z-index: 2; pointer-events: none;">
+        <div style="animation: eggBlanket 2.9s ease-in-out both; transform-origin: bottom center;">
+          <img data-egg-src="assets/egg/blanket.png" alt="человек в одеяле осуждающе смотрит" style="width: 256px; filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.35));" />
+        </div>
+      </div>
+
+      <!-- цифра (контент пересобирается скриптом) -->
+      <div id="egg-num" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 3;"></div>
+
+      <!-- мемные звери -->
+      <div id="egg-m-flycat" style="display: none; position: absolute; left: -280px; top: 55vh; z-index: 6; pointer-events: none; animation: eggFlyL 3s cubic-bezier(0.4, 0, 0.6, 1) both;">
+        <img data-egg-src="assets/egg/fly-cat.png" alt="грустный кот с капелькой" style="width: 150px; filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.35));" />
+      </div>
+      <div id="egg-m-flycat2" style="display: none; position: absolute; right: -300px; top: 20vh; z-index: 6; pointer-events: none; animation: eggFlyR 2.3s cubic-bezier(0.4, 0, 0.6, 1) both;">
+        <img data-egg-src="assets/egg/fly-cat.png" alt="грустный кот летит обратно" style="width: 200px; transform: scaleX(-1); filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.35));" />
+      </div>
+      <div id="egg-m-peek" style="display: none; position: absolute; right: 5vw; bottom: -4px; z-index: 6; pointer-events: none;">
+        <div style="animation: eggPeek 3.4s cubic-bezier(0.3, 1, 0.5, 1) both; transform-origin: bottom center;">
+          <img data-egg-src="assets/egg/peek-pup.png" alt="улыбающийся щенок подглядывает" style="width: 168px; filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.35));" />
+        </div>
+      </div>
+      <div id="egg-m-dvd" style="display: none; position: absolute; left: 0; top: 0; z-index: 6; pointer-events: none; animation: eggDvd 4.6s linear both;">
+        <img data-egg-src="assets/egg/dvd-cat.png" alt="очень странный кот снизу" style="width: 140px; filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.35));" />
+      </div>
+      <div id="egg-m-tg" style="display: none; position: absolute; left: 4vw; top: 24vh; z-index: 6; pointer-events: none; animation: eggTg 2.8s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+        <img data-egg-src="assets/egg/tg-pup.png" alt="щенок из телеграма, 13:05, прочитано" style="width: 170px; filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.35));" />
+      </div>
+      <div id="egg-m-bear" style="display: none; position: absolute; right: -6px; top: 32vh; z-index: 6; pointer-events: none;">
+        <div style="animation: eggBear 3.2s cubic-bezier(0.3, 1, 0.5, 1) both; transform-origin: right center;">
+          <img data-egg-src="assets/egg/bear-pup.png" alt="шоколадный щенок-медвежонок" style="width: 185px; filter: drop-shadow(-6px 8px 0 rgba(0,0,0,0.35));" />
+        </div>
+      </div>
+
+      <!-- авиасейлс-голова -->
+      <div id="egg-porthole" style="display: none; position: absolute; right: 5vw; bottom: -6px; z-index: 7; pointer-events: none;">
+        <div style="animation: eggPort 2.45s cubic-bezier(0.3, 1, 0.5, 1) both; transform-origin: bottom center;">
+          <img data-egg-src="assets/egg/porthole.png" alt="человек с головой-иллюминатором" style="height: min(38vh, 350px); width: auto; filter: drop-shadow(6px 8px 0 rgba(0,0,0,0.4));" />
+        </div>
+      </div>
+
+      <!-- гифка «нинада дядя» -->
+      <div style="position: absolute; left: 3vw; bottom: 92px; z-index: 6; pointer-events: none; animation: eggWiggle 2.6s ease-in-out infinite;">
+        <div style="position: relative; background: #FBF8EF; padding: 7px 7px 9px; box-shadow: 5px 7px 0 rgba(0,0,0,0.4); transform: rotate(-5deg);">
+          <img data-egg-src="assets/egg/ninada.gif" alt="дядя в наушниках качает головой: не надо" style="width: min(34vw, 150px);" />
+          <div id="egg-gif-calm" style="position: absolute; top: -20px; left: 4px; background: #EBDF7E; padding: 2px 12px; clip-path: polygon(2% 0%, 98% 4%, 100% 40%, 97% 100%, 3% 95%, 0% 60%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-4deg);">нинада дядя</div>
+          <div id="egg-gif-panic" style="display: none; position: absolute; top: -24px; left: 0px; background: #A31D4E; padding: 3px 12px; clip-path: polygon(2% 0%, 98% 4%, 100% 40%, 97% 100%, 3% 95%, 0% 60%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #FBF8EF; transform: rotate(-5deg); animation: eggVib 0.12s linear infinite;">НИНАДА ДЯДЯ!!!</div>
+        </div>
+      </div>
+
+      <!-- штамп при нуле -->
+      <div id="egg-stamp" style="display: none; position: absolute; inset: 0; z-index: 8; flex-direction: column; align-items: center; justify-content: center; gap: 16px; pointer-events: none;">
+        <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 30px; color: #F2EDE2; transform: rotate(-2deg); animation: fadeIn 0.3s ease both;">он додержал!!!</div>
+        <div style="border: 4px dashed #EBDF7E; color: #EBDF7E; background: rgba(51,41,31,0.88); font-family: 'Rubik Mono One', monospace; font-size: clamp(16px, 5vw, 30px); letter-spacing: 2px; padding: 14px 18px; max-width: 88vw; box-sizing: border-box; text-align: center; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">АВИАРЕЖИМ: ВКЛ</div>
+        <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #F2EDE2; transform: rotate(-1.5deg); animation: fadeIn 0.4s ease 0.35s both;">наоборотный. теперь всё летает и поёт.</div>
+      </div>
+    </div>
+
+    <canvas id="egg-fw" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;"></canvas>
+    <div id="egg-flash" style="position: absolute; inset: 0; z-index: 12; pointer-events: none;"></div>
   </div>
 
   <!-- ============ ЛОУДЕР 2 (после выбора) ============ -->
@@ -754,7 +890,8 @@
   function setMuteIcon() {
     elMuteEq.style.display = musicPlaying ? 'flex' : 'none';
     elMuteOff.style.display = musicPlaying ? 'none' : 'flex';
-    var label = musicPlaying ? 'Выключить музыку' : 'Включить музыку';
+    var label = eggState === 'active' ? 'Выключить пасхалку'
+      : (musicPlaying ? 'Выключить музыку' : 'Включить музыку');
     elMuteBtn.setAttribute('aria-label', label);
     elMuteBtn.setAttribute('title', label);
   }
@@ -777,6 +914,8 @@
       // тап по кнопке звука обрабатывает toggleMusic — иначе музыка стартанёт на
       // pointerdown и тут же выключится кликом
       if (ev && ev.target && elMuteWrap.contains(ev.target)) return;
+      // пасхалка владеет звуковой сценой — не стартуем базовый трек под отсчётом
+      if (eggState === 'arming' || eggState === 'counting' || eggState === 'boom') return;
       var a = getAudio(); audio = a; a.loop = true;
       clearInterval(fadeIv);
       a.volume = 0;
@@ -799,6 +938,7 @@
   }
   function fadeUp(a) {
     clearInterval(fadeIv);
+    eggFadeStop(a);   // гасим конкурирующий фейд пасхалки по тому же элементу
     fadeIv = setInterval(function () {
       a.volume = Math.min(1, a.volume + 0.04);
       if (a.volume >= 1) clearInterval(fadeIv);
@@ -843,6 +983,7 @@
     pausedByHidden = false; pendingStart = false;   // выбор пользователя важнее авто-восстановления
     if (musicPlaying) {
       clearInterval(fadeIv);
+      eggFadeStop(audio);
       if (audio) audio.pause();
       musicPlaying = false; setMuteIcon();
     } else {
@@ -851,7 +992,13 @@
       startMusic();
     }
   }
-  elMuteBtn.addEventListener('click', toggleMusic);
+  // клик кнопки обрабатывают pointer-события пасхалки ниже; здесь ловим только
+  // клавиатурную активацию (Enter/Space даёт click с detail === 0)
+  elMuteBtn.addEventListener('click', function (e) {
+    if (e.detail !== 0) return;
+    if (eggState === 'active') eggOff();
+    else if (eggState === 'idle') toggleMusic();
+  });
 
   // пауза музыки при сворачивании/уходе с вкладки, возврат при возвращении.
   // Если музыка выключена (не выбрана или нажат мьют) — ничего не восстанавливаем.
@@ -864,9 +1011,541 @@
       }
     } else if (pausedByHidden) {
       pausedByHidden = false;
-      if (musicPlaying) resumeMusic();
+      // в авиарежиме (и во время бума) базовый трек не восстанавливаем — там играет авиа-песня
+      if (musicPlaying && eggState !== 'boom' && eggState !== 'active') {
+        resumeMusic();
+        // вернулись во время отсчёта — сохраняем приглушение под оверлеем
+        if (eggState === 'counting') { clearInterval(fadeIv); eggFadeTo(audio, 0.22, 500); }
+      }
     }
   });
+
+  // ==================== ПАСХАЛКА №1: зажми кнопку музыки ====================
+  // Короткий тап — обычный вкл/выкл музыки. Удержание в 1 секунду запускает
+  // «обратный отсчёт непонятно чего»: отпустил — всё отменилось, додержал до нуля —
+  // фейерверк и «авиарежим» (другой трек + самолётики с котиками). Тап в авиарежиме
+  // глушит всё, следующий тап возвращает обычную музыку.
+  var EGG_HOLD_MS = 1000;
+  var EGG_START_FROM = 10;
+  var EGG_PLANE_GAP_MS = 3600;
+  var EGG_AUDIO_URL = 'assets/egg/avia-na-moroze.mp3';
+  var EGG_PHRASES = [
+    'о нет. кажется, он догадывается…',
+    'там будет ТАКОЕ… может, всё-таки не надо?',
+    'эмм. я предупреждаб. *предупреждал!!',
+    'ААААВИАСЕЙЛС!! …что? кто это сказал??',
+    'отпусти палец — и все останутся друзьями',
+    'у нас вообще-то свадьба на носу!!',
+    'кнопка уже тёпленькая. это плохой знак.',
+    'так. я звоню ульяне.',
+    'гудки… не берёт. мы обречены.'
+  ];
+  var EGG_AVIA_IDX = 3;   // на этой фразе всплывает голова-иллюминатор
+  var EGG_PANIC = {
+    3: 'ТРИ!! я умываю лапы!!',
+    2: 'ДВА!!! свидетели, ДЕРЖИТЕ ЕГО!!!',
+    1: 'ОДИН… ну всё. ну всё-ё-ё…'
+  };
+  var EGG_TOASTS = ['фух. пронесло.', 'мудрое решение.', 'кот выдохнул. все выдохнули.', 'правильно. не сегодня.'];
+
+  var eggOv = document.getElementById('egg-ov'),
+      eggShakeEl = document.getElementById('egg-shake'),
+      eggPanicEl = document.getElementById('egg-panic'),
+      eggFinal1 = document.getElementById('egg-final1'),
+      eggPhraseC = document.getElementById('egg-phrase'),
+      eggNumC = document.getElementById('egg-num'),
+      eggStampEl = document.getElementById('egg-stamp'),
+      eggFlashC = document.getElementById('egg-flash'),
+      eggFwCv = document.getElementById('egg-fw'),
+      eggArmEl = document.getElementById('egg-arm'),
+      eggBadgeEl = document.getElementById('egg-badge'),
+      eggToastEl = document.getElementById('egg-toast'),
+      eggToastText = document.getElementById('egg-toast-text'),
+      eggPlanesEl = document.getElementById('egg-planes'),
+      eggPortholeEl = document.getElementById('egg-porthole'),
+      eggGifCalm = document.getElementById('egg-gif-calm'),
+      eggGifPanic = document.getElementById('egg-gif-panic');
+  var eggMemes = {
+    flyCat: document.getElementById('egg-m-flycat'),
+    flyCat2: document.getElementById('egg-m-flycat2'),
+    peekPup: document.getElementById('egg-m-peek'),
+    dvdCat: document.getElementById('egg-m-dvd'),
+    blanket: document.getElementById('egg-m-blanket'),
+    tgPup: document.getElementById('egg-m-tg'),
+    bearPup: document.getElementById('egg-m-bear')
+  };
+
+  var eggState = 'idle';      // idle | arming | counting | boom | active
+  var eggPrev = 'idle';       // что было до текущего удержания (idle | active)
+  var eggReturnTo = 'idle';   // куда откатываться при отмене отсчёта
+  var eggTimers = [], eggHoldT = null, eggToastT = null, eggOffT = null, eggPid = null;
+  var eggCum = null, eggTotal = 0, eggSec = 0;
+  var avia = null, eggFades = new Map(), aviaPausedByHidden = false;
+
+  function eggTm(fn, ms) { var t = setTimeout(fn, ms); eggTimers.push(t); return t; }
+  function eggClearTimers() { eggTimers.forEach(clearTimeout); eggTimers = []; }
+  function getAvia() {
+    if (!avia) { avia = new Audio(EGG_AUDIO_URL); avia.loop = true; }
+    return avia;
+  }
+  function eggFadeStop(a) {
+    if (!a) return;
+    var iv = eggFades.get(a);
+    if (iv) { clearInterval(iv); eggFades.delete(a); }
+  }
+  function eggFadeTo(a, target, ms, done) {
+    if (!a) return;
+    eggFadeStop(a);
+    var steps = Math.max(1, Math.round(ms / 60));
+    var from = a.volume, i = 0;
+    var iv = setInterval(function () {
+      i++;
+      a.volume = Math.max(0, Math.min(1, from + (target - from) * (i / steps)));
+      if (i >= steps) { clearInterval(iv); eggFades.delete(a); if (done) done(); }
+    }, 60);
+    eggFades.set(a, iv);
+  }
+  // «благословляем» трек авиарежима первым же нажатием: короткий play на нулевой
+  // громкости внутри жеста — потом play() из таймера (boom) уже разрешён
+  function eggUnlock(a) {
+    if (!a || a.__unlocked || !a.paused) return;
+    var v = a.volume;
+    a.volume = 0;
+    var p = a.play();
+    if (p && p.then) {
+      p.then(function () {
+        a.pause();
+        try { a.currentTime = 0; } catch (e) {}
+        a.volume = v;
+        a.__unlocked = true;
+      }, function () { a.volume = v; });
+    }
+  }
+  // интервалы между тиками: до 4с — 1.3с, 3→2 и 2→1 — по 3с, 1→0 — 5с
+  function eggDur(s) { return s >= 4 ? 1300 : (s >= 2 ? 3000 : 5000); }
+
+  // ---------- отрисовка (контент пересобирается, чтобы CSS-анимации рестартовали) ----------
+  function eggShowNumber(s, hot) {
+    var ring = function (i) {
+      return '<span style="position: absolute; left: 50%; top: 50%; width: 54vmin; height: 54vmin; margin: -27vmin 0 0 -27vmin; border: ' + (hot ? '5px' : '4px') + ' solid ' + (hot ? 'rgba(242,237,226,0.8)' : 'rgba(235,223,126,0.75)') + '; border-radius: 50%; pointer-events: none; animation: eggRing ' + (0.95 + i * 0.35) + 's cubic-bezier(0.2, 0.7, 0.3, 1) ' + (i * 0.08) + 's both;"></span>';
+    };
+    var numAnim = s === 1
+      ? 'eggNumIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both, eggGrow1 4.3s ease-in 0.6s forwards'
+      : 'eggNumIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both';
+    eggNumC.innerHTML =
+      '<div style="position: relative; display: flex; align-items: center; justify-content: center;">' + ring(0) + ring(1) +
+        '<span style="position: relative; display: block; line-height: 1; font-family: Unbounded, sans-serif; font-weight: 900; font-size: ' + (hot ? 'min(42vh, 62vw)' : 'min(33vh, 50vw)') + '; color: ' + (hot ? '#F2EDE2' : '#EBDF7E') + '; text-shadow: ' + (hot ? '0 0 70px rgba(242,237,226,0.4), 10px 12px 0 #33291F' : '10px 12px 0 #A31D4E') + '; animation: ' + numAnim + ';">' +
+          '<span style="display: inline-block; animation: ' + (hot ? 'eggVib 0.12s linear 0.5s infinite' : 'none') + ';">' + s + '</span>' +
+        '</span>' +
+      '</div>';
+  }
+  function eggShowPhrase(text, panic) {
+    if (!text) { eggPhraseC.innerHTML = ''; return; }
+    eggPhraseC.innerHTML =
+      '<div style="position: absolute; top: 52px; left: 0; right: 0; z-index: 9; display: flex; justify-content: center; pointer-events: none; animation: eggPhraseIn 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) both;">' +
+        '<span style="max-width: 86vw; text-align: center; background: ' + (panic ? '#EBDF7E' : '#FBF8EF') + '; color: ' + (panic ? '#A31D4E' : '#33291F') + '; font-family: Caveat, cursive; font-weight: 700; font-size: ' + (panic ? '29px' : '25px') + '; line-height: 1.15; padding: 10px 20px; transform: rotate(-2deg); box-shadow: 5px 6px 0 rgba(0,0,0,0.4); clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%);">' + text + '</span>' +
+      '</div>';
+  }
+  function eggDoFlash(hot) {
+    eggFlashC.innerHTML = '<div style="position: absolute; inset: 0; background: #F2EDE2; opacity: 0; animation: ' + (hot ? 'eggFlashHard' : 'eggFlash') + ' 0.45s ease-out both;"></div>';
+  }
+  function eggSetPorthole(on) { eggPortholeEl.style.display = on ? 'block' : 'none'; }
+  // бейдж показываем всегда через хелпер: выключение пасхалки перебивает его
+  // анимацию на «падение», здесь возвращаем штамп
+  function eggShowBadge() {
+    clearTimeout(eggOffT);
+    eggBadgeEl.style.animation = 'stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) 0.2s both';
+    eggBadgeEl.style.display = 'block';
+  }
+  function eggHideMemes() { for (var k in eggMemes) eggMemes[k].style.display = 'none'; }
+  function eggSetPanic(s) {
+    eggPanicEl.style.display = 'block';
+    eggFinal1.style.display = s === 1 ? 'block' : 'none';
+    eggShakeEl.style.animation = s === 1 ? 'eggShake1 0.11s linear infinite'
+      : (s === 2 ? 'eggShake2 0.16s linear infinite' : 'eggShake3 0.22s linear infinite');
+    eggGifCalm.style.display = 'none';
+    eggGifPanic.style.display = 'block';
+  }
+  function eggCalmDown(keepGifPanic) {
+    eggPanicEl.style.display = 'none';
+    eggFinal1.style.display = 'none';
+    eggShakeEl.style.animation = 'none';
+    eggGifCalm.style.display = keepGifPanic ? 'none' : 'block';
+    eggGifPanic.style.display = keepGifPanic ? 'block' : 'none';
+  }
+
+  // ---------- кнопка ----------
+  function eggBtnDown(e) {
+    if (e.button !== 0) return;   // правый/средний клик мыши — не наш жест
+    if (eggState === 'arming' || eggState === 'counting' || eggState === 'boom') return;
+    try { elMuteBtn.setPointerCapture(e.pointerId); } catch (err) {}
+    eggPid = e.pointerId;
+    eggPrev = eggState;
+    eggUnlock(getAvia());
+    clearTimeout(eggToastT);
+    eggToastEl.style.display = 'none';
+    eggBadgeEl.style.display = 'none';   // чтобы не перекрывал пузырь «э? ты чего задумал?»
+    eggArmEl.style.display = 'block';
+    clearTimeout(eggHoldT);
+    eggState = 'arming';
+    eggHoldT = setTimeout(eggStartCountdown, EGG_HOLD_MS);
+  }
+  function eggBtnUp(e) {
+    if (eggPid == null || e.pointerId !== eggPid) return;
+    eggPid = null;
+    if (eggState === 'arming') {
+      clearTimeout(eggHoldT);
+      eggArmEl.style.display = 'none';
+      // тап засчитываем только за настоящее отпускание над кнопкой; pointercancel
+      // (звонок, поворот, жест ОС) и увод пальца в сторону — тихий откат
+      var deliberate = e.type === 'pointerup';
+      if (deliberate && (e.clientX || e.clientY)) {
+        try { deliberate = elMuteBtn.contains(document.elementFromPoint(e.clientX, e.clientY)); } catch (err) {}
+      }
+      if (!deliberate) {
+        eggState = eggPrev;
+        if (eggPrev === 'active') { eggShowBadge(); eggSpawnLoop(false); }
+        return;
+      }
+      if (eggPrev === 'active') eggOff();
+      else { eggState = 'idle'; toggleMusic(); }
+    } else if (eggState === 'counting') {
+      eggCancel();
+    }
+    // boom/active: отпускание ничего не меняет — он додержал
+  }
+  elMuteBtn.addEventListener('pointerdown', eggBtnDown);
+  elMuteBtn.addEventListener('pointerup', eggBtnUp);
+  elMuteBtn.addEventListener('pointercancel', eggBtnUp);
+  elMuteBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+  // ---------- отсчёт ----------
+  function eggStartCountdown() {
+    eggClearTimers();
+    eggStopPlanes();
+    clearTimeout(eggOffT);
+    eggPlanesEl.innerHTML = '';
+    eggPlanesEl.style.display = 'none';
+    eggBadgeEl.style.display = 'none';
+    eggArmEl.style.display = 'none';
+    eggReturnTo = eggPrev;
+    var a = getAvia();
+    try { a.preload = 'auto'; } catch (e) {}
+    if (!a.paused) eggFadeTo(a, 0, 250, function () { a.pause(); });
+    lockScroll(true);
+    if (musicPlaying && audio && !audio.paused) { clearInterval(fadeIv); eggFadeTo(audio, 0.22, 500); }
+
+    var N = EGG_START_FROM;
+    eggCum = {}; eggCum[N] = 0;
+    var acc = 0;
+    for (var s = N - 1; s >= 0; s--) {
+      acc += eggDur(s + 1);
+      eggCum[s] = acc;
+      (function (sv) { eggTm(function () { eggTick(sv); }, acc); })(s);
+    }
+    eggTotal = acc;
+    eggState = 'counting';
+    eggSec = N;
+
+    // оверлей: вход с рестартом анимации
+    eggOv.style.display = 'block';
+    eggOv.style.transition = 'none';
+    eggOv.style.opacity = '1';
+    eggOv.style.transform = 'none';
+    eggOv.style.animation = 'none';
+    void eggOv.offsetWidth;
+    eggOv.style.animation = 'eggOverIn 0.3s ease-out';
+
+    eggCalmDown(false);
+    eggStampEl.style.display = 'none';
+    eggHideMemes();
+    eggSetPorthole(false);
+    eggShowNumber(N, false);
+    eggShowPhrase(EGG_PHRASES[0], false);
+    eggDoFlash(false);
+
+    // ротация фраз до паники
+    var panicAt = eggCum[3];
+    for (var i = 1; i * 2250 < panicAt - 150; i++) {
+      (function (idx) {
+        eggTm(function () {
+          if (eggState !== 'counting' || eggSec <= 3) return;
+          eggShowPhrase(EGG_PHRASES[idx], false);
+          eggSetPorthole(idx === EGG_AVIA_IDX);
+        }, i * 2250);
+      })(i % EGG_PHRASES.length);
+    }
+
+    // мемные звери
+    var p3 = eggCum[3], p2 = eggCum[2], p1 = eggCum[1];
+    [
+      [eggMemes.flyCat, Math.max(900, p3 * 0.16), 3100],
+      [eggMemes.peekPup, p3 * 0.42, 3500],
+      [eggMemes.dvdCat, p3 * 0.68, 4700],
+      [eggMemes.blanket, p3 + 150, 3000],
+      [eggMemes.tgPup, p2 + 150, 2900],
+      [eggMemes.bearPup, p1 + 250, 3300],
+      [eggMemes.flyCat2, p1 + 2400, 2400]
+    ].forEach(function (it) {
+      eggTm(function () { if (eggState === 'counting') it[0].style.display = 'block'; }, it[1]);
+      eggTm(function () { it[0].style.display = 'none'; }, it[1] + it[2]);
+    });
+  }
+
+  function eggTick(s) {
+    if (eggState !== 'counting') return;
+    if (s === 0) { eggBoom(); return; }
+    eggSec = s;
+    var hot = s <= 3;
+    if (hot) {
+      eggShowPhrase(EGG_PANIC[s], true);
+      eggSetPorthole(false);
+      eggSetPanic(s);
+    }
+    eggShowNumber(s, hot);
+    eggDoFlash(hot);
+    if (s === 1) {
+      eggTm(function () {
+        if (eggState !== 'counting') return;
+        eggShowPhrase('…он всё ещё держит. уважение. но зря!!', true);
+      }, 2600);
+    }
+  }
+
+  function eggCancel() {
+    eggClearTimers();
+    eggState = eggReturnTo === 'active' ? 'active' : 'idle';
+    if (eggReturnTo === 'active') {
+      // отсчёт запускали прямо из авиарежима — возвращаем его как было
+      var a = getAvia();
+      musicPlaying = true; setMuteIcon();
+      if (document.hidden) {
+        aviaPausedByHidden = true;
+        a.volume = 1;
+      } else {
+        if (a.paused) { var pr = a.play(); if (pr && pr.catch) pr.catch(function () {}); }
+        eggFadeTo(a, 1, 500);
+      }
+    } else if (musicPlaying && audio && !audio.paused) {
+      clearInterval(fadeIv);
+      eggFadeTo(audio, 1, 500);
+    }
+    // быстрый, но красивый уход оверлея
+    eggOv.style.animation = 'none';
+    eggOv.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    eggOv.style.opacity = '0';
+    eggOv.style.transform = 'scale(1.12) rotate(2deg)';
+    eggTm(function () {
+      eggOv.style.display = 'none';
+      eggHideMemes();
+      eggSetPorthole(false);
+      eggShowPhrase('', false);
+      eggStampEl.style.display = 'none';
+      lockScroll(false);
+      eggToastText.textContent = EGG_TOASTS[Math.floor(Math.random() * EGG_TOASTS.length)];
+      eggToastEl.style.display = 'block';
+      clearTimeout(eggToastT);
+      eggToastT = setTimeout(function () {
+        eggToastEl.style.display = 'none';
+        // бейдж возвращается после тоста — они живут на одном месте
+        if (eggState === 'active') eggShowBadge();
+      }, 2300);
+      if (eggState === 'active') {
+        eggPlanesEl.style.display = 'block';
+        eggSpawnLoop(false);
+      }
+    }, 340);
+  }
+
+  function eggBoom() {
+    eggState = 'boom';
+    eggSec = 0;
+    pendingStart = false;   // отложенный автостарт базовой музыки больше не нужен
+    pausedByHidden = false; // и «вернуть базовый трек после разворота вкладки» — тоже
+    eggShowPhrase('', false);
+    eggSetPorthole(false);
+    eggHideMemes();
+    eggCalmDown(true);
+    eggShowNumber(0, true);
+    eggDoFlash(true);
+    eggStartFireworks();
+    eggTm(function () { eggNumC.innerHTML = ''; eggStampEl.style.display = 'flex'; }, 600);
+    if (audio) { clearInterval(fadeIv); eggFadeTo(audio, 0, 700, function () { try { audio.pause(); } catch (e) {} }); }
+    eggTm(function () {
+      var a = getAvia();
+      try { a.currentTime = 0; } catch (e) {}
+      if (document.hidden) {
+        // вкладка в фоне — не играем оттуда, старт отдаём visibilitychange
+        aviaPausedByHidden = true;
+        a.volume = 1;
+      } else {
+        a.volume = 0;
+        var pr = a.play();
+        if (pr && pr.catch) pr.catch(function () {});
+        eggFadeTo(a, 1, 1400);
+      }
+      musicPlaying = true; setMuteIcon();
+    }, 700);
+    eggTm(function () {
+      eggOv.style.animation = 'none';
+      eggOv.style.transition = 'opacity 0.85s ease, transform 0.85s ease';
+      eggOv.style.opacity = '0';
+      eggOv.style.transform = 'scale(0.985)';
+    }, 3500);
+    eggTm(function () {
+      eggState = 'active';
+      setMuteIcon();
+      eggOv.style.display = 'none';
+      eggStampEl.style.display = 'none';
+      lockScroll(false);
+      eggStopFireworks();
+      eggShowBadge();
+      eggPlanesEl.style.display = 'block';
+      eggSpawnLoop(true);
+    }, 4400);
+  }
+
+  function eggOff() {
+    eggStopPlanes();
+    eggState = 'idle';
+    musicPlaying = false; setMuteIcon();
+    var a = getAvia();
+    eggFadeTo(a, 0, 600, function () { a.pause(); });
+    // бейдж отклеивается и падает (на pointerdown его спрятали — вернём ради анимации),
+    // самолётики уходят в задорное пике
+    eggBadgeEl.style.display = 'block';
+    eggBadgeEl.style.animation = 'eggBadgeOut 0.55s cubic-bezier(0.55, 0, 0.8, 0.4) both';
+    Array.prototype.forEach.call(eggPlanesEl.children, function (p) {
+      if (p.firstChild) p.firstChild.style.animation = 'eggPlaneDive 0.9s cubic-bezier(0.55, 0, 0.8, 0.6) both';
+    });
+    clearTimeout(eggOffT);
+    eggOffT = setTimeout(function () {
+      eggPlanesEl.innerHTML = '';
+      eggPlanesEl.style.display = 'none';
+      eggBadgeEl.style.display = 'none';
+      if (eggState !== 'idle') return;
+      eggToastText.textContent = 'посадка! все котики целы.';
+      eggToastEl.style.display = 'block';
+      clearTimeout(eggToastT);
+      eggToastT = setTimeout(function () { eggToastEl.style.display = 'none'; }, 2300);
+    }, 950);
+  }
+
+  // авиарежим тоже уважает сворачивание вкладки (boom считается: авиа-трек уже его)
+  document.addEventListener('visibilitychange', function () {
+    var aviaOwns = eggState === 'active' || eggState === 'boom';
+    if (document.hidden) {
+      if (aviaOwns && avia && !avia.paused) {
+        aviaPausedByHidden = true;
+        eggFadeStop(avia);
+        try { avia.pause(); } catch (e) {}
+      }
+    } else if (aviaPausedByHidden) {
+      aviaPausedByHidden = false;
+      if (aviaOwns && avia) {
+        avia.volume = 1;
+        var pr = avia.play();
+        if (pr && pr.catch) pr.catch(function () {});
+      }
+    }
+  });
+
+  // ---------- самолётики ----------
+  var eggPlaneT = null, eggPlaneRms = [];
+  function eggSpawnLoop(first) {
+    clearTimeout(eggPlaneT);
+    function go() {
+      if (eggState !== 'active') return;
+      eggAddPlane();
+      eggPlaneT = setTimeout(go, EGG_PLANE_GAP_MS * (0.6 + Math.random() * 0.9));
+    }
+    eggPlaneT = setTimeout(go, first ? 350 : EGG_PLANE_GAP_MS);
+  }
+  function eggAddPlane() {
+    var dir = Math.random() < 0.5 ? 'l' : 'r';
+    var el = document.createElement('div');
+    var dur = 5500 + Math.round(Math.random() * 3200);
+    el.style.cssText = 'position: fixed; top: ' + (5 + Math.random() * 60) + 'vh; ' + (dir === 'l' ? 'left' : 'right') + ': -380px; pointer-events: none; animation: ' + (dir === 'l' ? 'eggPlaneL' : 'eggPlaneR') + ' ' + dur + 'ms linear both;';
+    el.innerHTML =
+      '<div style="animation: eggBob ' + (1.3 + Math.random()).toFixed(2) + 's ease-in-out infinite alternate;">' +
+        '<img src="assets/egg/catplane.png" alt="синий самолёт с котиками" style="width: ' + (130 + Math.round(Math.random() * 110)) + 'px; transform: rotate(' + Math.round(-8 + Math.random() * 16) + 'deg)' + (dir === 'l' ? ' scaleX(-1)' : '') + '; filter: drop-shadow(5px 7px 0 rgba(51,41,31,0.3));" />' +
+      '</div>';
+    eggPlanesEl.appendChild(el);
+    while (eggPlanesEl.children.length > 5) eggPlanesEl.removeChild(eggPlanesEl.firstChild);
+    eggPlaneRms.push(setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, dur + 400));
+  }
+  function eggStopPlanes() {
+    clearTimeout(eggPlaneT);
+    eggPlaneRms.forEach(clearTimeout);
+    eggPlaneRms = [];
+  }
+
+  // ---------- фейерверк ----------
+  var eggFwOn = false, eggFwRaf = null;
+  function eggStartFireworks() {
+    var cv = eggFwCv;
+    if (!cv) return;
+    cv.width = cv.clientWidth;
+    cv.height = cv.clientHeight;
+    var ctx = cv.getContext('2d');
+    var W = cv.width, H = cv.height;
+    var colors = ['#EBDF7E', '#E2588E', '#ECA02B', '#A31D4E', '#6C7ED6', '#F2EDE2'];
+    var parts = [];
+    function burst(x, y, n) {
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * Math.PI * 2;
+        var sp = 1.5 + Math.random() * 6.5;
+        parts.push({
+          x: x, y: y,
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1,
+          life: 1, decay: 0.011 + Math.random() * 0.013,
+          c: colors[Math.floor(Math.random() * colors.length)],
+          sz: 2 + Math.random() * 2.6
+        });
+      }
+    }
+    eggFwOn = true;
+    var t0 = performance.now();
+    var lastBurst = 0;
+    burst(W * 0.5, H * 0.3, 130);
+    burst(W * 0.22, H * 0.46, 90);
+    burst(W * 0.78, H * 0.42, 90);
+    function loop(now) {
+      if (!eggFwOn) return;
+      var el = now - t0;
+      if (el < 2900 && now - lastBurst > 260) {
+        lastBurst = now;
+        burst(W * (0.1 + Math.random() * 0.8), H * (0.12 + Math.random() * 0.45), 60 + Math.round(Math.random() * 60));
+      }
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,0.17)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-over';
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var pt = parts[i];
+        pt.vy += 0.05;
+        pt.vx *= 0.99;
+        pt.vy *= 0.995;
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.life -= pt.decay;
+        if (pt.life <= 0) { parts.splice(i, 1); continue; }
+        ctx.globalAlpha = Math.max(0, pt.life);
+        ctx.fillStyle = pt.c;
+        ctx.fillRect(pt.x, pt.y, pt.sz, pt.sz);
+      }
+      ctx.globalAlpha = 1;
+      if (el > 4500 && parts.length === 0) { eggFwOn = false; return; }
+      eggFwRaf = requestAnimationFrame(loop);
+    }
+    eggFwRaf = requestAnimationFrame(loop);
+  }
+  function eggStopFireworks() {
+    eggFwOn = false;
+    cancelAnimationFrame(eggFwRaf);
+    try { eggFwCv.getContext('2d').clearRect(0, 0, eggFwCv.width, eggFwCv.height); } catch (e) {}
+  }
+  // ==================== /ПАСХАЛКА №1 ====================
 
   // ---- предзагрузка (картинки + шрифты + песня; дальше не пускаем, пока всё не скачано) ----
   var loadedN = 0, loadTotal = 1, smooth = 0, loadDone = false;
@@ -1226,6 +1905,16 @@
   }
   if (motionOn()) raf = requestAnimationFrame(loop);
   else applyStaticPoses();
+
+  // --- прогрев ассетов пасхалки: src подставляем только после показа main,
+  // чтобы 3 МБ мемов не соревновались с ассетами лоудера за канал ---
+  setTimeout(function () {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-egg-src]'), function (im) {
+      im.src = im.getAttribute('data-egg-src');
+    });
+    var pre = new Image();
+    pre.src = 'assets/egg/catplane.png';
+  }, 1200);
   }
 })();
 </script>
