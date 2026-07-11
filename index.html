@@ -1816,18 +1816,26 @@
       kind === 'drop' ? 'translateY(-56px) rotate(-3deg)' :
       'scale(1.45) rotate(6deg)';
     }
+  // Гистерезис из двух observer'ов: показ при 12% видимости, скрытие — только
+  // когда элемент ушёл за вьюпорт дальше 120px. Скрывающие позы сдвигают/увеличивают
+  // элемент максимум на ~90px, поэтому спрятанный блок не может сам заехать обратно
+  // за порог показа — без запаса observer зацикливается и блоки дёргаются у грани экрана
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
-      var el = en.target;
-      if (en.isIntersecting) {
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-      } else {
-        el.style.opacity = '0';
-        el.style.transform = el._revealHidden;
+      if (en.intersectionRatio >= 0.12) {
+        en.target.style.opacity = '1';
+        en.target.style.transform = 'none';
       }
     });
   }, { threshold: 0.12 });
+  var ioHide = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) {
+        en.target.style.opacity = '0';
+        en.target.style.transform = en.target._revealHidden;
+      }
+    });
+  }, { rootMargin: '120px 0px 120px 0px', threshold: 0 });
 
   if (motionOn()) {
     Array.prototype.forEach.call(root.querySelectorAll('[data-reveal]'), function (el) {
@@ -1845,6 +1853,7 @@
       }
       el.style.transition = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
       io.observe(el);
+      ioHide.observe(el);
     });
   }
 
