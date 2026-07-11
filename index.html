@@ -1081,15 +1081,20 @@
   setInterval(tick, 1000);
 
   // --- click-spin photos ---
+  // спин крутит отдельную обёртку, а не саму картинку: idle-покачивание (bobA/bobB)
+  // не прерывается и не рестартует с нулевого кадра — без рывка в конце вертушки
   function spin(e) {
-    var img = e.currentTarget;
-    if (!img.dataset.idle) img.dataset.idle = img.style.animation;
-    img.style.animation = 'none';
-    void img.offsetWidth;
-    img.style.animation = 'spinOnce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1)';
-    img.onanimationend = function () { img.style.animation = img.dataset.idle; img.onanimationend = null; };
+    var wrap = e.currentTarget.parentNode;
+    wrap.style.animation = 'none';
+    void wrap.offsetWidth;
+    wrap.style.animation = 'spinOnce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    wrap.onanimationend = function () { wrap.style.animation = 'none'; wrap.onanimationend = null; };
   }
   Array.prototype.forEach.call(document.querySelectorAll('.photo-spin'), function (img) {
+    var wrap = document.createElement('div');
+    if (img.style.transformOrigin) wrap.style.transformOrigin = img.style.transformOrigin;
+    img.parentNode.insertBefore(wrap, img);
+    wrap.appendChild(img);
     img.addEventListener('click', spin);
   });
 
@@ -1102,6 +1107,7 @@
       axeWrap = document.getElementById('axe-wrap');
 
   function applyStaticPoses() {
+    smoothPos.tub = smoothPos.peek = smoothPos.axe = null;
     if (tubWrap) { var band = tubWrap.parentElement; var x = Math.max(0, band.clientWidth / 2 - 85); tubWrap.style.transform = 'translate3d(' + x + 'px,0,0)'; }
     if (peekWrap) peekWrap.style.transform = 'translateY(30px)';
     if (axeWrap) axeWrap.style.transform = 'translateY(50px)';
@@ -1169,6 +1175,16 @@
   });
   var last = window.scrollY, vel = 0, raf;
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  // сглаживание скролл-гэгов: на Android инерционный скролл идёт на компоузиторе,
+  // основной поток отстаёт, и при остановке позиция прилетает скачком — лерп догоняет плавно
+  var smoothPos = { tub: null, peek: null, axe: null };
+  function easeTo(key, target) {
+    var cur = smoothPos[key];
+    cur = cur === null ? target : cur + (target - cur) * 0.22;
+    if (Math.abs(target - cur) < 0.1) cur = target;
+    smoothPos[key] = cur;
+    return cur;
+  }
   function loop() {
     raf = requestAnimationFrame(loop);
     if (!motionOn()) { applyStaticPoses(); return; }
@@ -1190,7 +1206,7 @@
       var rb = band.getBoundingClientRect();
       var pb = clamp((vh - rb.top) / (vh + rb.height), 0, 1);
       var x = -230 + pb * (rb.width + 300);
-      tubWrap.style.transform = 'translate3d(' + x + 'px,0,0)';
+      tubWrap.style.transform = 'translate3d(' + easeTo('tub', x) + 'px,0,0)';
     }
     if (peekWrap) {
       var wrap = peekWrap.parentElement;
@@ -1198,14 +1214,14 @@
       var pp = clamp((vh - rp.top) / (vh + rp.height), 0, 1);
       var t = clamp((pp - 0.2) / 0.6, 0, 1);
       var peek = Math.sin(t * Math.PI);
-      peekWrap.style.transform = 'translateY(' + (160 - peek * 160) + 'px)';
+      peekWrap.style.transform = 'translateY(' + easeTo('peek', 160 - peek * 160) + 'px)';
     }
     if (axeWrap) {
       var doc = document.documentElement;
       var dist = Math.max(0, doc.scrollHeight - (y + vh));
       var t2 = clamp(1 - dist / 340, 0, 1);
       var e = 1 - Math.pow(1 - t2, 3);
-      axeWrap.style.transform = 'translateY(' + (200 - e * 200) + 'px)';
+      axeWrap.style.transform = 'translateY(' + easeTo('axe', 200 - e * 200) + 'px)';
     }
   }
   if (motionOn()) raf = requestAnimationFrame(loop);
