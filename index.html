@@ -761,6 +761,11 @@
   // до первого жеста, при котором play() реально проходит. Скролл на Android даёт
   // touchend БЕЗ user activation, поэтому неудачная попытка не снимает слушатели —
   // ждём настоящий тап/клик/клавишу.
+  var onAutoStarted = null;   // хук: дёргается, когда отложенный старт музыки удался (или мы сдались)
+  function fireAutoStarted() {
+    if (!onAutoStarted) return;
+    var f = onAutoStarted; onAutoStarted = null; f();
+  }
   function armAutoStart() {
     if (pendingStart) return;
     pendingStart = true;
@@ -779,8 +784,14 @@
         if (!pendingStart) return;
         pendingStart = false; off();
         musicPlaying = true; setMuteIcon(); fadeUp(a);
+        fireAutoStarted();
       }
-      if (pr && pr.then) pr.then(ok, function () {});
+      function fail() {
+        // click гарантированно несёт user activation; если play() не прошёл даже на нём —
+        // дело не в жесте (битый файл и т.п.), дальше не ждём
+        if (ev && ev.type === 'click' && pendingStart) { pendingStart = false; off(); fireAutoStarted(); }
+      }
+      if (pr && pr.then) pr.then(ok, fail);
       else ok();
     }
     evs.forEach(function (e) { document.addEventListener(e, go, { capture: true, passive: true }); });
@@ -792,7 +803,7 @@
       if (a.volume >= 1) clearInterval(fadeIv);
     }, 80);
   }
-  function startMusic() {
+  function startMusic(onOutcome) {
     var a = getAudio(); audio = a; a.loop = true;
     audioPrimed = true; detachPrime();   // реальный play идёт — прогрев больше не нужен
     clearInterval(fadeIv);
@@ -800,13 +811,17 @@
     try { a.currentTime = 0; } catch (e) {}
     var pr = a.play();
     musicPlaying = true; setMuteIcon();
-    if (pr && pr.then) pr.then(function () {}, function () {
-      // автостарт заблокирован браузером: честно показываем «выкл» и ждём первый жест
-      clearInterval(fadeIv);
-      musicPlaying = false; setMuteIcon();
-      if (elChosen.style.display !== 'none') elStampNote.textContent = 'тапни в любом месте — и заиграет музыка';
-      armAutoStart();
-    });
+    if (pr && pr.then) {
+      pr.then(function () {
+        if (onOutcome) onOutcome(true);
+      }, function () {
+        // автостарт заблокирован браузером: честно показываем «выкл» и ждём первый жест
+        clearInterval(fadeIv);
+        musicPlaying = false; setMuteIcon();
+        armAutoStart();
+        if (onOutcome) onOutcome(false);
+      });
+    } else if (onOutcome) onOutcome(true);
     fadeUp(a);
   }
   // возобновление после паузы по сворачиванию вкладки — продолжаем с того же места
@@ -957,14 +972,24 @@
     clearTimeout(idleT); clearInterval(cdIv);
     try { clearTimeout(window.__nuIdle); clearInterval(window.__nuCd); } catch (e) {}
     try { localStorage.setItem('nu-music', val); } catch (e) {}
-    if (val === 'on') startMusic();
     chosen = val; countdown = null;
     elCdBadge.style.display = 'none';
     var on = val === 'on';
     elStampText.textContent = on ? 'звук: вкл' : 'звук: выкл';
     elStampNote.textContent = on ? 'антоний уже наливает! кот одобряет' : 'уважаем. идём в благородной тишине';
     elChosen.style.display = 'flex';
-    setTimeout(startL2, on ? 2400 : 1300);
+    if (!on) { setTimeout(startL2, 1300); return; }
+    var advanced = false;
+    function advance(delay) { if (advanced) return; advanced = true; setTimeout(startL2, delay); }
+    startMusic(function (okPlay) {
+      if (okPlay) { advance(2400); return; }
+      // жеста ещё не было (авто-выбор по таймеру) — браузер не даёт стартовать звук.
+      // Держим штамп и ждём первый тап: он же и запустит музыку (armAutoStart уже слушает).
+      elStampNote.textContent = 'тапни в любом месте — и поехали!';
+      onAutoStarted = function () { advance(900); };
+      // страховка: совсем без тапа не держим вечно — уедем дальше, музыка врубится первым тапом
+      setTimeout(function () { advance(600); }, 60000);
+    });
   }
   document.getElementById('gate-sound').addEventListener('click', function () { choose('on'); });
   document.getElementById('gate-silence').addEventListener('click', function () { choose('off'); });
