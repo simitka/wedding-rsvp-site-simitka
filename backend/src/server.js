@@ -6,7 +6,7 @@
 import http from 'node:http';
 import { config, demoMode } from './config.js';
 import { findGuest } from './guests.js';
-import { sanitizePayload, submit, startOutboxLoop } from './rsvp.js';
+import { sanitizePayload, submit, startOutboxLoop, ensureSheetsAtStartup } from './rsvp.js';
 import { ensureDataDir, journalAppend } from './store.js';
 import { allow } from './ratelimit.js';
 
@@ -124,6 +124,7 @@ const server = http.createServer(async (req, res) => {
 
 ensureDataDir();
 startOutboxLoop();
+ensureSheetsAtStartup();
 server.listen(config.port, () => {
   console.log('[server] RSVP API на :' + config.port + (demoMode ? ' (демо-режим)' : ''));
 });

@@ -1,12 +1,18 @@
 // Бизнес-логика RSVP: валидация ответов и upsert строки в «Ответы на rsvp».
+// Схема вкладки (по строке на анкету, повторная отправка обновляет строку):
+//   A Секретное слово | B Гости | C Придут? | D Кто именно | E Человек приедет |
+//   F Трансфер | G Мест для попутчиков | H Ночёвка | I Оплата домика |
+//   J Обновлено | K Отправлено раз
+// E — число: на него опираются формулы вкладки «Сводка».
 // Клиенту не верим: имена берём из списка гостей, значения — из белых списков.
 import { config, demoMode } from './config.js';
 import { valuesGet, valuesUpdate, valuesAppend, listSheetTitles, addSheet, sheetRange } from './sheets.js';
 import { journalAppend, outboxPut, outboxRemoveById, outboxRead } from './store.js';
+import { normWord } from './guests.js';
 
 export const ANSWER_HEADERS = [
-  'Секретное слово', 'Гости', 'Придут?', 'Кто именно', 'Трансфер',
-  'Мест для попутчиков', 'Ночёвка', 'Оплата домика', 'Обновлено', 'Отправлено раз', 'JSON',
+  'Секретное слово', 'Гости', 'Придут?', 'Кто именно', 'Человек приедет',
+  'Трансфер', 'Мест для попутчиков', 'Ночёвка', 'Оплата домика', 'Обновлено', 'Отправлено раз',
 ];
 
 export function sanitizePayload(raw, guest) {
@@ -61,15 +67,15 @@ function toRow(rec, submitCount) {
     rec.guests.join(' и '),
     rec.isComing ? 'да' : 'нет',
     rec.attending.length ? rec.attending.join(' и ') : '—',
+    rec.attending.length,
     !rec.isComing ? '—' : t.mode === 'need' ? 'нужен трансфер' : t.mode === 'self' ? 'сам за рулём' : '—',
-    !rec.isComing ? '' : t.mode === 'self' ? String(t.seatsOffered) : '',
+    !rec.isComing || t.mode !== 'self' ? '' : t.seatsOffered,
     !rec.isComing ? '—' : o.staying ? 'остаются ночевать' : 'уедут в ночь',
     !rec.isComing ? '—' : !o.staying ? '—'
       : o.housePayment === 'me' ? 'оплатят сами'
       : o.housePayment === 'them' ? 'за счёт молодожёнов' : '—',
     tbilisiNow(),
-    String(submitCount),
-    JSON.stringify(rec),
+    submitCount,
   ];
 }
 
@@ -88,27 +94,21 @@ async function ensureSheets() {
   if (!titles.includes(config.answersSheet)) {
     await addSheet(config.answersSheet);
     await valuesAppend(sheetRange(config.answersSheet, 'A1'), [ANSWER_HEADERS]);
-  } else {
-    const head = await valuesGet(sheetRange(config.answersSheet, 'A1:A1'));
-    if (!head.length) await valuesAppend(sheetRange(config.answersSheet, 'A1'), [ANSWER_HEADERS]);
   }
   if (!titles.includes(config.guestsSheet)) {
     await addSheet(config.guestsSheet);
-    await valuesAppend(sheetRange(config.guestsSheet, 'A1'), [
-      ['Секретное слово', 'Имя 1', 'Имя 2 (для пары)'],
-      ['хинкали', 'Саша', ''],
-      ['сациви', 'Маша', 'Дима'],
-    ]);
+    await valuesAppend(sheetRange(config.guestsSheet, 'A1'),
+      [['Секретное слово', 'Имя 1', 'Имя 2 (для пары)', 'Комментарий']]);
   }
   ensured = true;
 }
 
 async function upsertRow(rec) {
   await ensureSheets();
-  const col = await valuesGet(sheetRange(config.answersSheet, 'A2:J'));
+  const col = await valuesGet(sheetRange(config.answersSheet, 'A2:K'));
   for (let i = 0; i < col.length; i++) {
-    if (String(col[i][0] || '').trim() === rec.word) {
-      const count = (parseInt(col[i][9], 10) || 0) + 1;
+    if (normWord(col[i][0]) === rec.word) {
+      const count = (parseInt(col[i][10], 10) || 0) + 1;
       await valuesUpdate(sheetRange(config.answersSheet, 'A' + (i + 2) + ':K' + (i + 2)), [toRow(rec, count)]);
       return;
     }
@@ -140,6 +140,18 @@ export function startOutboxLoop() {
   if (demoMode) return;
   setInterval(flushOutbox, 30 * 1000).unref();
   flushOutbox();
+}
+
+// Вкладки готовим сразу при старте: без «Гости» не пройдёт ни один auth,
+// а до submit (где ensureSheets тоже зовётся) дело иначе не дойдёт.
+export async function ensureSheetsAtStartup() {
+  if (demoMode) return;
+  try {
+    await serialized(() => ensureSheets());
+    console.log('[rsvp] вкладки таблицы на месте:', config.guestsSheet, '/', config.answersSheet);
+  } catch (e) {
+    console.error('[rsvp] не удалось подготовить таблицу (повторим при первом submit):', e.message);
+  }
 }
 
 // Ответ гостя: журнал → таблица; если таблица недоступна — в outbox с ретраями.

@@ -38,7 +38,8 @@ async function getAccessToken() {
   return token.value;
 }
 
-async function api(path, init = {}) {
+// экспорт — для разовых сервисных скриптов (setup вкладок, формулы, форматирование)
+export async function api(path, init = {}) {
   const t = await getAccessToken();
   const res = await fetch(SHEETS + '/' + config.spreadsheetId + path, {
     ...init,
@@ -74,7 +75,9 @@ export async function valuesUpdate(range, values) {
 }
 
 export async function valuesAppend(range, values) {
-  return api('/values/' + enc(range) + ':append?valueInputOption=RAW&insertDataOption=INSERT_ROWS', {
+  // OVERWRITE, а не INSERT_ROWS: вставка строк сдвигает open-ended ссылки
+  // формул «Сводки» ('Ответы на rsvp'!A2:A превращалась бы в A3:A)
+  return api('/values/' + enc(range) + ':append?valueInputOption=RAW&insertDataOption=OVERWRITE', {
     method: 'POST',
     body: JSON.stringify({ values }),
   });
