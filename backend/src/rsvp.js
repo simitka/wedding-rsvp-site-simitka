@@ -156,11 +156,6 @@ async function ensureSheets() {
     await addSheet(config.answersSheet);
     await valuesAppend(sheetRange(config.answersSheet, 'A1'), [ANSWER_HEADERS]);
   }
-  if (!titles.includes(config.guestsSheet)) {
-    await addSheet(config.guestsSheet);
-    await valuesAppend(sheetRange(config.guestsSheet, 'A1'),
-      [['Секретное слово', 'Имя 1', 'Имя 2 (для пары)', 'Комментарий']]);
-  }
   ensured = true;
 }
 
@@ -202,13 +197,13 @@ export function startOutboxLoop() {
   flushOutbox();
 }
 
-// Вкладки готовим сразу при старте: без «Гости» не пройдёт ни один auth,
-// а до submit (где ensureSheets тоже зовётся) дело иначе не дойдёт.
+// Вкладку готовим сразу при старте: без «Ответы на rsvp» не пройдёт ни один auth
+// (это же список приглашённых), а до submit дело иначе не дойдёт.
 export async function ensureSheetsAtStartup() {
   if (demoMode) return;
   try {
     await serialized(() => ensureSheets());
-    console.log('[rsvp] вкладки таблицы на месте:', config.guestsSheet, '/', config.answersSheet);
+    console.log('[rsvp] вкладка ответов на месте:', config.answersSheet);
   } catch (e) {
     console.error('[rsvp] не удалось подготовить таблицу (повторим при первом submit):', e.message);
   }

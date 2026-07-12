@@ -1,4 +1,5 @@
-// Список гостей: вкладка «Гости» (A секретное слово | B имя 1 | C имя 2 для пары).
+// Список приглашённых берём из «Ответы на rsvp» (A секретное слово | B Гость 1 |
+// C Гость 2) — та же вкладка, куда пишутся ответы; отдельной «Гости» больше нет.
 // Кешируется в памяти и на диске — если таблица моргнула, анкета не ложится.
 import { config, demoMode } from './config.js';
 import { valuesGet, sheetRange } from './sheets.js';
@@ -16,7 +17,7 @@ export function normWord(w) {
 }
 
 async function fetchGuests() {
-  const rows = await valuesGet(sheetRange(config.guestsSheet, 'A2:C'));
+  const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:C'));
   const guests = [];
   for (const row of rows) {
     const word = normWord(row[0]);

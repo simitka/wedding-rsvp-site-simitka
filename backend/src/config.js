@@ -18,7 +18,8 @@ export const config = {
   port: parseInt(process.env.PORT, 10) || 3000,
   dataDir: process.env.DATA_DIR || '/data',
   spreadsheetId: process.env.SPREADSHEET_ID || '13UFjGy42iBV9rhGtWehsmoCnbq1rJSWOBPR_mCXTX0U',
-  guestsSheet: process.env.GUESTS_SHEET || 'Гости',
+  // единственная вкладка-источник: A Секретное слово | B Гость 1 | C Гость 2 —
+  // список приглашённых (ведётся руками), туда же бэкенд дописывает ответы
   answersSheet: process.env.ANSWERS_SHEET || 'Ответы на rsvp',
   guestsTtlMs: 60 * 1000,
   serviceAccount: readServiceAccount(),
