@@ -13,8 +13,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@600;700&family=Neucha&family=Oswald:wght@500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Rubik+Mono+One&family=Unbounded:wght@700;900&family=Yeseva+One&display=swap" />
 <style>
-  html, body { margin: 0; padding: 0; background: #3B4A20; overflow-x: hidden; }
+  html, body { margin: 0; padding: 0; background: #3B4A20; overflow-x: hidden; overscroll-behavior: none; }
   body { -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none; }
+  /* листы анкеты сами гасят overscroll: без этого на iOS резинка утаскивает fixed-лист и снизу мелькает соседний лист/фон */
+  #rsvp-root [id^="rs-pose-"] > div { overscroll-behavior: contain; }
   img { display: block; max-width: 100%; -webkit-user-drag: none; -webkit-touch-callout: none; }
   a { color: #A31D4E; }
   a:hover { color: #E2588E; }
@@ -126,11 +128,13 @@
   .rsvp-btn:active { transform: translate(7px, 8px) !important; box-shadow: 0 0 0 #33291F !important; }
   /* на узких экранах прижимаем бейджик «до 1 августа!» к кнопке, чтобы не резался краем экрана */
   @media (max-width: 460px) { .rsvp-badge { right: -10px !important; top: -28px !important; } }
+  /* дресс-код: две карточки (палитра + джинсы/Ульяна) держим в ряд и ужимаем вместе; в столбик — только на совсем узких экранах */
+  @media (max-width: 340px) { .dress-cards { flex-wrap: wrap !important; } }
   .credit-link:hover { color: #E2588E !important; text-decoration-color: #EBDF7E !important; }
   .faq-link:hover { color: #6C7ED6 !important; text-decoration-color: #ECA02B !important; }
   /* фото-кнопки: без синей обводки/выделения при тапе */
-  .photo-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; touch-action: manipulation; }
-  .photo-spin:focus, .photo-spin:focus-visible { outline: none; }
+  .photo-spin, .rsvp-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; touch-action: manipulation; }
+  .photo-spin:focus, .photo-spin:focus-visible, .rsvp-spin:focus, .rsvp-spin:focus-visible { outline: none; }
 </style>
 </head>
 <body>
@@ -598,21 +602,21 @@
         </div>
       </div>
 
-      <div style="display: flex; align-items: flex-start; justify-content: center; gap: 18px; margin-top: 34px; flex-wrap: wrap;">
-        <div data-reveal="left" style="position: relative;">
-          <div style="background: #FBF8EF; padding: 10px 10px 34px; transform: rotate(-3deg); box-shadow: 4px 6px 0 rgba(51,41,31,0.25); width: 172px;">
+      <div class="dress-cards" style="display: flex; align-items: flex-start; justify-content: center; gap: clamp(10px, 3vw, 18px); margin-top: 34px; flex-wrap: nowrap;">
+        <div data-reveal="left" style="position: relative; flex: 0 1 172px; min-width: 0;">
+          <div style="background: #FBF8EF; padding: 10px 10px 34px; transform: rotate(-3deg); box-shadow: 4px 6px 0 rgba(51,41,31,0.25);">
             <img src="assets/palette.jpg" alt="Референс палитры с букетом" style="width: 100%; height: auto;" />
             <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; margin-top: 6px; text-align: center;">референс от флориста</div>
           </div>
           <div style="position: absolute; top: -10px; left: 50%; margin-left: -42px; width: 84px; height: 24px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(3deg);"></div>
         </div>
-        <div data-reveal="right" data-reveal-delay="120" style="max-width: 190px;">
+        <div data-reveal="right" data-reveal-delay="120" style="flex: 0 1 190px; min-width: 0;">
           <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 16px 18px; transform: rotate(2.5deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.4;">
             джинсы? — ладно.<br />
             костюм банана? — обсудим.<br />
             <span style="background: #EBDF7E; padding: 0 4px;">тотал-белый оставим невесте :)</span>
           </div>
-          <div style="position: relative; width: 140px; margin: 24px auto 0;">
+          <div style="position: relative; width: 100%; max-width: 140px; margin: 24px auto 0;">
             <div style="animation: swayPeek 3.6s ease-in-out infinite; transform-origin: 50% 97%;">
               <img src="assets/bride-kid.png" alt="Невеста в детстве в белом платье и диадеме — образ отрепетирован заранее" class="photo-spin" style="width: 100%; height: auto; filter: drop-shadow(4px 7px 8px rgba(51,41,31,0.3)); cursor: pointer;" />
             </div>
@@ -1143,8 +1147,14 @@
               </div>
             </div>
 
-            <div id="rs-info-single" style="max-width: 430px; width: 100%; margin-top: 18px;">
-              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 18px 16px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;"><span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #A31D4E;">важное:</span> приглашение действует ровно на одного тебя ♥ но если есть +1, без которого никак, — напиши <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> — обсудим!</div>
+            <div id="rs-info-single" style="position: relative; max-width: 430px; width: 100%; margin-top: 18px;">
+              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 100px 16px 18px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;"><span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #A31D4E;">важное:</span> приглашение действует ровно на одного тебя ♥ но если есть +1, без которого никак, — напиши <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> — обсудим!</div>
+              <div style="position: absolute; right: 4px; bottom: 2px; width: 84px;">
+                <div style="animation: wiggle 3.5s ease-in-out infinite; transform-origin: 50% 92%;">
+                  <img data-rsvp-src="assets/rsvp/fancy-girl.png" alt="Нарядная девочка в блестящем костюме" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(3px 6px 7px rgba(51,41,31,0.3)); cursor: pointer;" />
+                </div>
+                <span style="position: absolute; left: 50%; bottom: -8px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 1px 7px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 12px; pointer-events: none;">только ты!</span>
+              </div>
             </div>
             <div id="rs-info-couple" style="display: none; position: relative; max-width: 430px; width: 100%; margin-top: 18px;">
               <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 108px 16px 18px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;"><span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #A31D4E;">важное:</span> анкета одна на двоих — отвечайте за обоих. телепатия разрешена!!</div>
@@ -1152,7 +1162,7 @@
                 <div style="animation: wiggle 3.2s ease-in-out infinite; transform-origin: 50% 92%;">
                   <img data-rsvp-src="assets/rsvp/yellow-girl.png" alt="Маленькая девочка в жёлтом свитере" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(3px 6px 7px rgba(51,41,31,0.3)); cursor: pointer;" />
                 </div>
-                <span style="position: absolute; left: 50%; bottom: -8px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 1px 7px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 12px; pointer-events: none;">команда ×2!</span>
+                <span style="position: absolute; left: 50%; bottom: -8px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 1px 7px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 12px; pointer-events: none;">за двоих!</span>
               </div>
             </div>
 
@@ -3090,11 +3100,13 @@
     if (!rsvpMotionOn()) return;
     var el = e.currentTarget;
     if (el.animate) {
+      // как вертушка на основном экране (spinOnce): та же пружинистая кривая;
+      // composite:add — крутим поверх родного наклона фото, не сбивая idle-покачивание
       el.animate([
         { transform: 'rotate(0deg) scale(1)' },
         { transform: 'rotate(360deg) scale(1.15)', offset: 0.6 },
         { transform: 'rotate(360deg) scale(1)' }
-      ], { duration: 900, easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' });
+      ], { duration: 900, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', composite: 'add' });
     }
   }
 
