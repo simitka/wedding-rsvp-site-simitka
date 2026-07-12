@@ -3,3 +3,5 @@
 Dockerfile
 .dockerignore
 *.md
+backend/
+docker-compose.yml

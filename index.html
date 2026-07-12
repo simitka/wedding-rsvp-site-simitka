@@ -95,6 +95,21 @@
   @keyframes eggBob { from { transform: translateY(-14px) rotate(-4deg); } to { transform: translateY(14px) rotate(4deg); } }
   @keyframes eggBadgeOut { from { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 30% { opacity: 1; transform: translateY(-14px) rotate(-6deg) scale(1.06); } to { opacity: 0; transform: translateY(110px) rotate(22deg) scale(0.85); } }
   @keyframes eggPlaneDive { from { opacity: 1; } 25% { transform: translateY(-4vh) rotate(-6deg); } to { transform: translateY(125vh) rotate(46deg); opacity: 0; } }
+  /* RSVP-анкета: конверт-лоудер и листы (порт из дизайна rsvp.dc.html) */
+  @keyframes kTilt { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2deg); } }
+  @keyframes kFlap { 0%, 8% { transform: rotateX(0deg); z-index: 6; } 22%, 72% { transform: rotateX(-180deg); z-index: 2; } 86%, 100% { transform: rotateX(0deg); z-index: 6; } }
+  @keyframes kFlapFace { 0%, 15% { background: #E9DFC4; } 16%, 78% { background: radial-gradient(#FBF8EF 2.5px, transparent 3px) 0 0 / 24px 20px #E2588E; } 79%, 100% { background: #E9DFC4; } }
+  @keyframes kLetter { 0%, 20% { transform: translateY(0) rotate(0deg); } 38% { transform: translateY(-116px) rotate(-2deg); } 44%, 64% { transform: translateY(-108px) rotate(-2deg); } 78%, 100% { transform: translateY(0) rotate(0deg); } }
+  @keyframes kSeal { 0%, 40% { transform: scale(0) rotate(-30deg); } 46% { transform: scale(1.3) rotate(8deg); } 50%, 66% { transform: scale(1) rotate(8deg); } 74%, 100% { transform: scale(0) rotate(-30deg); } }
+  @keyframes kBubble { 0% { transform: translateY(0); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-95px); opacity: 0; } }
+  @keyframes slapIn { 0% { opacity: 0; transform: scale(2.1) rotate(10deg); } 65% { opacity: 1; transform: scale(0.94) rotate(-2deg); } 100% { opacity: 1; transform: scale(1) rotate(-2deg); } }
+  /* нажатия кнопок анкеты: «вдавливание» в бумагу; --rr хранит родной наклон кнопки */
+  .rs-press:active { transform: rotate(var(--rr, 0deg)) translate(5px, 6px) !important; box-shadow: none !important; animation: none !important; }
+  .rs-press-s:active { transform: rotate(var(--rr, 0deg)) translate(2px, 3px) !important; box-shadow: none !important; }
+  .rs-edit:active { transform: rotate(-2deg) scale(0.94) !important; }
+  #rsvp-root input { user-select: text; -webkit-user-select: text; }
+  #rsvp-root input::placeholder { color: rgba(75,50,39,0.38); font-size: clamp(17px, 5.4vw, 21px); }
+  #rsvp-root button { -webkit-tap-highlight-color: transparent; }
   /* hover/active перекрывают инлайн-стили кнопок, поэтому всюду !important */
   .gate-btn-a:active .gc-inner { transform: translate(5px, 6px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
   .gate-btn-b:active .gc-inner { transform: translate(-5px, 6px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
@@ -780,7 +795,7 @@
       <div data-reveal="drop" data-reveal-delay="100" style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 24px; color: #4B3227; transform: rotate(-1deg); margin: 18px 0 26px;">очень ждём! заполни анкету —<br />это займёт две минуты, честно</div>
 
       <div data-reveal="slap" data-reveal-delay="200" style="position: relative; display: inline-block;">
-        <a class="rsvp-btn" href="https://forms.gle/" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.6vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px clamp(14px, 4.5vw, 28px); animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
+        <a class="rsvp-btn" id="rsvp-open-btn" href="/rsvp" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.6vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px clamp(14px, 4.5vw, 28px); animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
         <span class="rsvp-badge" style="position: absolute; top: -22px; right: -30px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 1<br />августа!</span>
       </div>
 
@@ -996,6 +1011,479 @@
     </div>
   </div>
 
+  <!-- ============ RSVP-АНКЕТА (оверлей поверх сайта, порт rsvp.dc.html) ============ -->
+  <!-- листы-«бумаги» на весь вьюпорт; хореография как gate → l2 → main. Картинки грузятся
+       лениво через data-rsvp-src (гидрация при открытии анкеты или спустя пару секунд после main) -->
+  <div id="rsvp-root" style="display: none;">
+
+    <!-- лист: лоудер-конверт (вариант 1B из v3 part 1) -->
+    <div style="position: fixed; inset: 0; z-index: 118; will-change: transform; pointer-events: none;">
+      <div id="rs-pose-loader" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: translateY(106%) rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow: clip; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div style="position: absolute; top: 14px; right: -6px; z-index: 7;">
+            <div style="transform: rotate(7deg); border: 2.5px dashed #A31D4E; color: #A31D4E; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 20px 7px 12px; text-transform: uppercase; background: rgba(247,243,232,0.6);">RSVP · анкета гостя</div>
+          </div>
+          <div style="position: relative; width: 260px; height: 310px; perspective: 800px; margin-top: -26px; animation: kTilt 6.4s ease-in-out infinite; transform-origin: 50% 95%;">
+            <div style="position: absolute; left: 16px; right: 16px; bottom: -13px; height: 24px; background: radial-gradient(ellipse at 50% 50%, rgba(51,41,31,0.20), transparent 68%); z-index: 0;"></div>
+            <div style="position: absolute; left: 10px; bottom: 0; width: 240px; height: 150px; background: #F7F3E8; border: 3px solid #33291F; box-sizing: border-box; z-index: 1;"></div>
+            <span style="position: absolute; left: 78px; bottom: 146px; z-index: 2; font-size: 17px; color: #E2588E; animation: kBubble 2.7s linear infinite 0.3s;">♥</span>
+            <span style="position: absolute; left: 168px; bottom: 142px; z-index: 2; font-size: 13px; color: #A31D4E; animation: kBubble 3.3s linear infinite 1.7s;">♥</span>
+            <div style="position: absolute; left: 30px; bottom: 6px; width: 200px; box-sizing: border-box; background: #FBF8EF; border: 3px solid #33291F; z-index: 3; text-align: center; padding: 12px 10px 12px; animation: kLetter 6.4s ease-in-out infinite;">
+              <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 28px; line-height: 1.05; color: #A31D4E; transform: rotate(-2deg);">так-так!!!</div>
+              <div style="font-family: 'Neucha', cursive; font-size: 16px; margin-top: 3px;">вам анкета</div>
+              <div style="display: flex; justify-content: center; margin-top: 9px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #E2588E; color: #FBF8EF; font-size: 23px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); animation: kSeal 6.4s ease-in-out infinite;">♥</span>
+              </div>
+            </div>
+            <div style="position: absolute; left: 10px; bottom: 0; width: 240px; height: 150px; z-index: 4; background: #33291F; clip-path: polygon(0% 0%, 50% 44%, 100% 0%, 100% 100%, 0% 100%);"></div>
+            <div style="position: absolute; left: 13px; bottom: 3px; width: 234px; height: 144px; z-index: 4; background: #E9DFC4; clip-path: polygon(0% 0%, 50% 44%, 100% 0%, 100% 100%, 0% 100%);"></div>
+            <div style="position: absolute; left: 16px; right: 16px; bottom: 6px; height: 9px; z-index: 5; background: repeating-linear-gradient(45deg, #A31D4E 0px 9px, #FBF8EF 9px 18px, #6C7ED6 18px 27px, #FBF8EF 27px 36px);"></div>
+            <div style="position: absolute; left: 30px; bottom: 24px; z-index: 5; text-align: left; font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; line-height: 1.12; color: #4B3227; transform: rotate(-1.5deg);">кому: тебе ♥<br />от: Никиты и Ульяны</div>
+            <div style="position: absolute; right: 20px; bottom: 30px; z-index: 5; width: 42px; height: 50px; box-sizing: border-box; background: #FBF8EF; border: 2px dashed #A31D4E; transform: rotate(4deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;">
+              <span style="color: #E2588E; font-size: 16px; line-height: 1;">♥</span>
+              <span style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 9px; letter-spacing: 1px; color: #A31D4E;">11.09</span>
+            </div>
+            <div style="position: absolute; right: 46px; bottom: 62px; z-index: 5; width: 40px; height: 40px; border: 2px dashed rgba(51,41,31,0.5); border-radius: 50%; transform: rotate(-10deg);"></div>
+            <div style="position: absolute; left: 10px; top: 160px; width: 240px; height: 80px; transform-origin: 50% 0%; animation: kFlap 6.4s ease-in-out infinite; z-index: 6;">
+              <div style="position: absolute; inset: 0; background: #33291F; clip-path: polygon(0% 0%, 100% 0%, 50% 100%);"></div>
+              <div style="position: absolute; inset: 3px; clip-path: polygon(0% 0%, 100% 0%, 50% 100%); animation: kFlapFace 6.4s linear infinite;"></div>
+            </div>
+          </div>
+          <div style="margin-top: 40px; width: 210px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+            <div id="rs-ldr-bar" style="height: 14px; width: 0%; background: #A31D4E;"></div>
+          </div>
+          <div style="margin-top: 14px; display: flex; align-items: center; gap: 10px;">
+            <span id="rs-ldr-cap" style="font-family: 'Neucha', cursive; font-size: 18px; color: #4B3227;">вскрываем конверт…</span>
+            <span style="font-family: 'Rubik Mono One', monospace; font-size: 14px; background: #33291F; color: #F2EDE2; padding: 3px 8px; transform: rotate(-2deg);"><span id="rs-ldr-pct">0</span>%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: пароль -->
+    <div style="position: fixed; inset: 0; z-index: 102; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-secret" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 30px 22px 46px; position: relative;">
+            <button type="button" class="rs-exit rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← на сайт</button>
+            <div style="position: absolute; top: -8px; left: 50%; margin-left: -110px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+            <div style="position: absolute; top: 14px; right: -6px; z-index: 7;">
+              <div style="transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 20px 7px 12px; text-transform: uppercase; background: rgba(247,243,232,0.6);">фейс-контроль</div>
+            </div>
+            <div style="position: absolute; left: 8%; top: 60px; z-index: 1;">
+              <span style="display: inline-block; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 36px; color: #6C7ED6; transform: rotate(-12deg); animation: pulseStar 2.1s ease-in-out infinite alternate;">★</span>
+            </div>
+
+            <div style="flex: none; margin-top: auto;"></div>
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 26px;">тс-с-с! дальше — только по паролю</div>
+            <h1 style="margin: 14px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(30px, 9vw, 44px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(-2deg);">скажи</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(30px, 9vw, 44px); background: #EBDF7E; color: #33291F; padding: 6px 14px 4px; transform: rotate(2deg) translateY(4px); margin-left: 5px;">пароль</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(22px, 6.5vw, 32px); background: #6C7ED6; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">!</span>
+            </h1>
+            <div style="font-family: 'Neucha', cursive; font-size: 17px; color: #4B3227; text-align: center; max-width: 300px; margin-top: 16px;">Никита и Ульяна отправляли тебе секретное слово. вспоминай!</div>
+
+            <div style="position: relative; margin-top: 22px; width: 190px;">
+              <div style="animation: wiggle 3.4s ease-in-out infinite; transform-origin: 50% 94%;">
+                <img data-rsvp-src="assets/rsvp/hammer-kid.png" alt="Охрана анкеты: ребёнок с молотком" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(5px 9px 10px rgba(51,41,31,0.32)); cursor: pointer;" />
+              </div>
+              <span style="position: absolute; left: 50%; bottom: -10px; width: max-content; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; pointer-events: none;">охрана. неподкупна.</span>
+            </div>
+
+            <div id="rs-wordbox" style="margin-top: 28px; width: min(320px, 84vw); background: #FBF8EF; border: 3px solid #33291F; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); padding: 6px 8px; transform: rotate(-1deg); box-sizing: border-box;">
+              <input id="rs-word" placeholder="Введи секретное слово сюда" autocomplete="off" autocapitalize="off" spellcheck="false" style="width: 100%; box-sizing: border-box; border: none; outline: none; background: transparent; text-align: center; font-family: 'Caveat', cursive; font-weight: 700; font-size: 30px; color: #33291F; padding: 2px 0;" />
+            </div>
+
+            <div id="rs-err" style="display: none; margin-top: 16px; animation: slapIn 0.4s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+              <span id="rs-err-msg" style="display: inline-block; border: 2.5px dashed #A31D4E; color: #A31D4E; background: rgba(251,248,239,0.9); font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; padding: 5px 14px; transform: rotate(-2deg);"></span>
+            </div>
+
+            <button type="button" id="rs-word-go" class="rs-press" style="--rr: -1deg; margin-top: 22px; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 6px 7px 0 #33291F; padding: 17px 28px; cursor: pointer; transform: rotate(-1deg);">впусти меня →</button>
+
+            <div id="rs-errlots" style="display: none; margin-top: 20px; font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; text-align: center; max-width: 320px; animation: fadeIn 0.4s ease both;">слово потерялось? напиши <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> — выдадим новое ♥</div>
+
+            <div id="rs-hints" style="display: none; margin-top: 34px; font-family: 'Neucha', cursive; font-size: 14px; color: rgba(75,50,39,0.65); border: 2px dashed rgba(75,50,39,0.35); padding: 6px 12px; transform: rotate(-1deg); text-align: center;">для демо: «хинкали» — один гость · «сациви» — пара</div>
+            <div style="flex: none; margin-bottom: auto;"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: привет-имя -->
+    <div style="position: fixed; inset: 0; z-index: 104; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-hello" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 40px 22px 44px; position: relative;">
+            <button type="button" class="rs-goback rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← пароль</button>
+            <div style="position: absolute; top: -8px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+
+            <div style="flex: none; margin-top: auto;"></div>
+            <div style="margin-top: 26px; border: 3px dashed #3B4A20; color: #3B4A20; background: rgba(247,243,232,0.85); font-family: 'Rubik Mono One', monospace; font-size: 15px; letter-spacing: 2px; padding: 9px 14px; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">ПАРОЛЬ ПРИНЯТ!!!</div>
+
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 20px;">ну наконец-то! мы заждались:</div>
+            <h1 style="margin: 12px 0 0; line-height: 1.2; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(26px, 8vw, 34px); color: #4B3227; transform: rotate(-2deg); margin-right: 6px;">привет,</span>
+              <span id="rs-name-a" style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(34px, 11vw, 52px); background: #EBDF7E; color: #33291F; padding: 4px 16px 2px; transform: rotate(-2deg); box-shadow: 4px 5px 0 rgba(51,41,31,0.85);">…</span>
+              <span id="rs-hello-couple" style="display: none;">
+                <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(22px, 7vw, 28px); color: #A31D4E; background: #FBF8EF; border-radius: 50%; padding: 5px 12px; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); transform: rotate(-8deg); margin: 0 4px;">и</span>
+                <span id="rs-name-b" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(32px, 10vw, 48px); background: #E2588E; color: #FBF8EF; padding: 6px 16px 4px; transform: rotate(2deg) translateY(3px); box-shadow: 4px 5px 0 rgba(51,41,31,0.85);"></span>
+              </span>
+              <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(28px, 9vw, 38px); color: #A31D4E; transform: rotate(3deg); margin-left: 4px;">!</span>
+            </h1>
+
+            <div style="position: relative; max-width: 430px; width: 100%; margin-top: 30px;">
+              <div style="position: relative; background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 20px 18px 18px; transform: rotate(-0.8deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45;">
+                <div style="float: right; width: 42%; max-width: 170px; margin: -6px -4px 6px 12px; position: relative;">
+                  <div style="animation: wiggle 3.6s ease-in-out infinite; transform-origin: 50% 90%;">
+                    <img data-rsvp-src="assets/rsvp/serious-kid.png" alt="Очень серьёзный ребёнок со сложенными руками" class="rsvp-spin" style="width: 100%; height: auto; transform: rotate(2deg); filter: drop-shadow(-4px 8px 9px rgba(51,41,31,0.3)); cursor: pointer;" />
+                  </div>
+                  <span style="position: absolute; left: 50%; bottom: -12px; width: max-content; max-width: 150px; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 2px 8px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; line-height: 1.15; text-align: center; pointer-events: none;">главный по подсчёту<br />хинкали</span>
+                </div>
+                <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; background: #33291F; color: #F2EDE2; padding: 5px 10px; transform: rotate(-1.5deg); margin-bottom: 10px;">а теперь серьёзно</span>
+                <div id="rs-serious" style="margin-top: 8px;"></div>
+                <div style="clear: both;"></div>
+              </div>
+            </div>
+
+            <div id="rs-info-single" style="max-width: 430px; width: 100%; margin-top: 18px;">
+              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 18px 16px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;"><span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #A31D4E;">важное:</span> приглашение действует ровно на одного тебя ♥ но если есть +1, без которого никак, — напиши <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> — обсудим!</div>
+            </div>
+            <div id="rs-info-couple" style="display: none; position: relative; max-width: 430px; width: 100%; margin-top: 18px;">
+              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 108px 16px 18px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;"><span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #A31D4E;">важное:</span> анкета одна на двоих — отвечайте за обоих. телепатия разрешена!!</div>
+              <div style="position: absolute; right: 4px; bottom: 2px; width: 86px;">
+                <div style="animation: wiggle 3.2s ease-in-out infinite; transform-origin: 50% 92%;">
+                  <img data-rsvp-src="assets/rsvp/yellow-girl.png" alt="Маленькая девочка в жёлтом свитере" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(3px 6px 7px rgba(51,41,31,0.3)); cursor: pointer;" />
+                </div>
+                <span style="position: absolute; left: 50%; bottom: -8px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 1px 7px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 12px; pointer-events: none;">команда ×2!</span>
+              </div>
+            </div>
+
+            <div style="position: relative; display: inline-block; margin-top: 34px;">
+              <button type="button" id="rs-start" class="rs-press" style="--rr: 0deg; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(15px, 4.6vw, 19px); text-transform: uppercase; letter-spacing: 1px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 19px 26px; cursor: pointer; animation: wiggle 2.4s ease-in-out infinite;">поехали!!! →</button>
+              <span style="position: absolute; top: -26px; right: -26px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; line-height: 1.05; text-align: center; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">3 вопроса<br />+ чек</span>
+            </div>
+            <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 18px; transform: rotate(-1deg);">займёт две минуты. мы засекали!</div>
+            <div style="flex: none; margin-bottom: auto;"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: вопрос 1 — придёшь? -->
+    <div style="position: fixed; inset: 0; z-index: 106; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-come" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 18px 22px 44px; position: relative;">
+            <button type="button" class="rs-goback rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← назад</button>
+
+            <div style="margin-top: 56px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="rs-chips" style="display: flex; align-items: flex-start; justify-content: center; gap: 14px;"></div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                <div style="width: 170px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+                  <div class="rs-prog-fill" style="height: 10px; background: #A31D4E; width: 0%; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+                </div>
+                <span class="rs-prog-text" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; color: #4B3227; transform: rotate(-2deg);"></span>
+              </div>
+            </div>
+
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 34px;">вопрос №1 · он же главный</div>
+            <h1 id="rs-come-h-single" style="margin: 12px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(24px, 7.5vw, 34px); background: #3B4A20; color: #EBDF7E; padding: 8px 12px 6px; transform: rotate(-2deg);">придёшь</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(26px, 8vw, 38px); background: #EBDF7E; color: #33291F; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">к нам</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #A31D4E; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+            </h1>
+            <h1 id="rs-come-h-couple" style="display: none; margin: 12px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(24px, 7.5vw, 34px); background: #3B4A20; color: #EBDF7E; padding: 8px 12px 6px; transform: rotate(-2deg);">кто</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(26px, 8vw, 38px); background: #EBDF7E; color: #33291F; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">будет</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #A31D4E; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+            </h1>
+            <div style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 14px; transform: rotate(-1deg); text-align: center;">11 сентября 2026 · винодельня в Кахетии · вино и хинкали прилагаются</div>
+
+            <div id="rs-come-single" style="display: flex; flex-direction: column; gap: 16px; width: min(360px, 100%); margin-top: 30px;">
+              <button type="button" id="rs-come-yes" class="rs-press" style="--rr: -1deg; position: relative; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 6px 7px 0 #33291F; padding: 19px 18px; cursor: pointer; transform: rotate(-1deg);">да!!! уже пакую чемодан
+                <span id="rs-b-yes" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+              <button type="button" id="rs-come-no" class="rs-press-s" style="--rr: 1deg; position: relative; font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; background: rgba(251,248,239,0.8); color: #A31D4E; border: 3px dashed #A31D4E; padding: 13px 18px; cursor: pointer; transform: rotate(1deg);">не смогу приехать…((
+                <span id="rs-b-no" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+            </div>
+
+            <div id="rs-come-couple" style="display: none; flex-direction: column; gap: 16px; width: min(360px, 100%); margin-top: 30px;">
+              <button type="button" id="rs-come-both" class="rs-press" style="--rr: -1deg; position: relative; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 6px 7px 0 #33291F; padding: 19px 18px; cursor: pointer; transform: rotate(-1deg);">будем оба!!!
+                <span id="rs-b-both" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+              <button type="button" id="rs-come-a" class="rs-press" style="--rr: 0.8deg; position: relative; font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; background: #FBF8EF; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); padding: 12px 18px; cursor: pointer; transform: rotate(0.8deg);">только <span id="rs-come-a-name"></span>
+                <span id="rs-b-a" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+              <button type="button" id="rs-come-b" class="rs-press" style="--rr: -0.8deg; position: relative; font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; background: #FBF8EF; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); padding: 12px 18px; cursor: pointer; transform: rotate(-0.8deg);">только <span id="rs-come-b-name"></span>
+                <span id="rs-b-b" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+              <button type="button" id="rs-come-no2" class="rs-press-s" style="--rr: 1deg; position: relative; font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; background: rgba(251,248,239,0.8); color: #A31D4E; border: 3px dashed #A31D4E; padding: 13px 18px; cursor: pointer; transform: rotate(1deg);">никто не сможет…((
+                <span id="rs-b-no2" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+            </div>
+
+            <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 26px; transform: rotate(1deg);">жать можно смело — в конце всё проверим</div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: вопрос 2 — дорога -->
+    <div style="position: fixed; inset: 0; z-index: 108; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-road" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 18px 22px 150px; position: relative;">
+            <button type="button" class="rs-goback rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← назад</button>
+
+            <div style="margin-top: 56px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="rs-chips" style="display: flex; align-items: flex-start; justify-content: center; gap: 14px;"></div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                <div style="width: 170px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+                  <div class="rs-prog-fill" style="height: 10px; background: #A31D4E; width: 0%; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+                </div>
+                <span class="rs-prog-text" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; color: #4B3227; transform: rotate(-2deg);"></span>
+              </div>
+            </div>
+
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 34px;">вопрос №2 · дорожный</div>
+            <h1 style="margin: 12px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(24px, 7.5vw, 34px); background: #ECA02B; color: #33291F; padding: 8px 12px 6px; transform: rotate(-2deg);">как</span><span id="rs-road-verb" style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(26px, 8vw, 38px); background: #6C7ED6; color: #FFFFFF; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">доберёшься</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #A31D4E; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+            </h1>
+            <div style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 14px; transform: rotate(-1deg); text-align: center;">из Тбилиси до винодельни ≈2,5 часа красоты и серпантина</div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px; width: min(390px, 100%); margin-top: 28px;">
+              <button type="button" id="rs-need" class="rs-press" style="--rr: -0.8deg; position: relative; display: flex; align-items: center; gap: 14px; text-align: left; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 6px 7px 0 #33291F; padding: 12px 14px; cursor: pointer; transform: rotate(-0.8deg);">
+                <img data-rsvp-src="assets/car-van.png" alt="Бусик для гостей" style="width: 86px; height: auto; flex: none; transform: rotate(-2deg);" />
+                <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                  <span style="font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; color: #33291F;">нужен трансфер!!!</span>
+                  <span style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227;">соберём в Тбилиси, довезём туда и обратно</span>
+                </span>
+                <span id="rs-b-need" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+              <button type="button" id="rs-self" class="rs-press" style="--rr: 0.8deg; position: relative; display: flex; align-items: center; gap: 14px; text-align: left; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 6px 7px 0 #33291F; padding: 12px 14px; cursor: pointer; transform: rotate(0.8deg);">
+                <img data-rsvp-src="assets/car-roof.png" alt="Ребёнок на крыше машины" style="width: 86px; height: auto; flex: none; transform: rotate(2deg);" />
+                <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                  <span id="rs-road-selfl" style="font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; color: #33291F;">доеду сам</span>
+                  <span style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227;">своя машина или аренда — сам себе штурман</span>
+                </span>
+                <span id="rs-b-self" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+            </div>
+
+            <div id="rs-road-sub" style="display: none; position: relative; width: min(390px, 100%); margin-top: 22px; animation: kInD 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+              <div style="position: absolute; top: -10px; left: 24px; width: 84px; height: 24px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-7deg); z-index: 3;"></div>
+              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 22px 18px 20px; transform: rotate(-0.6deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;">
+                <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #6C7ED6;">сам за рулём? уважаем!!</span><br />
+                машину удобно взять тут:
+                <a href="https://www.localrent.com/ru/georgia/" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #33291F; color: #F2EDE2; padding: 7px 12px; transform: rotate(-1.5deg); box-shadow: 3px 4px 0 rgba(51,41,31,0.35); margin-left: 6px;">localrent.com →</a>
+                <div style="border-top: 3px dashed rgba(51,41,31,0.25); margin: 16px 0 12px;"></div>
+                <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E;">и раз есть машина —</span> <span id="rs-take-q">подхватишь</span> кого-то из наших? мы напишем ближе к дате и подсадим попутчиков.
+                <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 16px;">
+                  <button type="button" id="rs-minus" class="rs-press-s" style="--rr: 0deg; width: 48px; height: 48px; border-radius: 50%; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Rubik Mono One', monospace; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">−</button>
+                  <span id="rs-seats" style="width: 74px; height: 62px; background: #FBF8EF; border: 3px solid #33291F; display: flex; align-items: center; justify-content: center; font-family: 'Rubik Mono One', monospace; font-size: 28px; color: #A31D4E; transform: rotate(-1deg);">0</span>
+                  <button type="button" id="rs-plus" class="rs-press-s" style="--rr: 0deg; width: 48px; height: 48px; border-radius: 50%; background: #E2588E; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Rubik Mono One', monospace; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">+</button>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                  <span id="rs-seats-label" style="display: inline-block; background: #FBF8EF; padding: 2px 12px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px; transform: rotate(-1.5deg);">пока никого — еду налегке</span>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                  <button type="button" id="rs-road-next" class="rs-press" style="--rr: -1deg; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 14px 22px; cursor: pointer; transform: rotate(-1deg);">дальше →</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="position: absolute; right: 5%; bottom: -6px; width: 150px; z-index: 1;">
+              <div style="animation: wiggle 3.2s ease-in-out infinite; transform-origin: 50% 94%;">
+                <img data-rsvp-src="assets/rsvp/trimmer-kid.png" alt="Ребёнок с триммером в защитном шлеме" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(-5px 8px 9px rgba(51,41,31,0.32)); cursor: pointer;" />
+              </div>
+              <span style="position: absolute; left: -66px; top: 20px; transform: rotate(-6deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; white-space: nowrap; pointer-events: none;">дорожная служба<br />уже вышла</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: вопрос 3 — ночёвка -->
+    <div style="position: fixed; inset: 0; z-index: 110; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-sleep" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 18px 22px 140px; position: relative;">
+            <button type="button" class="rs-goback rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← назад</button>
+
+            <div style="margin-top: 56px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="rs-chips" style="display: flex; align-items: flex-start; justify-content: center; gap: 14px;"></div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                <div style="width: 170px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+                  <div class="rs-prog-fill" style="height: 10px; background: #A31D4E; width: 0%; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+                </div>
+                <span class="rs-prog-text" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; color: #4B3227; transform: rotate(-2deg);"></span>
+              </div>
+            </div>
+
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 34px;">вопрос №3 · самый уютный</div>
+            <h1 style="margin: 12px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span id="rs-sleep-verb" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(26px, 8vw, 38px); background: #B49BE0; color: #33291F; padding: 6px 14px 4px; transform: rotate(-1.5deg);">останешься</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(26px, 8vw, 38px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(2deg) translateY(4px); margin-left: 5px;">ночевать</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #ECA02B; color: #33291F; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+            </h1>
+            <div style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 14px; transform: rotate(-1deg); text-align: center;">домики прямо на винодельне — такси в ночи отменяется!</div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px; width: min(360px, 100%); margin-top: 28px;">
+              <button type="button" id="rs-stay-yes" class="rs-press" style="--rr: -1deg; position: relative; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; background: #3B4A20; color: #EBDF7E; border: 3px solid #33291F; box-shadow: 6px 7px 0 #33291F; padding: 19px 18px; cursor: pointer; transform: rotate(-1deg);"><span id="rs-stay-yes-l">остаюсь!!! танцы до 02:47</span>
+                <span id="rs-b-stayyes" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+              <button type="button" id="rs-stay-no" class="rs-press-s" style="--rr: 1deg; position: relative; font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; background: rgba(251,248,239,0.8); color: #A31D4E; border: 3px dashed #A31D4E; padding: 13px 18px; cursor: pointer; transform: rotate(1deg);"><span id="rs-stay-no-l">нет, уеду в ночь((</span>
+                <span id="rs-b-stayno" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+              </button>
+            </div>
+
+            <div id="rs-sleep-sub" style="display: none; position: relative; width: min(390px, 100%); margin-top: 22px; animation: kInD 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+              <div style="position: absolute; top: -10px; right: 24px; width: 84px; height: 24px; background: rgba(180,155,224,0.5); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(5deg); z-index: 3;"></div>
+              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 22px 18px 20px; transform: rotate(0.6deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;">
+                <span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: 15px; background: #A31D4E; color: #F2EDE2; padding: 6px 10px; transform: rotate(-2deg);">220 GEL</span>
+                <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E; margin-left: 8px;">— столько стоит домик на ночь.</span><br />
+                и деликатный вопрос века: как поступим?
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 16px;">
+                  <button type="button" id="rs-pay-me" class="rs-press" style="--rr: -0.6deg; position: relative; text-align: left; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); padding: 13px 16px; cursor: pointer; transform: rotate(-0.6deg); display: flex; flex-direction: column; gap: 2px;">
+                    <span id="rs-pay-me-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #33291F;">оплачу домик сам</span>
+                    <span style="font-family: 'Neucha', cursive; font-size: 14px; color: #4B3227;">минус одна забота у молодожёнов ♥</span>
+                    <span id="rs-b-payme" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+                  </button>
+                  <button type="button" id="rs-pay-them" class="rs-press" style="--rr: 0.6deg; position: relative; text-align: left; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); padding: 13px 16px; cursor: pointer; transform: rotate(0.6deg); display: flex; flex-direction: column; gap: 2px;">
+                    <span id="rs-pay-them-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #33291F;">гуляю за счёт молодожёнов</span>
+                    <span style="font-family: 'Neucha', cursive; font-size: 14px; color: #4B3227;">имею право, я гость!! (принято)</span>
+                    <span id="rs-b-paythem" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div style="position: absolute; left: 4%; bottom: -4px; width: 180px; z-index: 1;">
+              <div style="animation: wiggle 3.6s ease-in-out infinite; transform-origin: 50% 94%;">
+                <img data-rsvp-src="assets/rsvp/flip-kid.png" alt="Ребёнок кувыркается" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(5px 8px 9px rgba(51,41,31,0.3)); cursor: pointer;" />
+              </div>
+              <span style="position: absolute; right: -30px; top: 6px; transform: rotate(4deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; white-space: nowrap; pointer-events: none;">кровати уже<br />тестируются</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: проверка ответов -->
+    <div style="position: fixed; inset: 0; z-index: 112; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-check" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 18px 22px 60px; position: relative;">
+            <button type="button" class="rs-goback rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← назад</button>
+
+            <div style="margin-top: 56px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="rs-chips" style="display: flex; align-items: flex-start; justify-content: center; gap: 14px;"></div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                <div style="width: 170px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+                  <div class="rs-prog-fill" style="height: 10px; background: #A31D4E; width: 0%; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+                </div>
+                <span class="rs-prog-text" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; color: #4B3227; transform: rotate(-2deg);"></span>
+              </div>
+            </div>
+
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 34px;">финишная прямая!!!</div>
+            <h1 style="margin: 12px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(24px, 7.5vw, 34px); background: #ECA02B; color: #33291F; padding: 8px 12px 6px; transform: rotate(-2deg);">всё</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(26px, 8vw, 38px); background: #6C7ED6; color: #FFFFFF; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">сходится</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #A31D4E; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+            </h1>
+
+            <div id="rs-sum-rows" style="display: flex; flex-direction: column; gap: 14px; width: min(430px, 100%); margin-top: 26px;"></div>
+
+            <div style="position: relative; display: inline-block; margin-top: 34px;">
+              <button type="button" id="rs-confirm" class="rs-press" style="--rr: 0deg; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.4vw, 18px); text-transform: uppercase; letter-spacing: 1px; background: #A31D4E; color: #F2EDE2; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px 26px; cursor: pointer; animation: wiggle 2.4s ease-in-out infinite;">всё так!!! отправить →</button>
+            </div>
+            <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 20px; transform: rotate(1deg); text-align: center; max-width: 320px;">передумаешь потом — не страшно: напиши нам, поменяем руками</div>
+
+            <div style="position: relative; margin-top: 30px; width: 130px;">
+              <div style="animation: wiggle 3.4s ease-in-out infinite; transform-origin: 50% 94%;">
+                <img data-rsvp-src="assets/rsvp/lace-girl.png" alt="Девочка в белом кружевном платье с мамой" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(4px 7px 8px rgba(51,41,31,0.3)); cursor: pointer;" />
+              </div>
+              <span style="position: absolute; left: 50%; bottom: -10px; width: max-content; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 9px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; pointer-events: none;">отдел контроля проверит в четыре глаза</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- лист: готово / сводка -->
+    <div style="position: fixed; inset: 0; z-index: 114; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-done" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 34px 22px 0; position: relative;">
+            <button type="button" class="rs-exit rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← на сайт</button>
+            <div style="position: absolute; top: -8px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+
+            <div style="margin-top: 14px; border: 4px dashed #A31D4E; color: #A31D4E; background: rgba(251,248,239,0.92); font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6.5vw, 30px); letter-spacing: 2px; padding: 14px 20px; animation: stampIn 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;">ПРИНЯТО!!!</div>
+            <div id="rs-done-thanks" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(22px, 7vw, 27px); color: #33291F; transform: rotate(-1.5deg); margin-top: 18px; text-align: center;">спасибо!</div>
+
+            <div id="rs-done-pass" style="width: 100%;">
+              <div style="font-family: 'Neucha', cursive; font-size: 17px; color: #4B3227; margin: 8px auto 0; text-align: center; max-width: 340px;">хинкали внесены в смету, тамада предупреждён. <span id="rs-done-wait">ждём тебя 11 сентября!</span></div>
+              <div style="position: relative; height: 228px; width: min(340px, 92%); margin: 22px auto 0;">
+                <div style="position: absolute; left: 4%; bottom: 6px; transform: rotate(-5deg); z-index: 2;">
+                  <div style="animation: wiggle 4.2s ease-in-out infinite; transform-origin: 50% 92%;">
+                    <img data-rsvp-src="assets/rsvp/fancy-girl.png" alt="Девочка в нарядном блестящем костюме" class="rsvp-spin" style="height: 185px; width: auto; filter: drop-shadow(6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
+                  </div>
+                  <span style="position: absolute; left: 50%; bottom: -8px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 2px 9px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; pointer-events: none;">парадный образ: найден</span>
+                </div>
+                <div style="position: absolute; right: 2%; bottom: 6px; transform: rotate(5deg); z-index: 1;">
+                  <div style="animation: wiggle 3.6s ease-in-out infinite reverse; transform-origin: 50% 92%;">
+                    <img data-rsvp-src="assets/rsvp/sit-kid-v2.png" alt="Мальчик в рубашке сидит и терпеливо ждёт" class="rsvp-spin" style="height: 185px; width: auto; filter: drop-shadow(-6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
+                  </div>
+                  <span style="position: absolute; left: 50%; bottom: -6px; width: max-content; transform: translateX(-50%) rotate(3deg); background: #FBF8EF; padding: 2px 9px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; pointer-events: none;">занял очередь за хинкали</span>
+                </div>
+                <div style="position: absolute; left: 48%; top: 8px; z-index: 3; margin-left: -20px;">
+                  <span style="display: inline-block; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 44px; color: #E2588E; transform: rotate(14deg); animation: pulseStar 1.6s ease-in-out infinite alternate;">♥</span>
+                </div>
+              </div>
+            </div>
+            <div id="rs-done-fail" style="display: none; width: 100%;">
+              <div style="font-family: 'Neucha', cursive; font-size: 17px; color: #4B3227; margin: 8px auto 0; text-align: center; max-width: 340px;">будем скучать. по-настоящему!! если планы вдруг поменяются — ты знаешь, кому писать.</div>
+              <div style="position: relative; width: min(260px, 74%); margin: 22px auto 0;">
+                <div style="animation: wiggle 4.2s ease-in-out infinite; transform-origin: 50% 92%;">
+                  <img data-rsvp-src="assets/rsvp/sofa-girl.png" alt="Девочка с пуделем на синем диване" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
+                </div>
+                <span style="position: absolute; left: 50%; bottom: -10px; width: max-content; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; pointer-events: none;">твоё место на диване уже занято((</span>
+              </div>
+            </div>
+
+            <div id="rs-recap-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #A31D4E; transform: rotate(-2deg); margin-top: 30px;">твои ответы:</div>
+            <div id="rs-done-rows" style="display: flex; flex-direction: column; gap: 12px; width: min(430px, 100%); margin-top: 12px;"></div>
+            <div id="rs-sync-note" style="display: none; margin-top: 14px; font-family: 'Neucha', cursive; font-size: 14px; color: rgba(75,50,39,0.75); border: 2px dashed rgba(163,29,78,0.45); padding: 5px 12px; transform: rotate(-1deg); text-align: center; max-width: 320px;">интернет моргнул — ответы сохранились на этом устройстве, отправим при следующем открытии анкеты</div>
+
+            <div style="max-width: 430px; width: 100%; margin-top: 22px;">
+              <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 18px 16px; transform: rotate(0.6deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5; text-align: center;">что-то изменилось? не проходи анкету заново — просто напиши, поправим руками:</div>
+              <div style="display: flex; justify-content: center; gap: 14px; margin-top: 14px; flex-wrap: wrap;">
+                <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; padding: 11px 16px; transform: rotate(-1.5deg);">тг Никиты</a>
+                <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #E2588E; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; padding: 11px 16px; transform: rotate(1.5deg);">тг Ульяны</a>
+              </div>
+            </div>
+
+            <button type="button" id="rs-reset" style="display: none; margin-top: 26px; background: transparent; border: 2px dashed rgba(75,50,39,0.35); color: rgba(75,50,39,0.65); font-family: 'Neucha', cursive; font-size: 14px; padding: 6px 12px; transform: rotate(-1deg); cursor: pointer;">демо: сбросить ответы и пройти заново</button>
+
+            <div style="width: 108%; margin: 34px 0 0 0; transform: rotate(-1.4deg); background: #33291F; color: #F2EDE2; overflow: hidden; padding: 10px 0; box-shadow: 0 6px 14px rgba(51,41,31,0.3);">
+              <div style="display: flex; width: max-content; animation: marquee 16s linear infinite; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap;">
+                <span class="rs-marquee" style="padding-right: 24px;"></span>
+                <span class="rs-marquee" style="padding-right: 24px;"></span>
+              </div>
+            </div>
+            <div style="height: 26px;"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- реакция-оверлей (арбузный восторг / диванная грусть) -->
+    <div id="rs-react" style="display: none; position: fixed; inset: 0; z-index: 130; align-items: center; justify-content: center; pointer-events: none;">
+      <div style="position: absolute; inset: 0; background: rgba(51,41,31,0.45); animation: fadeIn 0.25s ease both;"></div>
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">
+        <img id="rs-react-yes" data-rsvp-src="assets/rsvp/watermelon-kid.png" alt="Довольный ребёнок с арбузом" style="display: none; width: min(62vw, 290px); height: auto; filter: drop-shadow(6px 12px 14px rgba(0,0,0,0.45));" />
+        <img id="rs-react-no" data-rsvp-src="assets/rsvp/sad-kid.png" alt="Расстроенный ребёнок на корточках" style="display: none; width: min(50vw, 220px); height: auto; filter: drop-shadow(6px 12px 14px rgba(0,0,0,0.45));" />
+        <span id="rs-react-text" style="margin-top: 16px; display: inline-block; background: #FBF8EF; color: #33291F; padding: 5px 18px; box-shadow: 3px 4px 0 rgba(51,41,31,0.85); font-family: 'Caveat', cursive; font-weight: 700; font-size: 27px; transform: rotate(-2deg);"></span>
+      </div>
+    </div>
+
+    <!-- конфетти -->
+    <canvas id="rs-confetti" style="position: fixed; inset: 0; width: 100%; height: 100%; z-index: 135; pointer-events: none;"></canvas>
+
+  </div><!-- /rsvp-root -->
+
 </div><!-- /app -->
 
 
@@ -1012,6 +1500,10 @@
   var app = document.getElementById('app');
   var reduceW = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   app.setAttribute('data-motion', reduceW ? 'off' : 'on');
+
+  // прямой заход на /rsvp: сразу анкета, без бут-лоудера, гейта музыки и главной
+  // (объявлено до аудио-блока: на standalone музыку не прогреваем вообще)
+  var rsvpStandalone = location.pathname.replace(/\/+$/, '') === '/rsvp';
 
   var elBoot = document.getElementById('boot'),
       elBootBar = document.getElementById('boot-bar'),
@@ -1053,7 +1545,9 @@
     return w.__nuAudio;
   }
   var audio = null, fadeIv = null, musicPlaying = false, audioPrimed = false, pausedByHidden = false, pendingStart = false;
-  try { audio = getAudio(); audio.preload = 'auto'; audio.loop = true; } catch (e) {}
+  if (!rsvpStandalone) {
+    try { audio = getAudio(); audio.preload = 'auto'; audio.loop = true; } catch (e) {}
+  }
 
   // ---- «прогрев» аудио первым жестом пользователя ----
   // Браузеры блокируют play() без user-gesture, поэтому авто-выбор по таймеру не может
@@ -1064,6 +1558,7 @@
     primeEvents.forEach(function (ev) { document.removeEventListener(ev, primeAudio, true); });
   }
   function primeAudio() {
+    if (rsvpStandalone) { detachPrime(); return; }
     if (audioPrimed) { detachPrime(); return; }
     var a = getAudio();
     try {
@@ -1927,13 +2422,761 @@
     }, 990 + l2PlayMs() + 1000);
   }
 
+  // ==================== RSVP-АНКЕТА (порт rsvp.dc.html) ====================
+  // Оверлей из «листов» поверх сайта. Открывается кнопкой «заполнить анкету»
+  // (history.pushState('/rsvp')) или прямым заходом на /rsvp (nginx отдаёт index.html).
+  // Бэкенд — контейнер backend/ за тем же nginx (location /api/): /auth проверяет
+  // секретное слово, /submit пишет ответы в Google-таблицу. RSVP_API = '' включает
+  // чисто клиентский демо-режим: локальные пароли и console.log вместо отправки
+  // (для открытия index.html без докера).
+  var RSVP_API = '/api/rsvp';
+  var RSVP_LOADER_MS = 3400;
+
+  // демо-подсказка паролей и кнопка сброса: в клиентском демо-режиме — всегда,
+  // с бэкендом — только пока тот сам в демо-режиме (/api/health → {demo:true});
+  // при заливке реального списка гостей подсказки гаснут автоматически
+  var rsDemoHints = !RSVP_API;
+  var rsHintsChecked = false;
+
+  var RS_KEY = 'nu-rsvp-v1';
+  var RS_ORDER = ['loader', 'secret', 'hello', 'come', 'road', 'sleep', 'check', 'done'];
+  var RS_LDR_CAPS = ['вскрываем конверт…', 'ищем твою анкету…', 'точим карандашик…', 'пересчитываем хинкали…'];
+  var RS_ERRS = ['не-а, не то слово((', 'охрана качает головой. ещё разок?', 'хм. может, опечатка?', 'слово где-то рядом, но нет!!'];
+  var RS_SEAT_LABELS = ['пока никого — еду налегке', '+1 счастливчик едет с тобой', '+2 — уже компания!', '+3 — целая банда!', '+4 — весёлый экипаж!', '+5 — да это маршрутка!', '+6 — почти автобус!!', '+7 — ты и есть трансфер!!!'];
+  var RS_DEMO_GUESTS = { 'хинкали': ['Саша'], 'сациви': ['Маша', 'Дима'] };
+  var RS_TORN_A = 'polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%)';
+  var RS_TORN_B = 'polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%)';
+
+  var R = rsvpBootState();
+  R.open = false;
+
+  var elRsvpRoot = document.getElementById('rsvp-root');
+  var rsEls = {};
+  ['rs-pose-loader', 'rs-pose-secret', 'rs-pose-hello', 'rs-pose-come', 'rs-pose-road', 'rs-pose-sleep', 'rs-pose-check', 'rs-pose-done',
+   'rs-ldr-bar', 'rs-ldr-cap', 'rs-ldr-pct', 'rs-word', 'rs-wordbox', 'rs-word-go', 'rs-err', 'rs-err-msg', 'rs-errlots', 'rs-hints',
+   'rs-name-a', 'rs-name-b', 'rs-hello-couple', 'rs-serious', 'rs-info-single', 'rs-info-couple', 'rs-start',
+   'rs-come-h-single', 'rs-come-h-couple', 'rs-come-single', 'rs-come-couple', 'rs-come-a-name', 'rs-come-b-name',
+   'rs-b-yes', 'rs-b-no', 'rs-b-both', 'rs-b-a', 'rs-b-b', 'rs-b-no2',
+   'rs-road-verb', 'rs-road-selfl', 'rs-b-need', 'rs-b-self', 'rs-road-sub', 'rs-take-q', 'rs-seats', 'rs-seats-label',
+   'rs-sleep-verb', 'rs-stay-yes-l', 'rs-stay-no-l', 'rs-b-stayyes', 'rs-b-stayno', 'rs-sleep-sub', 'rs-pay-me-t', 'rs-pay-them-t', 'rs-b-payme', 'rs-b-paythem',
+   'rs-sum-rows', 'rs-confirm', 'rs-done-thanks', 'rs-done-pass', 'rs-done-fail', 'rs-done-wait', 'rs-recap-t', 'rs-done-rows', 'rs-sync-note', 'rs-reset',
+   'rs-react', 'rs-react-yes', 'rs-react-no', 'rs-react-text', 'rs-confetti'
+  ].forEach(function (id) { rsEls[id] = document.getElementById(id); });
+
+  var rsInT, rsLdrIv, rsLdrTo, rsAdvT, rsCloseT, rsFwRaf, rsHydrated = false;
+  var rsSession = 0;   // инвалидация колбэков auth при закрытии/переоткрытии оверлея
+
+  function rsvpMotionOn() { return app.getAttribute('data-motion') !== 'off'; }
+  function rsvpNorm(w) { return String(w || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, ''); }
+
+  function rsvpBootState() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(RS_KEY) || 'null'); } catch (e) {}
+    var base = {
+      phase: 'loader', ldrIn: false, ldrPct: 0,
+      word: '', fails: 0, guest: null,
+      come: null, transfer: null, seats: 0, stay: null, pay: null,
+      confirmed: false, reaction: null, visited: {}, sync: null, pending: null
+    };
+    if (saved && saved.word && saved.names && saved.names.length) {
+      base.guest = { names: saved.names };
+      base.word = saved.word;
+      base.come = saved.come != null ? saved.come : null;
+      base.transfer = saved.transfer != null ? saved.transfer : null;
+      base.seats = saved.seats || 0;
+      base.stay = saved.stay != null ? saved.stay : null;
+      base.pay = saved.pay != null ? saved.pay : null;
+      base.confirmed = !!saved.confirmed;
+      base.visited = saved.visited || {};
+      base.sync = saved.sync || null;
+      base.pending = saved.pending || null;
+      if (base.confirmed) { base.phase = 'done'; base.ldrIn = true; }
+    }
+    return base;
+  }
+
+  function rsvpPersist() {
+    if (!R.guest) return;
+    try {
+      localStorage.setItem(RS_KEY, JSON.stringify({
+        word: R.word, names: R.guest.names, come: R.come, transfer: R.transfer,
+        seats: R.seats, stay: R.stay, pay: R.pay, confirmed: R.confirmed,
+        visited: R.visited, sync: R.sync, pending: R.pending
+      }));
+    } catch (e) {}
+  }
+
+  // ---------- производные ----------
+  function rsvpIsNo() { return R.come === 'no'; }
+  function rsvpCouple() { return !!(R.guest && R.guest.names.length > 1); }
+  function rsvpAttendNames() {
+    if (!R.guest) return [];
+    var names = R.guest.names;
+    if (names.length === 1) return R.come === 'no' ? [] : [names[0]];
+    if (R.come === 'both') return names;
+    if (R.come === 'onlyA') return [names[0]];
+    if (R.come === 'onlyB') return [names[1]];
+    if (R.come === 'no') return [];
+    return names;
+  }
+  function rsvpAttendN() { return Math.max(1, rsvpAttendNames().length); }
+
+  // следующий НЕотвеченный шаг (после правки со сводки вернёт сразу на чек)
+  function rsvpFlowNext() {
+    if (R.come == null) return 'come';
+    if (R.come !== 'no') {
+      if (R.transfer == null) return 'road';
+      if (R.stay == null || (R.stay === 'yes' && R.pay == null)) return 'sleep';
+    }
+    return 'check';
+  }
+
+  function rsvpGo(phase) {
+    // явный переход (назад, чип, «поменять») отменяет запланированный автопереход
+    clearTimeout(rsAdvT);
+    rsvpHideReaction();
+    R.visited[phase] = 1;
+    R.phase = phase;
+    rsvpPersist();
+    rsvpRender();
+  }
+
+  function rsvpAdvance(delay) {
+    clearTimeout(rsAdvT);
+    rsAdvT = setTimeout(function () { rsvpGo(rsvpFlowNext()); }, delay);
+  }
+
+  function rsvpGoBack() {
+    var map = { hello: 'secret', come: 'hello', road: 'come', sleep: 'road', check: rsvpIsNo() ? 'come' : 'sleep' };
+    if (map[R.phase]) rsvpGo(map[R.phase]);
+  }
+
+  // ---------- бэкенд ----------
+  function rsvpAuth(word, cb) {
+    var norm = rsvpNorm(word);
+    if (!norm) { cb(null, 'bad'); return; }
+    if (!RSVP_API) {
+      setTimeout(function () {
+        var names = RS_DEMO_GUESTS[norm];
+        cb(names || null, names ? null : 'bad');
+      }, 350);
+      return;
+    }
+    var settled = false;
+    var to = setTimeout(function () { if (!settled) { settled = true; cb(null, 'net'); } }, 9000);
+    fetch(RSVP_API + '/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word: norm }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (settled) return; settled = true; clearTimeout(to);
+        if (d && d.ok && d.names && d.names.length) cb(d.names, null);
+        else cb(null, d && d.error === 'slow-down' ? 'rate' : 'bad');
+      })
+      .catch(function () { if (!settled) { settled = true; clearTimeout(to); cb(null, 'net'); } });
+  }
+
+  function rsvpBuildPayload() {
+    return {
+      secretWord: rsvpNorm(R.word),
+      guests: R.guest ? R.guest.names : [],
+      attending: rsvpAttendNames(),
+      isComing: R.come !== 'no',
+      comeAnswer: R.come,
+      transfer: R.come === 'no' ? null : { mode: R.transfer, seatsOffered: R.transfer === 'self' ? R.seats : 0 },
+      overnight: R.come === 'no' ? null : { staying: R.stay === 'yes', housePayment: R.stay === 'yes' ? R.pay : null },
+      submittedAt: new Date().toISOString()
+    };
+  }
+
+  function rsvpSend(payload) {
+    if (!RSVP_API) {
+      console.log('[RSVP] payload:', JSON.stringify(payload));
+      R.sync = 'ok'; R.pending = null; rsvpPersist(); rsvpRenderDone();
+      return;
+    }
+    R.sync = 'pending'; R.pending = payload; rsvpPersist();
+    fetch(RSVP_API + '/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), keepalive: true })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok) { R.sync = 'ok'; R.pending = null; }
+        else { R.sync = 'pending'; }
+        rsvpPersist(); rsvpRenderDone();
+      })
+      .catch(function () { R.sync = 'pending'; rsvpPersist(); rsvpRenderDone(); });
+  }
+
+  // ---------- рендер ----------
+  function rsvpPoseFor(key) {
+    var cur = RS_ORDER.indexOf(R.phase);
+    var idx = RS_ORDER.indexOf(key);
+    if (key === 'loader') {
+      if (!R.ldrIn) return 'translateY(106%) rotate(2.5deg)';
+      return cur === 0 ? 'translateY(0px)' : 'translateY(-112%) rotate(-2.5deg)';
+    }
+    if (idx === cur) return 'translateY(-106%)';
+    return idx < cur ? 'translateY(-218%) rotate(-2.5deg)' : 'rotate(2.5deg)';
+  }
+
+  function rsvpRenderPoses() {
+    RS_ORDER.forEach(function (key) {
+      var pose = rsEls['rs-pose-' + key];
+      pose.style.transform = rsvpPoseFor(key);
+      // спрятанные за вьюпортом листы фокусируемы табом — глушим их через inert
+      try { pose.parentNode.inert = key !== R.phase; } catch (e) {}
+    });
+  }
+
+  function rsvpChipDefs() {
+    var couple = rsvpCouple(), skip = rsvpIsNo();
+    return [
+      { key: 'come', n: '1', label: couple ? 'кто будет?' : 'придёшь?', done: R.come != null, skip: false },
+      { key: 'road', n: '2', label: 'дорога', done: R.transfer != null && !skip, skip: skip },
+      { key: 'sleep', n: '3', label: 'ночёвка', done: !skip && R.stay != null && (R.stay === 'no' || R.pay != null), skip: skip },
+      { key: 'check', n: '4', label: 'чек', done: R.confirmed, skip: false }
+    ];
+  }
+
+  function rsvpRenderChips() {
+    var defs = rsvpChipDefs();
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-chips'), function (box) {
+      box.innerHTML = '';
+      defs.forEach(function (d) {
+        var current = R.phase === d.key;
+        var clickable = !d.skip && !current && (d.done || R.visited[d.key]);
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px;width:62px;' +
+          'cursor:' + (clickable ? 'pointer' : 'default') + ';opacity:' + (d.skip ? '0.75' : '1') + ';';
+        var circ = document.createElement('span');
+        circ.style.cssText = 'width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;' +
+          "font-family:'Rubik Mono One',monospace;font-size:15px;" +
+          'border:' + (d.skip ? '3px dashed rgba(51,41,31,0.35)' : '3px solid #33291F') + ';' +
+          'background:' + (current ? '#A31D4E' : d.done ? '#3B4A20' : d.skip ? 'transparent' : '#FBF8EF') + ';' +
+          'color:' + (current ? '#F2EDE2' : d.done ? '#EBDF7E' : d.skip ? 'rgba(51,41,31,0.4)' : '#33291F') + ';' +
+          'box-shadow:' + (d.skip ? 'none' : '2px 3px 0 rgba(51,41,31,0.8)') + ';transform:rotate(-2deg);' +
+          'animation:' + (current ? 'wiggle 2s ease-in-out infinite' : 'none') + ';';
+        circ.textContent = d.skip ? '✕' : (d.done && !current ? '✓' : d.n);
+        var lab = document.createElement('span');
+        lab.style.cssText = "font-family:'Oswald',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;text-align:center;" +
+          'color:' + (d.skip ? 'rgba(51,41,31,0.4)' : current ? '#A31D4E' : '#4B3227') + ';' +
+          'text-decoration:' + (d.skip ? 'line-through' : 'none') + ';';
+        lab.textContent = d.label;
+        wrap.appendChild(circ);
+        wrap.appendChild(lab);
+        if (clickable) wrap.addEventListener('click', function () { rsvpGo(d.key); });
+        box.appendChild(wrap);
+      });
+    });
+    var skip = rsvpIsNo();
+    var total = skip ? 2 : 4, done = 0;
+    if (R.come != null) done++;
+    if (!skip && R.transfer != null) done++;
+    if (!skip && R.stay != null && (R.stay === 'no' || R.pay != null)) done++;
+    if (R.confirmed) done++;
+    done = Math.min(done, total);
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-prog-fill'), function (el) {
+      el.style.width = Math.round(done / total * 100) + '%';
+    });
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-prog-text'), function (el) {
+      el.textContent = done + ' из ' + total;
+    });
+  }
+
+  function rsvpRows(withEdit) {
+    var names = R.guest ? R.guest.names : ['…'];
+    var couple = names.length > 1;
+    var rows = [];
+    var comeA = R.come === 'no' ? (couple ? 'никто не сможет((' : 'не смогу приехать((')
+      : R.come === 'both' ? 'будем оба!!!'
+      : R.come === 'onlyA' ? 'только ' + names[0]
+      : R.come === 'onlyB' ? 'только ' + names[1]
+      : 'да, буду!!!';
+    rows.push({ q: couple ? 'кто будет?' : 'придёшь?', a: comeA, key: 'come' });
+    if (R.come !== 'no' && R.come != null) {
+      var n = rsvpAttendN();
+      var seatW = R.seats === 1 ? 'место' : R.seats < 5 ? 'места' : 'мест';
+      rows.push({
+        q: 'дорога', key: 'road',
+        a: R.transfer === 'need' ? 'нужен трансфер из Тбилиси'
+          : R.transfer === 'self' ? ((n > 1 ? 'едем сами' : 'еду сам') + (R.seats > 0 ? ' · +' + R.seats + ' ' + seatW + ' для наших' : ' · без попутчиков'))
+          : '—'
+      });
+      rows.push({
+        q: 'ночёвка', key: 'sleep',
+        a: R.stay === 'yes' ? (n > 1 ? 'остаёмся ночевать' : 'остаюсь ночевать')
+          : R.stay === 'no' ? (n > 1 ? 'уедем в ночь' : 'уеду в ночь') : '—'
+      });
+      if (R.stay === 'yes') {
+        rows.push({
+          q: 'домик · 220 GEL', key: 'sleep',
+          a: R.pay === 'me' ? (n > 1 ? 'оплатим сами' : 'оплачу сам')
+            : R.pay === 'them' ? 'за счёт молодожёнов' : '—'
+        });
+      }
+    }
+    var frag = document.createDocumentFragment();
+    rows.forEach(function (r, i) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;padding:13px 16px 11px;' +
+        'background:' + (i % 2 ? '#F7F3E8' : '#FBF8EF') + ';' +
+        'clip-path:' + (i % 2 ? RS_TORN_B : RS_TORN_A) + ';' +
+        'transform:rotate(' + (i % 2 ? 0.8 : -0.8) + 'deg);';
+      var txt = document.createElement('div');
+      txt.style.cssText = 'flex:1;min-width:0;';
+      var q = document.createElement('div');
+      q.style.cssText = "font-family:'Caveat',cursive;font-weight:700;font-size:19px;color:#A31D4E;line-height:1.1;";
+      q.textContent = r.q;
+      var a = document.createElement('div');
+      a.style.cssText = "font-family:'Neucha',cursive;font-size:17px;color:#33291F;margin-top:3px;";
+      a.textContent = r.a;
+      txt.appendChild(q); txt.appendChild(a);
+      row.appendChild(txt);
+      if (withEdit) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rs-edit';
+        btn.style.cssText = "flex:none;background:transparent;border:none;font-family:'Oswald',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#6C7ED6;text-decoration:underline wavy #ECA02B 2px;text-underline-offset:4px;cursor:pointer;padding:6px 2px;transform:rotate(-2deg);";
+        btn.textContent = 'поменять';
+        btn.addEventListener('click', function () { rsvpGo(r.key); });
+        row.appendChild(btn);
+      }
+      frag.appendChild(row);
+    });
+    return frag;
+  }
+
+  function rsvpSetBadges(map) {
+    for (var id in map) {
+      var el = rsEls[id];
+      if (el) el.style.display = map[id] ? 'flex' : 'none';
+    }
+  }
+
+  function rsvpRenderDone() {
+    var names = R.guest ? R.guest.names : ['…'];
+    var attend = rsvpAttendNames();
+    var couple = rsvpCouple();
+    var n = rsvpAttendN();
+    rsEls['rs-done-thanks'].textContent = 'спасибо, ' + (attend.length ? attend : names).join(' и ') + '!';
+    rsEls['rs-done-pass'].style.display = R.come !== 'no' ? 'block' : 'none';
+    rsEls['rs-done-fail'].style.display = R.come === 'no' ? 'block' : 'none';
+    rsEls['rs-done-wait'].textContent = n > 1 ? 'ждём вас 11 сентября!' : 'ждём тебя 11 сентября!';
+    rsEls['rs-recap-t'].textContent = couple ? 'ваши ответы:' : 'твои ответы:';
+    rsEls['rs-done-rows'].innerHTML = '';
+    rsEls['rs-done-rows'].appendChild(rsvpRows(false));
+    rsEls['rs-sync-note'].style.display = (RSVP_API && R.sync === 'pending') ? 'block' : 'none';
+    rsEls['rs-reset'].style.display = rsDemoHints ? 'inline-block' : 'none';
+    var mq = R.come === 'no'
+      ? 'будем скучать ♥ напиши нам ♥ Никита и Ульяна ♥ 11.09.2026 ♥'
+      : 'ждём ' + (n > 1 ? 'вас' : 'тебя') + ' ♥ 11.09.2026 ♥ Кахетия ♥ Chubini Wine Cellar ♥';
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-marquee'), function (el) { el.textContent = mq; });
+  }
+
+  function rsvpRender() {
+    var couple = rsvpCouple();
+    var names = R.guest ? R.guest.names : ['…'];
+    var n = rsvpAttendN();
+
+    rsvpRenderPoses();
+    rsvpRenderChips();
+
+    // пароль
+    rsEls['rs-hints'].style.display = rsDemoHints ? 'block' : 'none';
+    rsEls['rs-err'].style.display = R.fails > 0 ? 'block' : 'none';
+    rsEls['rs-errlots'].style.display = R.fails >= 3 ? 'block' : 'none';
+
+    // привет
+    rsEls['rs-name-a'].textContent = names[0];
+    rsEls['rs-hello-couple'].style.display = couple ? 'inline' : 'none';
+    if (couple) rsEls['rs-name-b'].textContent = names[1];
+    rsEls['rs-serious'].textContent = couple
+      ? 'нам нужно посчитать хинкали с точностью до штуки. поэтому ваши ответы очень важны — от них зависит счастье (и сытость) всех гостей!!'
+      : 'нам нужно посчитать хинкали с точностью до штуки. поэтому твои ответы очень важны — от них зависит счастье (и сытость) всех гостей!!';
+    rsEls['rs-info-single'].style.display = couple ? 'none' : 'block';
+    rsEls['rs-info-couple'].style.display = couple ? 'block' : 'none';
+
+    // вопрос 1
+    rsEls['rs-come-h-single'].style.display = couple ? 'none' : 'block';
+    rsEls['rs-come-h-couple'].style.display = couple ? 'block' : 'none';
+    rsEls['rs-come-single'].style.display = couple ? 'none' : 'flex';
+    rsEls['rs-come-couple'].style.display = couple ? 'flex' : 'none';
+    if (couple) {
+      rsEls['rs-come-a-name'].textContent = names[0];
+      rsEls['rs-come-b-name'].textContent = names[1];
+    }
+    rsvpSetBadges({
+      'rs-b-yes': R.come === 'yes', 'rs-b-no': R.come === 'no' && !couple,
+      'rs-b-both': R.come === 'both', 'rs-b-a': R.come === 'onlyA', 'rs-b-b': R.come === 'onlyB',
+      'rs-b-no2': R.come === 'no' && couple
+    });
+
+    // вопрос 2
+    rsEls['rs-road-verb'].textContent = n > 1 ? 'доберётесь' : 'доберёшься';
+    rsEls['rs-road-selfl'].textContent = n > 1 ? 'доедем сами' : 'доеду сам';
+    rsEls['rs-take-q'].textContent = n > 1 ? 'подхватите' : 'подхватишь';
+    rsvpSetBadges({ 'rs-b-need': R.transfer === 'need', 'rs-b-self': R.transfer === 'self' });
+    rsEls['rs-road-sub'].style.display = R.transfer === 'self' ? 'block' : 'none';
+    rsEls['rs-seats'].textContent = String(R.seats);
+    rsEls['rs-seats-label'].textContent = RS_SEAT_LABELS[R.seats] || RS_SEAT_LABELS[0];
+
+    // вопрос 3
+    rsEls['rs-sleep-verb'].textContent = n > 1 ? 'останетесь' : 'останешься';
+    rsEls['rs-stay-yes-l'].textContent = n > 1 ? 'остаёмся!!! танцы до 02:47' : 'остаюсь!!! танцы до 02:47';
+    rsEls['rs-stay-no-l'].textContent = n > 1 ? 'нет, уедем в ночь((' : 'нет, уеду в ночь((';
+    rsvpSetBadges({ 'rs-b-stayyes': R.stay === 'yes', 'rs-b-stayno': R.stay === 'no' });
+    rsEls['rs-sleep-sub'].style.display = R.stay === 'yes' ? 'block' : 'none';
+    rsEls['rs-pay-me-t'].textContent = n > 1 ? 'оплатим домик сами' : 'оплачу домик сам';
+    rsEls['rs-pay-them-t'].textContent = n > 1 ? 'гуляем за счёт молодожёнов' : 'гуляю за счёт молодожёнов';
+    rsvpSetBadges({ 'rs-b-payme': R.pay === 'me', 'rs-b-paythem': R.pay === 'them' });
+
+    // чек
+    rsEls['rs-sum-rows'].innerHTML = '';
+    rsEls['rs-sum-rows'].appendChild(rsvpRows(true));
+
+    // готово
+    rsvpRenderDone();
+  }
+
+  // ---------- лоудер-конверт ----------
+  function rsvpStartLoader() {
+    clearTimeout(rsInT); clearTimeout(rsLdrTo); clearInterval(rsLdrIv);
+    R.phase = 'loader'; R.ldrIn = false; R.ldrPct = 0;
+    rsvpRender();
+    rsInT = setTimeout(function () { R.ldrIn = true; rsvpRenderPoses(); }, 90);
+    var ms = Math.max(800, RSVP_LOADER_MS);
+    var t0 = Date.now();
+    rsLdrIv = setInterval(function () {
+      var el = Date.now() - t0;
+      R.ldrPct = Math.max(R.ldrPct, Math.min(100, Math.round(el / (ms - 300) * 100)));
+      rsEls['rs-ldr-bar'].style.width = R.ldrPct + '%';
+      rsEls['rs-ldr-pct'].textContent = String(R.ldrPct);
+      rsEls['rs-ldr-cap'].textContent = RS_LDR_CAPS[Math.floor(el / 1400) % RS_LDR_CAPS.length];
+    }, 60);
+    rsLdrTo = setTimeout(function () {
+      clearInterval(rsLdrIv);
+      rsvpGo(R.guest ? 'hello' : 'secret');
+    }, ms + 350);
+  }
+
+  // ---------- реакция и конфетти ----------
+  function rsvpShowReaction(yes, text) {
+    rsEls['rs-react-yes'].style.display = yes ? 'block' : 'none';
+    rsEls['rs-react-no'].style.display = yes ? 'none' : 'block';
+    rsEls['rs-react-text'].textContent = text;
+    rsEls['rs-react'].style.display = 'flex';
+  }
+  function rsvpHideReaction() {
+    rsEls['rs-react'].style.display = 'none';
+  }
+
+  function rsvpBurst() {
+    if (!rsvpMotionOn()) return;
+    var cv = rsEls['rs-confetti'];
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var w = cv.clientWidth, h = cv.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var cols = ['#A31D4E', '#EBDF7E', '#6C7ED6', '#ECA02B', '#E2588E', '#A2A845', '#B49BE0', '#FBF8EF'];
+    var P = [];
+    for (var i = 0; i < 190; i++) {
+      var left = i % 2 === 0;
+      P.push({
+        x: left ? -14 : w + 14,
+        y: h * (0.28 + Math.random() * 0.5),
+        vx: (left ? 1 : -1) * (5 + Math.random() * 10),
+        vy: -(6 + Math.random() * 9),
+        w: 7 + Math.random() * 9, h: 10 + Math.random() * 12,
+        r: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.36,
+        c: cols[i % cols.length], heart: i % 11 === 0
+      });
+    }
+    var t0 = Date.now();
+    function step() {
+      ctx.clearRect(0, 0, w, h);
+      var alive = false;
+      for (var j = 0; j < P.length; j++) {
+        var p = P[j];
+        p.vy += 0.34; p.vx *= 0.988; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        if (p.y < h + 50) alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        if (p.heart) {
+          ctx.font = '22px serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('♥', 0, 0);
+        } else {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+      }
+      if (alive && Date.now() - t0 < 5200) rsFwRaf = requestAnimationFrame(step);
+      else ctx.clearRect(0, 0, w, h);
+    }
+    cancelAnimationFrame(rsFwRaf);
+    rsFwRaf = requestAnimationFrame(step);
+  }
+
+  // ---------- ответы ----------
+  function rsvpPickCome(val) {
+    var yes = val !== 'no';
+    R.come = val;
+    rsvpPersist();
+    rsvpRender();
+    rsvpShowReaction(yes, val === 'no' ? 'эх… ну лааадно(((' : (val === 'yes' || val === 'both') ? 'лучший ответ!!!' : 'уже победа!!!');
+    clearTimeout(rsAdvT);
+    rsAdvT = setTimeout(function () {
+      rsvpHideReaction();
+      rsvpGo(rsvpFlowNext());
+    }, yes ? 1500 : 1900);
+  }
+
+  function rsvpUpdSeats(d) {
+    R.seats = Math.max(0, Math.min(7, R.seats + d));
+    rsvpPersist();
+    rsEls['rs-seats'].textContent = String(R.seats);
+    rsEls['rs-seats-label'].textContent = RS_SEAT_LABELS[R.seats] || RS_SEAT_LABELS[0];
+  }
+
+  // ---------- пароль ----------
+  function rsvpSubmitWord() {
+    var btn = rsEls['rs-word-go'];
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.style.opacity = '0.75';
+    btn.textContent = 'стучимся…';
+    var sess = rsSession;
+    rsvpAuth(rsEls['rs-word'].value, function (names, err) {
+      // ответ пришёл после закрытия/переоткрытия анкеты — сессия уже другая
+      if (sess !== rsSession || !R.open) return;
+      btn.disabled = false;
+      btn.style.opacity = '';
+      btn.textContent = 'впусти меня →';
+      if (names) {
+        var newWord = rsvpNorm(rsEls['rs-word'].value);
+        // другой гость на том же устройстве: прежние ответы ему не принадлежат
+        if (R.word && R.word !== newWord) {
+          R.come = null; R.transfer = null; R.seats = 0; R.stay = null; R.pay = null;
+          R.confirmed = false; R.visited = {}; R.sync = null; R.pending = null;
+        }
+        R.word = newWord;
+        R.guest = { names: names };
+        R.fails = 0;
+        rsvpPersist();
+        rsvpGo('hello');
+      } else {
+        R.fails += 1;
+        rsEls['rs-err-msg'].textContent = err === 'net'
+          ? 'охрана уснула (интернет моргнул). ещё раз?'
+          : err === 'rate'
+          ? 'столько попыток, что охрана заволновалась. подожди минутку!'
+          : RS_ERRS[(R.fails - 1) % RS_ERRS.length];
+        rsEls['rs-err'].style.display = 'block';
+        rsEls['rs-errlots'].style.display = R.fails >= 3 ? 'block' : 'none';
+        var box = rsEls['rs-wordbox'];
+        if (box.animate && rsvpMotionOn()) {
+          box.animate([
+            { transform: 'rotate(-1deg) translateX(0)' },
+            { transform: 'rotate(-1deg) translateX(-10px)' },
+            { transform: 'rotate(-1deg) translateX(9px)' },
+            { transform: 'rotate(-1deg) translateX(-6px)' },
+            { transform: 'rotate(-1deg) translateX(5px)' },
+            { transform: 'rotate(-1deg) translateX(0)' }
+          ], { duration: 400, easing: 'ease-out' });
+        }
+      }
+    });
+  }
+
+  function rsvpConfirm() {
+    if (R.confirmed || !R.guest || R.come == null) return;
+    // на чек можно допрыгнуть чипом с неотвеченными вопросами — сначала доотвечать
+    if (R.come !== 'no' && (R.transfer == null || R.stay == null || (R.stay === 'yes' && R.pay == null))) {
+      rsvpGo(rsvpFlowNext());
+      return;
+    }
+    R.confirmed = true;
+    rsvpPersist();
+    rsvpRenderChips();
+    rsvpBurst();
+    rsvpSend(rsvpBuildPayload());
+    clearTimeout(rsAdvT);
+    rsAdvT = setTimeout(function () { rsvpGo('done'); }, 450);
+  }
+
+  // ---------- вертушка фото по клику ----------
+  function rsvpSpin(e) {
+    if (!rsvpMotionOn()) return;
+    var el = e.currentTarget;
+    if (el.animate) {
+      el.animate([
+        { transform: 'rotate(0deg) scale(1)' },
+        { transform: 'rotate(360deg) scale(1.15)', offset: 0.6 },
+        { transform: 'rotate(360deg) scale(1)' }
+      ], { duration: 900, easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' });
+    }
+  }
+
+  // ---------- гидрация ленивых картинок ----------
+  function rsvpHydrate() {
+    if (rsHydrated) return;
+    rsHydrated = true;
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('[data-rsvp-src]'), function (im) {
+      im.src = im.getAttribute('data-rsvp-src');
+    });
+  }
+
+  // ---------- открытие / закрытие оверлея ----------
+  function rsvpOpen(push) {
+    if (R.open) return;
+    clearTimeout(rsCloseT);
+    rsSession++;
+    rsvpHydrate();
+    R = rsvpBootState();
+    R.open = true;
+    rsEls['rs-word'].value = R.word || '';
+    var wordBtn = rsEls['rs-word-go'];
+    wordBtn.disabled = false;
+    wordBtn.style.opacity = '';
+    wordBtn.textContent = 'впусти меня →';
+    elRsvpRoot.style.display = 'block';
+    lockScroll(true);
+    if (push) { try { history.pushState({ nuRsvp: 1 }, '', '/rsvp'); } catch (e) {} }
+    // главная под оверлеем: слегка «утапливаем» (как при l2 → main) и глушим для таба
+    if (!rsvpStandalone && phase === 'main') elMainWrap.style.transform = 'translateY(24px) scale(0.99)';
+    try { elMainWrap.inert = true; elGate.inert = true; } catch (e) {}
+    // кнопка звука должна остаться доступной поверх листов — поднимаем над анкетой
+    elMuteWrap.style.zIndex = '140';
+    // спрашиваем бэкенд, демо ли он: от этого зависят подсказки паролей
+    if (RSVP_API && !rsHintsChecked) {
+      rsHintsChecked = true;
+      fetch(RSVP_API.replace(/\/rsvp$/, '') + '/health')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          rsDemoHints = !!(d && d.demo);
+          rsEls['rs-hints'].style.display = rsDemoHints ? 'block' : 'none';
+          rsEls['rs-reset'].style.display = rsDemoHints ? 'inline-block' : 'none';
+        })
+        .catch(function () {});
+    }
+    // не отправленные ранее ответы дотаскиваем в таблицу
+    if (RSVP_API && R.confirmed && R.sync === 'pending' && R.pending) rsvpSend(R.pending);
+    if (R.phase === 'loader') {
+      rsvpStartLoader();
+    } else {
+      // подтверждённый гость: сразу «ПРИНЯТО» со сводкой, без лоудера — но с въездом листа
+      R.ldrIn = true;
+      var target = R.phase;
+      R.phase = 'closed';
+      rsvpRender();
+      setTimeout(function () { if (R.open) rsvpGo(target); }, 80);
+    }
+  }
+
+  function rsvpClose() {
+    if (!R.open) return;
+    R.open = false;
+    rsSession++;
+    clearTimeout(rsInT); clearTimeout(rsLdrTo); clearTimeout(rsAdvT);
+    clearInterval(rsLdrIv);
+    cancelAnimationFrame(rsFwRaf);
+    rsvpHideReaction();
+    R.phase = 'closed';
+    R.ldrIn = false;
+    rsvpRenderPoses();
+    try { elMainWrap.inert = false; elGate.inert = false; } catch (e) {}
+    elMuteWrap.style.zIndex = '';
+    if (phase === 'main') elMainWrap.style.transform = 'none';
+    rsCloseT = setTimeout(function () {
+      if (R.open) return;
+      elRsvpRoot.style.display = 'none';
+      if (phase === 'main' || phase === 'gate') lockScroll(false);
+    }, 950);
+  }
+
+  function rsvpExit() {
+    if (rsvpStandalone) { location.href = '/'; return; }
+    if (history.state && history.state.nuRsvp) history.back();
+    else rsvpClose();
+  }
+
+  window.addEventListener('popstate', function () {
+    var onRsvpPath = location.pathname.replace(/\/+$/, '') === '/rsvp';
+    if (R.open && !rsvpStandalone && !onRsvpPath) rsvpClose();
+    else if (!R.open && onRsvpPath && !rsvpStandalone) rsvpOpen(false);
+  });
+
+  // ---------- байндинги ----------
+  (function rsvpBind() {
+    var openBtn = document.getElementById('rsvp-open-btn');
+    if (openBtn) openBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      rsvpOpen(true);
+    });
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-goback'), function (b) {
+      b.addEventListener('click', rsvpGoBack);
+    });
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-exit'), function (b) {
+      b.addEventListener('click', rsvpExit);
+    });
+    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rsvp-spin'), function (im) {
+      im.addEventListener('click', rsvpSpin);
+    });
+    rsEls['rs-word-go'].addEventListener('click', rsvpSubmitWord);
+    rsEls['rs-word'].addEventListener('keydown', function (e) { if (e.key === 'Enter') rsvpSubmitWord(); });
+    rsEls['rs-start'].addEventListener('click', function () { rsvpGo('come'); });
+    document.getElementById('rs-come-yes').addEventListener('click', function () { rsvpPickCome('yes'); });
+    document.getElementById('rs-come-no').addEventListener('click', function () { rsvpPickCome('no'); });
+    document.getElementById('rs-come-both').addEventListener('click', function () { rsvpPickCome('both'); });
+    document.getElementById('rs-come-a').addEventListener('click', function () { rsvpPickCome('onlyA'); });
+    document.getElementById('rs-come-b').addEventListener('click', function () { rsvpPickCome('onlyB'); });
+    document.getElementById('rs-come-no2').addEventListener('click', function () { rsvpPickCome('no'); });
+    document.getElementById('rs-need').addEventListener('click', function () {
+      R.transfer = 'need'; rsvpPersist(); rsvpRender(); rsvpAdvance(430);
+    });
+    document.getElementById('rs-self').addEventListener('click', function () {
+      clearTimeout(rsAdvT);
+      R.transfer = 'self'; rsvpPersist(); rsvpRender();
+    });
+    document.getElementById('rs-minus').addEventListener('click', function () { rsvpUpdSeats(-1); });
+    document.getElementById('rs-plus').addEventListener('click', function () { rsvpUpdSeats(1); });
+    document.getElementById('rs-road-next').addEventListener('click', function () { rsvpGo(rsvpFlowNext()); });
+    document.getElementById('rs-stay-yes').addEventListener('click', function () {
+      clearTimeout(rsAdvT);
+      R.stay = 'yes'; rsvpPersist(); rsvpRender();
+    });
+    document.getElementById('rs-stay-no').addEventListener('click', function () {
+      R.stay = 'no'; R.pay = null; rsvpPersist(); rsvpRender(); rsvpAdvance(430);
+    });
+    document.getElementById('rs-pay-me').addEventListener('click', function () {
+      R.pay = 'me'; rsvpPersist(); rsvpRender(); rsvpAdvance(430);
+    });
+    document.getElementById('rs-pay-them').addEventListener('click', function () {
+      R.pay = 'them'; rsvpPersist(); rsvpRender(); rsvpAdvance(430);
+    });
+    rsEls['rs-confirm'].addEventListener('click', rsvpConfirm);
+    rsEls['rs-reset'].addEventListener('click', function () {
+      try { localStorage.removeItem(RS_KEY); } catch (e) {}
+      location.reload();
+    });
+  })();
+  // ==================== /RSVP-АНКЕТА ====================
+
   // ---- старт бут-лоудера ----
   try { clearTimeout(window.__nuIdle); clearInterval(window.__nuCd); } catch (e) {}
   lockScroll(true);
-  preload();
-  bootT0 = Date.now();
-  applyPoses();
-  bootIv = setInterval(bootTick, 50);
+  if (rsvpStandalone) {
+    // прямой заход на /rsvp: без LOVE.EXE, выбора музыки и главной — сразу анкета
+    elBoot.style.display = 'none';
+    elGate.style.display = 'none';
+    rsvpOpen(false);
+  } else {
+    preload();
+    bootT0 = Date.now();
+    applyPoses();
+    bootIv = setInterval(bootTick, 50);
+  }
 
   // ======================================================================
   // ==== ОСНОВНОЕ ПРИГЛАШЕНИЕ (v2) — инициализируется при показе main ====
@@ -2242,6 +3485,8 @@
       p.src = s;
     });
   }, 1200);
+  // фоновая догрузка фото анкеты, чтобы к моменту «заполнить анкету» всё уже было в кеше
+  setTimeout(rsvpHydrate, 3200);
   }
 })();
 </script>

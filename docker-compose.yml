@@ -1,0 +1,25 @@
+# Локальный запуск «как на проде»: сайт + RSVP API за одним nginx.
+#   docker compose up --build          → http://localhost:8080
+# Бэкенд без GOOGLE_SA_JSON_BASE64 работает в демо-режиме:
+# пароли «хинкали»/«сациви», ответы пишутся только в журнал контейнера.
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      RSVP_API_HOST: api
+    depends_on:
+      - api
+
+  api:
+    build: backend
+    environment:
+      DATA_DIR: /data
+      # GOOGLE_SA_JSON_BASE64: "<base64 ключа сервис-аккаунта>"  # реальная запись в таблицу
+      # SPREADSHEET_ID: "13UFjGy42iBV9rhGtWehsmoCnbq1rJSWOBPR_mCXTX0U"
+    volumes:
+      - rsvp-data:/data
+
+volumes:
+  rsvp-data:
