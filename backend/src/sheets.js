@@ -62,8 +62,11 @@ export function sheetRange(title, ref) {
   return "'" + String(title).replace(/'/g, "''") + "'!" + ref;
 }
 
-export async function valuesGet(range) {
-  const data = await api('/values/' + enc(range));
+// unformatted=true → значения как есть (число — числом, чекбокс — boolean),
+// без локализованного форматирования (иначе TRUE/FALSE приходят как «ИСТИНА/ЛОЖЬ»)
+export async function valuesGet(range, unformatted) {
+  const q = unformatted ? '?valueRenderOption=UNFORMATTED_VALUE' : '';
+  const data = await api('/values/' + enc(range) + q);
   return data.values || [];
 }
 

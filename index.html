@@ -2465,6 +2465,8 @@
 
   var rsInT, rsLdrIv, rsLdrTo, rsAdvT, rsCloseT, rsFwRaf, rsHydrated = false;
   var rsSession = 0;   // инвалидация колбэков auth при закрытии/переоткрытии оверлея
+  // координация «лоудер как шлюз + ответ сервера»: маршрут ставится, когда готово И то, И другое
+  var rsLoaderDone = false, rsRefreshTarget;  // undefined = ещё ждём сервер
 
   function rsvpMotionOn() { return app.getAttribute('data-motion') !== 'off'; }
   function rsvpNorm(w) { return String(w || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, ''); }
@@ -2476,7 +2478,7 @@
       phase: 'loader', ldrIn: false, ldrPct: 0,
       word: '', fails: 0, guest: null,
       come: null, transfer: null, seats: 0, stay: null, pay: null,
-      confirmed: false, reaction: null, visited: {}, sync: null, pending: null
+      confirmed: false, locked: false, reaction: null, visited: {}, sync: null, pending: null
     };
     if (saved && saved.word && saved.names && saved.names.length) {
       base.guest = { names: saved.names };
@@ -2487,6 +2489,7 @@
       base.stay = saved.stay != null ? saved.stay : null;
       base.pay = saved.pay != null ? saved.pay : null;
       base.confirmed = !!saved.confirmed;
+      base.locked = !!saved.locked;
       base.visited = saved.visited || {};
       base.sync = saved.sync || null;
       base.pending = saved.pending || null;
@@ -2500,7 +2503,7 @@
     try {
       localStorage.setItem(RS_KEY, JSON.stringify({
         word: R.word, names: R.guest.names, come: R.come, transfer: R.transfer,
-        seats: R.seats, stay: R.stay, pay: R.pay, confirmed: R.confirmed,
+        seats: R.seats, stay: R.stay, pay: R.pay, confirmed: R.confirmed, locked: R.locked,
         visited: R.visited, sync: R.sync, pending: R.pending
       }));
     } catch (e) {}
@@ -2552,13 +2555,15 @@
   }
 
   // ---------- бэкенд ----------
+  // cb(data, err): data = { names, answers, locked } | null. answers = сохранённые
+  // ответы гостя из таблицы (или null), locked = флаг «Заполнено?» (замок).
   function rsvpAuth(word, cb) {
     var norm = rsvpNorm(word);
     if (!norm) { cb(null, 'bad'); return; }
     if (!RSVP_API) {
       setTimeout(function () {
         var names = RS_DEMO_GUESTS[norm];
-        cb(names || null, names ? null : 'bad');
+        cb(names ? { names: names, answers: null, locked: false } : null, names ? null : 'bad');
       }, 350);
       return;
     }
@@ -2568,10 +2573,34 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (settled) return; settled = true; clearTimeout(to);
-        if (d && d.ok && d.names && d.names.length) cb(d.names, null);
+        if (d && d.ok && d.names && d.names.length) cb({ names: d.names, answers: d.answers || null, locked: !!d.locked }, null);
         else cb(null, d && d.error === 'slow-down' ? 'rate' : 'bad');
       })
       .catch(function () { if (!settled) { settled = true; clearTimeout(to); cb(null, 'net'); } });
+  }
+
+  // применяем ответ /auth в состояние: имена, сохранённые ответы (сервер главнее),
+  // замок. Ответы перезаписываем только если сервер их прислал (иначе — храним
+  // локальный незавершённый прогресс). confirmed/locked ставим лишь в серверном режиме.
+  function rsvpApplyAuth(data) {
+    if (data.names) R.guest = { names: data.names };
+    var a = data.answers;
+    if (a) {
+      R.come = a.comeAnswer != null ? a.comeAnswer : null;
+      R.transfer = a.transfer != null ? a.transfer : null;
+      R.seats = a.seats || 0;
+      R.stay = a.stay != null ? a.stay : null;
+      R.pay = a.pay != null ? a.pay : null;
+    }
+    if (RSVP_API) { R.locked = !!data.locked; R.confirmed = !!data.locked; }
+  }
+
+  // куда вести гостя после успешного /auth: замок → готово (read-only),
+  // есть ответы → чек/незаполненный шаг, свежий гость → приветствие
+  function rsvpAuthTarget(data) {
+    if (RSVP_API && data.locked) return 'done';
+    if (data.answers) return rsvpFlowNext();
+    return 'hello';
   }
 
   function rsvpBuildPayload() {
@@ -2836,12 +2865,14 @@
   }
 
   // ---------- лоудер-конверт ----------
-  function rsvpStartLoader() {
+  // onDone вызывается по завершении показа (по умолчанию — переход к приветствию/паролю).
+  // Для returning-гостя onDone лишь «отпускает шлюз» — реальный маршрут даёт rsvpRefresh.
+  function rsvpStartLoader(minMs, onDone) {
     clearTimeout(rsInT); clearTimeout(rsLdrTo); clearInterval(rsLdrIv);
     R.phase = 'loader'; R.ldrIn = false; R.ldrPct = 0;
     rsvpRender();
     rsInT = setTimeout(function () { R.ldrIn = true; rsvpRenderPoses(); }, 90);
-    var ms = Math.max(800, RSVP_LOADER_MS);
+    var ms = Math.max(800, minMs || RSVP_LOADER_MS);
     var t0 = Date.now();
     rsLdrIv = setInterval(function () {
       var el = Date.now() - t0;
@@ -2852,8 +2883,55 @@
     }, 60);
     rsLdrTo = setTimeout(function () {
       clearInterval(rsLdrIv);
-      rsvpGo(R.guest ? 'hello' : 'secret');
+      (onDone || function () { rsvpGo(R.guest ? 'hello' : 'secret'); })();
     }, ms + 350);
+  }
+
+  // returning-гость: уводим с лоудера только когда готовы И минимум показа, И ответ сервера
+  function rsMaybeRoute() {
+    if (!rsLoaderDone || rsRefreshTarget === undefined) return;
+    var t = rsRefreshTarget || (R.guest ? 'hello' : 'secret');
+    rsLoaderDone = false; rsRefreshTarget = undefined;  // разово потребляем
+    rsvpGo(t);
+  }
+
+  // освежаем состояние по сохранённому слову: сервер — источник правды (флаг замка
+  // и ответы могли поменяться на другом устройстве или руками в таблице)
+  function rsvpRefresh() {
+    var sess = rsSession;
+    var hadUnsent = !!(R.confirmed && R.pending && R.sync === 'pending');
+    rsvpAuth(R.word, function (data, err) {
+      if (sess !== rsSession || !R.open) return;
+      if (err === 'bad') {            // гостя больше нет / слово изменили → чистим всё, просим слово заново
+        R.guest = null; R.word = '';
+        R.come = null; R.transfer = null; R.seats = 0; R.stay = null; R.pay = null;
+        R.confirmed = false; R.locked = false; R.visited = {}; R.sync = null; R.pending = null;
+        try { localStorage.removeItem(RS_KEY); } catch (e) {}
+        rsRefreshTarget = 'secret';
+      } else if (err) {               // сеть/лимит → оффлайн-фолбэк на локальное состояние
+        rsRefreshTarget = R.confirmed ? 'done' : (R.come != null ? rsvpFlowNext() : (R.guest ? 'hello' : 'secret'));
+      } else if (hadUnsent && !data.locked) {
+        // подтверждали локально, но до таблицы не доехало — досылаем намеренный ответ,
+        // локальные ответы НЕ затираем серверными (снапшот payload важнее устаревшей строки)
+        if (data.names) R.guest = { names: data.names };
+        R.confirmed = true; R.locked = false;
+        rsvpSend(R.pending);
+        rsRefreshTarget = 'done';
+        rsvpPersist();
+      } else {
+        rsvpApplyAuth(data);
+        if (data.locked) {
+          R.sync = 'ok'; R.pending = null;                // сервер уже принял и залочил — досылать нечего
+          rsRefreshTarget = 'done';                       // замок → read-only
+        } else if (data.answers || R.come != null) {
+          rsRefreshTarget = rsvpFlowNext();               // серверные ответы или локальный прогресс → шаг/чек
+        } else {
+          rsRefreshTarget = 'hello';                      // слово есть, ответов ещё нет
+        }
+        rsvpPersist();
+      }
+      rsMaybeRoute();
+    });
   }
 
   // ---------- реакция и конфетти ----------
@@ -2947,24 +3025,25 @@
     btn.style.opacity = '0.75';
     btn.textContent = 'стучимся…';
     var sess = rsSession;
-    rsvpAuth(rsEls['rs-word'].value, function (names, err) {
+    rsvpAuth(rsEls['rs-word'].value, function (data, err) {
       // ответ пришёл после закрытия/переоткрытия анкеты — сессия уже другая
       if (sess !== rsSession || !R.open) return;
       btn.disabled = false;
       btn.style.opacity = '';
       btn.textContent = 'впусти меня →';
-      if (names) {
+      if (data) {
         var newWord = rsvpNorm(rsEls['rs-word'].value);
         // другой гость на том же устройстве: прежние ответы ему не принадлежат
         if (R.word && R.word !== newWord) {
           R.come = null; R.transfer = null; R.seats = 0; R.stay = null; R.pay = null;
-          R.confirmed = false; R.visited = {}; R.sync = null; R.pending = null;
+          R.confirmed = false; R.locked = false; R.visited = {}; R.sync = null; R.pending = null;
         }
         R.word = newWord;
-        R.guest = { names: names };
+        rsvpApplyAuth(data);   // имена + сохранённые ответы + замок (сервер главнее)
         R.fails = 0;
         rsvpPersist();
-        rsvpGo('hello');
+        // уже заполнял → сразу на чек/готово; иначе — приветствие и обычный флоу
+        rsvpGo(rsvpAuthTarget(data));
       } else {
         R.fails += 1;
         rsEls['rs-err-msg'].textContent = err === 'net'
@@ -2997,6 +3076,7 @@
       return;
     }
     R.confirmed = true;
+    R.locked = true;   // отправка = замок (сервер тоже ставит «Заполнено?»=true)
     rsvpPersist();
     rsvpRenderChips();
     rsvpBurst();
@@ -3060,18 +3140,30 @@
         })
         .catch(function () {});
     }
-    // не отправленные ранее ответы дотаскиваем в таблицу
-    if (RSVP_API && R.confirmed && R.sync === 'pending' && R.pending) rsvpSend(R.pending);
-    if (R.phase === 'loader') {
-      rsvpStartLoader();
-    } else {
-      // подтверждённый гость: сразу «ПРИНЯТО» со сводкой, без лоудера — но с въездом листа
-      R.ldrIn = true;
-      var target = R.phase;
-      R.phase = 'closed';
-      rsvpRender();
-      setTimeout(function () { if (R.open) rsvpGo(target); }, 80);
+    if (!RSVP_API) {
+      // ДЕМО (без бэкенда): источник правды — localStorage, поведение как раньше
+      if (R.phase === 'loader') {
+        rsvpStartLoader();
+      } else {
+        // подтверждённый гость: сразу «ПРИНЯТО» со сводкой, без лоудера — но с въездом листа
+        R.ldrIn = true;
+        var target = R.phase;
+        R.phase = 'closed';
+        rsvpRender();
+        setTimeout(function () { if (R.open) rsvpGo(target); }, 80);
+      }
+      return;
     }
+    // СЕРВЕРНЫЙ РЕЖИМ: источник правды — таблица (флаг «Заполнено?» + сохранённые ответы).
+    // Свежий гость без слова — обычный лоудер к паролю; гость со словом — лоудер как
+    // шлюз, а реальный экран (замок→готово / всё есть→чек / иначе→шаг) даёт рефреш.
+    if (!R.word) {
+      rsvpStartLoader();
+      return;
+    }
+    rsLoaderDone = false; rsRefreshTarget = undefined;
+    rsvpStartLoader(1100, function () { rsLoaderDone = true; rsMaybeRoute(); });
+    rsvpRefresh();
   }
 
   function rsvpClose() {

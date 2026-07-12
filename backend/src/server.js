@@ -1,12 +1,12 @@
 // HTTP-сервер RSVP API. Роуты (JSON):
-//   POST /api/rsvp/auth   {word}                  → {ok, names[]}
+//   POST /api/rsvp/auth   {word}                  → {ok, names[], answers, locked}
 //   POST /api/rsvp/submit {secretWord, ...ответы} → {ok}
 //   GET  /api/health                              → {ok, demo}
 // Доступ — только через nginx сайта (location /api/), поэтому CORS не нужен.
 import http from 'node:http';
 import { config, demoMode } from './config.js';
 import { findGuest } from './guests.js';
-import { sanitizePayload, submit, startOutboxLoop, ensureSheetsAtStartup } from './rsvp.js';
+import { sanitizePayload, submit, startOutboxLoop, ensureSheetsAtStartup, readGuestAnswer } from './rsvp.js';
 import { ensureDataDir, journalAppend } from './store.js';
 import { allow } from './ratelimit.js';
 
@@ -92,7 +92,10 @@ const server = http.createServer(async (req, res) => {
         send(res, 200, { ok: false });
         return;
       }
-      send(res, 200, { ok: true, names: guest.names });
+      // отдаём сохранённые ответы + флаг замка: фронтенд по ним решает экран
+      // (замок → read-only, всё заполнено → чек, иначе → незаполненный шаг)
+      const state = await readGuestAnswer(guest);
+      send(res, 200, { ok: true, names: guest.names, answers: state.answers, locked: state.locked });
       return;
     }
 

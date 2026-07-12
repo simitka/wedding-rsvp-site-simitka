@@ -1,23 +1,28 @@
 // Бизнес-логика RSVP: валидация ответов и upsert строки в «Ответы на rsvp».
 // Схема вкладки (по строке на анкету, повторная отправка обновляет строку):
-//   A Секретное слово | B Гости | C Придут? | D Кто именно | E Человек приедет |
-//   F Трансфер | G Мест для попутчиков | H Ночёвка | I Оплата домика |
-//   J Обновлено | K Отправлено раз
-// E — число: на него опираются формулы вкладки «Сводка».
-// Клиенту не верим: имена берём из списка гостей, значения — из белых списков.
+//   A Секретное слово | B Гость 1 | C Гость 2 | D Приедут? | E Трансфер |
+//   F Мест для попутчиков | G Ночёвка | H Оплата домика | I Заполнено? | J Обновлено
+// D/E/G/H — тексты из белых списков (совпадают с выпадающими списками таблицы),
+// I — boolean-чекбокс (true = анкета отправлена и залочена), «Сводка» считает всё
+// формулами поверх этих колонок. Клиенту не верим: имена берём из списка гостей,
+// значения — из белых списков.
 import { config, demoMode } from './config.js';
 import { valuesGet, valuesUpdate, valuesAppend, listSheetTitles, addSheet, sheetRange } from './sheets.js';
 import { journalAppend, outboxPut, outboxRemoveById, outboxRead } from './store.js';
 import { normWord } from './guests.js';
 
 export const ANSWER_HEADERS = [
-  'Секретное слово', 'Гости', 'Придут?', 'Кто именно', 'Человек приедет',
-  'Трансфер', 'Мест для попутчиков', 'Ночёвка', 'Оплата домика', 'Обновлено', 'Отправлено раз',
+  'Секретное слово', 'Гость 1', 'Гость 2', 'Приедут?', 'Трансфер',
+  'Мест для попутчиков', 'Ночёвка', 'Оплата домика', 'Заполнено?', 'Обновлено',
 ];
 
 export function sanitizePayload(raw, guest) {
-  const come = ['yes', 'no', 'both', 'onlyA', 'onlyB'].includes(raw.comeAnswer) ? raw.comeAnswer : null;
+  let come = ['yes', 'no', 'both', 'onlyA', 'onlyB'].includes(raw.comeAnswer) ? raw.comeAnswer : null;
   if (!come) return null;
+  // клиенту не верим: приводим ответ к составу гостя, иначе «Приедут?»/«Сводка» врут
+  const couple = guest.names.length > 1;
+  if (!couple && come !== 'no') come = 'yes';       // одиночке — только «приду / не приду»
+  if (couple && come === 'yes') come = 'both';      // «yes» бывает лишь у одиночки
   const isComing = come !== 'no';
   const names = guest.names;
   let attending = [];
@@ -59,24 +64,80 @@ function tbilisiNow() {
   }).format(new Date());
 }
 
-function toRow(rec, submitCount) {
+// «Приедут?» — тексты выпадающего списка колонки D. У одиночного гостя «да» = «Да,
+// Гость 1»; у пары есть «Да, оба» и раздельные «только он / только она».
+function comeCell(rec) {
+  if (!rec.isComing) return 'Нет';
+  switch (rec.comeAnswer) {
+    case 'both': return 'Да, оба';
+    case 'onlyA': return 'Да, Гость 1';
+    case 'onlyB': return 'Да, Гость 2';
+    default: return 'Да, Гость 1'; // 'yes' — одиночный гость
+  }
+}
+
+function toRow(rec) {
   const t = rec.transfer || {};
   const o = rec.overnight || {};
+  const coming = rec.isComing;
+  const g = rec.guests || [];
   return [
-    rec.word,
-    rec.guests.join(' и '),
-    rec.isComing ? 'да' : 'нет',
-    rec.attending.length ? rec.attending.join(' и ') : '—',
-    rec.attending.length,
-    !rec.isComing ? '—' : t.mode === 'need' ? 'нужен трансфер' : t.mode === 'self' ? 'сам за рулём' : '—',
-    !rec.isComing || t.mode !== 'self' ? '' : t.seatsOffered,
-    !rec.isComing ? '—' : o.staying ? 'остаются ночевать' : 'уедут в ночь',
-    !rec.isComing ? '—' : !o.staying ? '—'
-      : o.housePayment === 'me' ? 'оплатят сами'
-      : o.housePayment === 'them' ? 'за счёт молодожёнов' : '—',
-    tbilisiNow(),
-    submitCount,
+    rec.word,                                                 // A Секретное слово
+    g[0] || '',                                               // B Гость 1
+    g[1] || '',                                               // C Гость 2
+    comeCell(rec),                                            // D Приедут?
+    !coming ? '' : t.mode === 'need' ? 'Нужен' : t.mode === 'self' ? 'Не нужен' : '', // E Трансфер
+    !coming || t.mode !== 'self' ? '' : t.seatsOffered,       // F Мест для попутчиков
+    !coming ? '' : o.staying ? 'Остаюсь' : 'Не остаюсь',      // G Ночёвка
+    !coming || !o.staying ? '' : o.housePayment === 'me' ? 'Заплачу' : o.housePayment === 'them' ? 'Не заплачу' : '', // H Оплата домика
+    true,                                                     // I Заполнено? (отправка = замок)
+    tbilisiNow(),                                             // J Обновлено (Тбилиси)
   ];
+}
+
+// Разбор строки таблицы обратно в состояние анкеты (для гидрации фронтенда при
+// заходе гостя). couple важен: «Да, Гость 1» у одиночки = 'yes', у пары = 'onlyA'.
+export function parseAnswerRow(row, guest) {
+  const couple = guest.names.length > 1;
+  const s = (i) => String(row[i] == null ? '' : row[i]).trim();
+  const d = s(3);
+  const come = d === 'Нет' ? 'no'
+    : d === 'Да, оба' ? 'both'
+    : d === 'Да, Гость 1' ? (couple ? 'onlyA' : 'yes')
+    : d === 'Да, Гость 2' ? 'onlyB'
+    : null;
+  const e = s(4);
+  const transfer = e === 'Нужен' ? 'need' : e === 'Не нужен' ? 'self' : null;
+  const seatsN = parseInt(row[5], 10);
+  const seats = Number.isFinite(seatsN) ? Math.max(0, Math.min(7, seatsN)) : 0;
+  const g = s(6);
+  const stay = g === 'Остаюсь' ? 'yes' : g === 'Не остаюсь' ? 'no' : null;
+  const h = s(7);
+  const pay = h === 'Заплачу' ? 'me' : h === 'Не заплачу' ? 'them' : null;
+  const locked = row[8] === true || String(row[8]).trim().toLowerCase() === 'true';
+  return { comeAnswer: come, transfer, seats, stay, pay, locked };
+}
+
+// Ответ гостя из таблицы: { answers|null, locked }. answers=null, если строки нет
+// или в ней ещё не выбран пункт «Приедут?» (гостю показываем обычный флоу).
+export async function readGuestAnswer(guest) {
+  if (demoMode) return { answers: null, locked: false };
+  try {
+    await ensureSheets();
+    const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:J'), true);
+    for (const row of rows) {
+      if (normWord(row[0]) === guest.word) {
+        const p = parseAnswerRow(row, guest);
+        // замок засчитываем только при валидном «Приедут?»: галочка на пустой/битой
+        // строке (ручная правка) не должна запирать гостя на фиктивном ответе
+        const has = p.comeAnswer != null;
+        return { answers: has ? p : null, locked: has && p.locked };
+      }
+    }
+  } catch (e) {
+    console.error('[rsvp] не удалось прочитать ответ гостя:', e.message);
+  }
+  return { answers: null, locked: false };
 }
 
 // Все записи в таблицу идут по одной — последовательная очередь вместо гонок
@@ -105,15 +166,14 @@ async function ensureSheets() {
 
 async function upsertRow(rec) {
   await ensureSheets();
-  const col = await valuesGet(sheetRange(config.answersSheet, 'A2:K'));
+  const col = await valuesGet(sheetRange(config.answersSheet, 'A2:A'));
   for (let i = 0; i < col.length; i++) {
     if (normWord(col[i][0]) === rec.word) {
-      const count = (parseInt(col[i][10], 10) || 0) + 1;
-      await valuesUpdate(sheetRange(config.answersSheet, 'A' + (i + 2) + ':K' + (i + 2)), [toRow(rec, count)]);
+      await valuesUpdate(sheetRange(config.answersSheet, 'A' + (i + 2) + ':J' + (i + 2)), [toRow(rec)]);
       return;
     }
   }
-  await valuesAppend(sheetRange(config.answersSheet, 'A1'), [toRow(rec, 1)]);
+  await valuesAppend(sheetRange(config.answersSheet, 'A1'), [toRow(rec)]);
 }
 
 let flushing = false;
