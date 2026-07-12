@@ -25,6 +25,11 @@
   @keyframes drift { from { transform: translateY(-5px); } to { transform: translateY(6px); } }
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @keyframes spinOnce { 0% { transform: rotate(0deg) scale(1); } 60% { transform: rotate(360deg) scale(1.15); } 100% { transform: rotate(360deg) scale(1); } }
+  @keyframes magicCharge { 0% { transform: scale(1) rotate(0deg) translateX(0); filter: contrast(1) brightness(1); } 30% { transform: scale(1.06) rotate(-3deg) translateX(-2px); filter: contrast(1) brightness(1.15); } 50% { transform: scale(1.02) rotate(3deg) translateX(3px); filter: contrast(0.8) brightness(1.35); } 70% { transform: scale(1.05) rotate(-2.5deg) translateX(-3px); filter: contrast(0.45) brightness(1.6) drop-shadow(0 0 12px rgba(235,223,126,0.85)); } 100% { transform: scale(0.84) rotate(2deg) translateX(0); filter: contrast(0) brightness(2) drop-shadow(0 0 24px rgba(235,223,126,0.95)); } }
+  @keyframes magicPop { 0% { transform: scale(0.7) rotate(-8deg); filter: contrast(0) brightness(2) drop-shadow(0 0 24px rgba(235,223,126,0.95)); } 40% { transform: scale(1.14) rotate(4deg); filter: contrast(0.85) brightness(1.15) drop-shadow(0 0 14px rgba(235,223,126,0.6)); } 70% { transform: scale(0.95) rotate(-2deg); filter: contrast(1) brightness(1) drop-shadow(0 0 0 rgba(235,223,126,0)); } 100% { transform: scale(1) rotate(0deg); filter: contrast(1) brightness(1); } }
+  @keyframes sparkFly { 0% { transform: translate(-50%, -50%) translate(0px, 0px) rotate(0deg) scale(0.3); opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(1.05); opacity: 0; } }
+  @keyframes magicRing { from { transform: translate(-50%, -50%) scale(0.18); opacity: 0.95; } to { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+  @keyframes magicFlash { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; } }
   @keyframes wiggle { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(1.6deg); } }
   @keyframes bounceDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(9px); } }
   @keyframes pulseStar { from { transform: scale(1); } to { transform: scale(1.08); } }
@@ -109,7 +114,7 @@
   .credit-link:hover { color: #E2588E !important; text-decoration-color: #EBDF7E !important; }
   .faq-link:hover { color: #6C7ED6 !important; text-decoration-color: #ECA02B !important; }
   /* фото-кнопки: без синей обводки/выделения при тапе */
-  .photo-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; }
+  .photo-spin { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; outline: none; touch-action: manipulation; }
   .photo-spin:focus, .photo-spin:focus-visible { outline: none; }
 </style>
 </head>
@@ -1962,6 +1967,7 @@
   // не прерывается и не рестартует с нулевого кадра — без рывка в конце вертушки
   function spin(e) {
     var wrap = e.currentTarget.parentNode;
+    if (wrap.dataset.magicBusy) return;
     wrap.style.animation = 'none';
     void wrap.offsetWidth;
     wrap.style.animation = 'spinOnce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1)';
@@ -1991,6 +1997,87 @@
       vanGo.removeEventListener('animationend', h);
     });
   });
+
+  // --- секрет шапки: 3 клика по фото за 5 секунд — «пуф» и подменное детское фото ---
+  // трансформация играет на спин-обёртке (перебивает вертушку третьего клика),
+  // idle-покачивание на самой картинке при этом не трогаем
+  var SPARK_COLORS = ['#EBDF7E', '#ECA02B', '#E2588E', '#6C7ED6', '#FBF8EF', '#A31D4E'];
+  var SPARK_GLYPHS = ['✦', '✧', '✶', '★', '✺'];
+  function magicBurst(holder) {
+    var box = document.createElement('div');
+    box.style.cssText = 'position:absolute;left:50%;top:50%;width:0;height:0;z-index:7;pointer-events:none;';
+    var flash = document.createElement('div');
+    flash.style.cssText = 'position:absolute;left:0;top:0;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle, rgba(251,248,239,0.95) 0%, rgba(235,223,126,0.6) 38%, rgba(235,223,126,0) 70%);animation:magicFlash 0.55s ease-out both;';
+    box.appendChild(flash);
+    [['#EBDF7E', '0s'], ['#E2588E', '0.08s']].forEach(function (r) {
+      var ring = document.createElement('div');
+      ring.style.cssText = 'position:absolute;left:0;top:0;width:190px;height:190px;border-radius:50%;border:4px solid ' + r[0] + ';animation:magicRing 0.6s ease-out ' + r[1] + ' both;';
+      box.appendChild(ring);
+    });
+    for (var i = 0; i < 16; i++) {
+      var ang = (i / 16) * Math.PI * 2 + Math.random() * 0.5;
+      var dist = 70 + Math.random() * 90;
+      var s = document.createElement('span');
+      s.textContent = SPARK_GLYPHS[i % SPARK_GLYPHS.length];
+      s.style.cssText = 'position:absolute;left:0;top:0;line-height:1;' +
+        'font-size:' + (14 + Math.round(Math.random() * 16)) + 'px;' +
+        'color:' + SPARK_COLORS[i % SPARK_COLORS.length] + ';' +
+        'text-shadow:0 0 6px rgba(235,223,126,0.7);' +
+        '--sx:' + Math.round(Math.cos(ang) * dist) + 'px;' +
+        '--sy:' + Math.round(Math.sin(ang) * dist) + 'px;' +
+        '--sr:' + (Math.round(Math.random() * 300) - 150) + 'deg;' +
+        'animation:sparkFly ' + (0.6 + Math.random() * 0.45).toFixed(2) + 's cubic-bezier(0.16, 0.8, 0.35, 1) both;';
+      box.appendChild(s);
+    }
+    holder.appendChild(box);
+    setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 1300);
+  }
+  function magicSwap(holder, altSrc, altAlt) {
+    var img = holder && holder.querySelector('img');
+    if (!img) return;
+    var srcs = [img.getAttribute('src'), altSrc],
+        alts = [img.getAttribute('alt'), altAlt],
+        cur = 0, clicks = [], failTimer;
+    holder.style.position = 'relative';
+    img.addEventListener('click', function () {
+      var wrap = img.parentNode;
+      if (wrap.dataset.magicBusy) return;
+      var now = Date.now();
+      clicks.push(now);
+      while (clicks.length && now - clicks[0] > 5000) clicks.shift();
+      if (clicks.length < 3) return;
+      clicks.length = 0;
+      cur = 1 - cur;
+      if (!motionOn()) { img.src = srcs[cur]; img.alt = alts[cur]; return; }
+      wrap.dataset.magicBusy = '1';
+      wrap.style.animation = 'magicCharge 0.5s cubic-bezier(0.6, 0, 0.8, 1) both';
+      wrap.onanimationend = function () {
+        img.src = srcs[cur];
+        img.alt = alts[cur];
+        magicBurst(holder);
+        wrap.style.animation = 'magicPop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both';
+        wrap.onanimationend = function () {
+          clearTimeout(failTimer);
+          wrap.style.animation = 'none';
+          wrap.onanimationend = null;
+          delete wrap.dataset.magicBusy;
+        };
+      };
+      // страховка: если animationend потерялся (фоновая вкладка и т.п.) — доводим руками;
+      // при штатном завершении и при новом запуске таймер гасится, чтобы не убить чужой свап
+      clearTimeout(failTimer);
+      failTimer = setTimeout(function () {
+        if (!wrap.dataset.magicBusy) return;
+        img.src = srcs[cur];
+        img.alt = alts[cur];
+        wrap.style.animation = 'none';
+        wrap.onanimationend = null;
+        delete wrap.dataset.magicBusy;
+      }, 2500);
+    });
+  }
+  magicSwap(document.getElementById('photo-n'), 'assets/nikita-secret.png', 'Никита в детстве, смотрит в камеру снизу вверх');
+  magicSwap(document.getElementById('photo-u'), 'assets/ulyana-secret.png', 'Ульяна в детстве, в красной кепке');
 
   // --- refs ---
   var photoN = document.getElementById('photo-n'),
@@ -2150,6 +2237,10 @@
     });
     var pre = new Image();
     pre.src = 'assets/egg/catplane.png';
+    ['assets/nikita-secret.png', 'assets/ulyana-secret.png'].forEach(function (s) {
+      var p = new Image();
+      p.src = s;
+    });
   }, 1200);
   }
 })();
