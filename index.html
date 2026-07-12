@@ -13,10 +13,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@600;700&family=Neucha&family=Oswald:wght@500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Rubik+Mono+One&family=Unbounded:wght@700;900&family=Yeseva+One&display=swap" />
 <style>
-  html, body { margin: 0; padding: 0; background: #3B4A20; overflow-x: hidden; overscroll-behavior: none; }
+  html, body { margin: 0; padding: 0; background: #3B4A20; overflow-x: hidden; }
   body { -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none; }
-  /* листы анкеты сами гасят overscroll: без этого на iOS резинка утаскивает fixed-лист и снизу мелькает соседний лист/фон */
-  #rsvp-root [id^="rs-pose-"] > div { overscroll-behavior: contain; }
   img { display: block; max-width: 100%; -webkit-user-drag: none; -webkit-touch-callout: none; }
   a { color: #A31D4E; }
   a:hover { color: #E2588E; }
