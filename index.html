@@ -406,9 +406,9 @@
         </div>
       </div>
 
-      <div data-reveal="slap" data-reveal-delay="120" style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 26px;">
-        <a class="btn-map-g" href="https://www.google.com/maps/search/?api=1&query=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(-1.5deg);">google maps →</a>
-        <a class="btn-map-y" href="https://yandex.com/maps/org/chubini_winery_cabins/113326001656" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 11px 16px; transform: rotate(1.8deg) translateY(2px);">яндекс карты →</a>
+      <div data-reveal="slap" data-reveal-delay="120" style="display: flex; justify-content: center; align-items: stretch; gap: 10px; flex-wrap: nowrap; margin-top: 26px;">
+        <a class="btn-map-g" href="https://www.google.com/maps/search/?api=1&query=Chubini+Wine+Cellar+Kakheti+Georgia" target="_blank" rel="noopener" style="flex: 1 1 0; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(12px, 3.4vw, 15px); letter-spacing: 1px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 12px 8px; transform: rotate(-1.5deg);">google maps →</a>
+        <a class="btn-map-y" href="https://yandex.com/maps/org/chubini_winery_cabins/113326001656" target="_blank" rel="noopener" style="flex: 1 1 0; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(12px, 3.4vw, 15px); letter-spacing: 1px; text-transform: uppercase; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 12px 8px; transform: rotate(1.8deg) translateY(2px);">яндекс карты →</a>
       </div>
 
       <div data-reveal="right" data-reveal-delay="200" style="display: flex; justify-content: flex-end; margin-top: 28px;">
@@ -1018,6 +1018,12 @@
        лениво через data-rsvp-src (гидрация при открытии анкеты или спустя пару секунд после main) -->
   <div id="rsvp-root" style="display: none;">
 
+    <!-- сплошная «бумажная» подложка под всеми листами: закрывает просвет на главную
+         (в т.ч. подвал «сделано Никитой») в момент свайпа-перехода между листами -->
+    <div style="position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; pointer-events: none;">
+      <div style="width: 100%; max-width: 600px; height: 100%; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px;"></div>
+    </div>
+
     <!-- лист: лоудер-конверт (вариант 1B из v3 part 1) -->
     <div style="position: fixed; inset: 0; z-index: 118; will-change: transform; pointer-events: none;">
       <div id="rs-pose-loader" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: translateY(106%) rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
@@ -1406,7 +1412,7 @@
             <div id="rs-sum-rows" style="display: flex; flex-direction: column; gap: 14px; width: min(430px, 100%); margin-top: 26px;"></div>
 
             <div style="position: relative; display: inline-block; margin-top: 34px;">
-              <button type="button" id="rs-confirm" class="rs-press" style="--rr: 0deg; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.4vw, 18px); text-transform: uppercase; letter-spacing: 1px; background: #A31D4E; color: #F2EDE2; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px 26px; cursor: pointer; animation: wiggle 2.4s ease-in-out infinite;">всё так!!! отправить →</button>
+              <button type="button" id="rs-confirm" class="rs-press" style="--rr: 0deg; display: inline-flex; align-items: center; justify-content: center; gap: 16px; text-align: left; line-height: 1.12; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.4vw, 18px); text-transform: uppercase; letter-spacing: 1px; background: #A31D4E; color: #F2EDE2; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 18px 24px; cursor: pointer; animation: wiggle 2.4s ease-in-out infinite;"><span style="display: flex; flex-direction: column;"><span>всё так!!!</span><span>отправить</span></span><span style="font-size: 1.6em; line-height: 1;">→</span></button>
             </div>
             <div style="font-family: 'Neucha', cursive; font-size: 15px; color: #4B3227; margin-top: 20px; transform: rotate(1deg); text-align: center; max-width: 320px;">передумаешь потом — не страшно: напиши нам, поменяем руками</div>
 
@@ -1477,7 +1483,7 @@
 
             <button type="button" id="rs-reset" style="display: none; margin-top: 26px; background: transparent; border: 2px dashed rgba(75,50,39,0.35); color: rgba(75,50,39,0.65); font-family: 'Neucha', cursive; font-size: 14px; padding: 6px 12px; transform: rotate(-1deg); cursor: pointer;">демо: сбросить ответы и пройти заново</button>
 
-            <div style="width: 108%; margin: 34px 0 0 0; transform: rotate(-1.4deg); background: #33291F; color: #F2EDE2; overflow: hidden; padding: 10px 0; box-shadow: 0 6px 14px rgba(51,41,31,0.3);">
+            <div style="width: calc(100% + 44px); margin: 34px -22px 0; transform: rotate(-1.4deg); background: #33291F; color: #F2EDE2; overflow: hidden; padding: 10px 0; box-shadow: 0 6px 14px rgba(51,41,31,0.3);">
               <div style="display: flex; width: max-content; animation: marquee 16s linear infinite; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap;">
                 <span class="rs-marquee" style="padding-right: 24px;"></span>
                 <span class="rs-marquee" style="padding-right: 24px;"></span>
@@ -2415,7 +2421,7 @@
       elL2Bar.style.transition = 'none';
       elL2Bar.style.width = '0%';
       requestAnimationFrame(function () {
-        elL2Bar.style.transition = 'width ' + (barMs / 1000) + 's steps(12, end)';
+        elL2Bar.style.transition = 'width ' + (barMs / 1000) + 's linear';
         elL2Bar.style.width = '100%';
       });
       var t0 = Date.now();
@@ -2892,7 +2898,7 @@
     R.phase = 'loader'; R.ldrIn = false; R.ldrPct = 0;
     rsvpRender();
     rsInT = setTimeout(function () { R.ldrIn = true; rsvpRenderPoses(); }, 90);
-    var ms = Math.max(800, minMs || RSVP_LOADER_MS);
+    var ms = Math.max(3000, minMs || RSVP_LOADER_MS);   // минимум показа лоудера при открытии — 3 c
     var t0 = Date.now();
     rsLdrIv = setInterval(function () {
       var el = Date.now() - t0;
@@ -3186,7 +3192,7 @@
       return;
     }
     rsLoaderDone = false; rsRefreshTarget = undefined;
-    rsvpStartLoader(1100, function () { rsLoaderDone = true; rsMaybeRoute(); });
+    rsvpStartLoader(3000, function () { rsLoaderDone = true; rsMaybeRoute(); });
     rsvpRefresh();
   }
 
