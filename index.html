@@ -140,7 +140,7 @@
 <div id="app" data-motion="on" style="min-height: 100dvh; background: #3B4A20; font-family: 'Neucha', cursive; color: #33291F;">
 
   <!-- ============ GATE (выбор музыки) ============ -->
-  <div id="gate-outer" style="width: 100%; display: flex; flex-direction: column; align-items: center; transform: translateY(38px) scale(0.985); transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.12s; will-change: transform;">
+  <div id="gate-outer" style="width: 100%; display: flex; flex-direction: column; align-items: center; visibility: hidden; transform: translateY(38px) scale(0.985); transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.12s; will-change: transform;">
     <div style="width: 100%; max-width: 600px; min-height: 100dvh; display: flex; flex-direction: column; background: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.5); overflow: clip; position: relative;">
 
       <section style="position: relative; padding: 16px 16px 30px; flex: 1; display: flex; flex-direction: column;">
@@ -487,10 +487,6 @@
         <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">довезём!!!</div>
       </div>
 
-      <div data-reveal="slap" data-reveal-delay="160" style="text-align: center; margin-top: 28px;">
-        <a class="btn-rsvp-road" href="#rsvp" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 12px 18px; transform: rotate(-1.5deg);">отметить в анкете ↓</a>
-        <div style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 14px; transform: rotate(1deg);">тосты и руль сочетаются так себе — берите трансфер :)</div>
-      </div>
     </section>
 
     <div style="width: 110%; margin: 0 0 0 -5%; height: 20px; background: repeating-linear-gradient(90deg, rgba(236,160,43,0.5) 0 14px, rgba(236,160,43,0.22) 14px 28px); transform: rotate(0.9deg); box-shadow: 0 1px 4px rgba(51,41,31,0.12);"></div>
@@ -2305,6 +2301,9 @@
     elBoot.style.transform = phase === 'boot' ? 'translateY(0)' : 'translateY(-112%) rotate(-2.5deg)';
     var bootVisible = elBoot.style.display !== 'none';
     elGate.style.transform = phase === 'boot' ? 'translateY(38px) scale(0.985)' : (bootVisible ? 'translateY(0)' : 'none');
+    // держим гейт скрытым, пока крутится бут-лоудер, — иначе на первом кадре
+    // (до перекрытия fixed-оверлеем) экран выбора звука успевает мигнуть
+    elGate.style.visibility = phase === 'boot' ? 'hidden' : 'visible';
   }
 
   // ширина полосы = целое число прямоугольников; правый край ровно по грани последнего
