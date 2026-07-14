@@ -1847,6 +1847,17 @@
       navigator.vibrate(pattern);
     } catch (e) {}
   }
+  // паттерн финальных 3-2-1: сильный удар на тик + непрерывная лёгкая дрожь до следующего тика
+  // (Web Vibration API не умеет амплитуду — «сила» имитируется длиной импульса)
+  function eggBuzzPattern(s) {
+    var span = eggDur(s);                 // сколько секунда провисит до следующего тика
+    var strong = s === 1 ? 130 : 100;     // жёсткий «тик» в начале
+    var GAP = 70, WEAK = 14;              // фоновая дрожь: короткие импульсы через паузы
+    var pat = [strong, GAP];
+    var t = strong + GAP;
+    while (t + WEAK + GAP < span - 60) { pat.push(WEAK, GAP); t += WEAK + GAP; }
+    return pat;
+  }
 
   // ---------- отрисовка (контент пересобирается, чтобы CSS-анимации рестартовали) ----------
   function eggShowNumber(s, hot) {
@@ -2024,8 +2035,9 @@
     if (s === 0) { eggBoom(); return; }
     eggSec = s;
     var hot = s <= 3;
-    // тик отсчёта отдаётся в палец: спокойный пульс, к финалу — жёстче
-    eggVibrate(hot ? (s === 1 ? [60, 40, 90] : s === 2 ? [45, 35, 55] : [55]) : 22);
+    // тик отсчёта отдаётся в палец: обычные секунды — одиночный пульс,
+    // финальные 3-2-1 — сильный удар + непрерывная лёгкая дрожь на всю трясущуюся секунду
+    eggVibrate(hot ? eggBuzzPattern(s) : 22);
     if (hot) {
       eggShowPhrase(EGG_PANIC[s], true);
       eggSetPorthole(false);
