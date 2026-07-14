@@ -1838,6 +1838,13 @@
   // интервалы между тиками: до 4с — 1.3с, 3→2 и 2→1 — по 3с, 1→0 — 5с
   function eggDur(s) { return s >= 4 ? 1300 : (s >= 2 ? 3000 : 5000); }
 
+  // тактильный отклик отсчёта — на каждый тик; глушится общим motion-контрактом
+  function eggVibrate(pattern) {
+    if (!motionOn()) return;
+    if (!navigator.vibrate) return;
+    try { navigator.vibrate(pattern); } catch (e) {}
+  }
+
   // ---------- отрисовка (контент пересобирается, чтобы CSS-анимации рестартовали) ----------
   function eggShowNumber(s, hot) {
     var ring = function (i) {
@@ -2011,6 +2018,8 @@
     if (s === 0) { eggBoom(); return; }
     eggSec = s;
     var hot = s <= 3;
+    // тик отсчёта отдаётся в палец: спокойный пульс, к финалу — жёстче
+    eggVibrate(hot ? (s === 1 ? [60, 40, 90] : s === 2 ? [45, 35, 55] : [55]) : 22);
     if (hot) {
       eggShowPhrase(EGG_PANIC[s], true);
       eggSetPorthole(false);
@@ -2028,6 +2037,7 @@
 
   function eggCancel() {
     eggClearTimers();
+    if (navigator.vibrate) { try { navigator.vibrate(0); } catch (e) {} }   // обрываем недовибрировавший тик
     eggState = eggReturnTo === 'active' ? 'active' : 'idle';
     if (eggReturnTo === 'active') {
       // отсчёт запускали прямо из авиарежима — возвращаем его как было
@@ -2082,6 +2092,7 @@
     eggCalmDown(true);
     eggShowNumber(0, true);
     eggDoFlash(true);
+    eggVibrate([90, 45, 90, 45, 220]);   // финальный «бабах» в палец
     eggStartFireworks();
     eggTm(function () { eggNumC.innerHTML = ''; eggStampEl.style.display = 'flex'; }, 600);
     if (audio) { clearInterval(fadeIv); eggFadeTo(audio, 0, 700, function () { try { audio.pause(); } catch (e) {} }); }
