@@ -1931,6 +1931,9 @@
       if (eggPrev === 'active') eggOff();
       else { eggState = 'idle'; toggleMusic(); }
     } else if (eggState === 'counting') {
+      // наша же вибрация трясёт телефон, и система рвёт удержание через pointercancel —
+      // это НЕ отпускание, палец на кнопке. отсчёт продолжаем; отмена — только осознанный pointerup
+      if (e.type !== 'pointerup') { eggPid = e.pointerId; return; }
       eggCancel();
     }
     // boom/active: отпускание ничего не меняет — он додержал
