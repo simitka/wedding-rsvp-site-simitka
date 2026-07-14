@@ -1838,11 +1838,14 @@
   // интервалы между тиками: до 4с — 1.3с, 3→2 и 2→1 — по 3с, 1→0 — 5с
   function eggDur(s) { return s >= 4 ? 1300 : (s >= 2 ? 3000 : 5000); }
 
-  // тактильный отклик отсчёта — на каждый тик; глушится общим motion-контрактом
+  // тактильный отклик отсчёта — на каждый тик; уважает prefers-reduced-motion
   function eggVibrate(pattern) {
-    if (!motionOn()) return;
     if (!navigator.vibrate) return;
-    try { navigator.vibrate(pattern); } catch (e) {}
+    try {
+      var mm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mm && mm.matches) return;
+      navigator.vibrate(pattern);
+    } catch (e) {}
   }
 
   // ---------- отрисовка (контент пересобирается, чтобы CSS-анимации рестартовали) ----------
