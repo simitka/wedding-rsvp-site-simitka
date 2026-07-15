@@ -103,6 +103,11 @@
   @keyframes kSeal { 0%, 40% { transform: scale(0) rotate(-30deg); } 46% { transform: scale(1.3) rotate(8deg); } 50%, 66% { transform: scale(1) rotate(8deg); } 74%, 100% { transform: scale(0) rotate(-30deg); } }
   @keyframes kBubble { 0% { transform: translateY(0); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-95px); opacity: 0; } }
   @keyframes slapIn { 0% { opacity: 0; transform: scale(2.1) rotate(10deg); } 65% { opacity: 1; transform: scale(0.94) rotate(-2deg); } 100% { opacity: 1; transform: scale(1) rotate(-2deg); } }
+  /* «богатая» строчка в сводке (оплачу домик сам): золотое переливание */
+  @keyframes richShine { to { background-position: -200% center; } }
+  @keyframes richFloat { 0%, 100% { transform: rotate(-1.6deg) translateY(0); } 50% { transform: rotate(1.4deg) translateY(-2px); } }
+  .rs-rich { background: linear-gradient(100deg, #9C7A22 0%, #EBDF7E 18%, #FFF7C6 30%, #EBDF7E 42%, #C79A2E 58%, #FFF7C6 70%, #EBDF7E 82%, #9C7A22 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-shadow: 0 1px 0 rgba(156,122,34,0.18); animation: richShine 2.6s linear infinite, richFloat 3.4s ease-in-out infinite; will-change: background-position, transform; }
+  .rs-rich::after { content: ' ✦'; -webkit-text-fill-color: #ECA02B; color: #ECA02B; }
   /* нажатия кнопок анкеты: «вдавливание» в бумагу; --rr хранит родной наклон кнопки */
   .rs-press:active { transform: rotate(var(--rr, 0deg)) translate(5px, 6px) !important; box-shadow: none !important; animation: none !important; }
   .rs-press-s:active { transform: rotate(var(--rr, 0deg)) translate(2px, 3px) !important; box-shadow: none !important; }
@@ -756,7 +761,7 @@
                 <span style="position: absolute; left: 50%; bottom: -12px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 2px 8px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; line-height: 1.15; text-align: center; pointer-events: none;">проверяют,<br />хватит ли хинкали</span>
               </div>
               <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #6C7ED6;">а с плюс-один?</div>
-              <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">да! только впишите его или её в анкету, чтобы всем хватило хинкали.</div>
+              <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">Поясним в анкете. Скорее начинай заполнять, кнопка ниже.</div>
               <div style="clear: both;"></div>
             </div>
           </div>
@@ -1353,10 +1358,10 @@
               <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 22px 18px 20px; transform: rotate(0.6deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5;">
                 <span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: 15px; background: #A31D4E; color: #F2EDE2; padding: 6px 10px; transform: rotate(-2deg);">220 GEL</span>
                 <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E; margin-left: 8px;">— столько стоит домик на ночь.</span><br />
-                и деликатный вопрос века: как поступим?
+                как душе угодно, так и правильно
                 <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 16px;">
                   <button type="button" id="rs-pay-me" class="rs-press" style="--rr: -0.6deg; position: relative; text-align: left; background: #FBF8EF; border: 3px solid #33291F; box-shadow: 5px 6px 0 rgba(51,41,31,0.85); padding: 13px 16px; cursor: pointer; transform: rotate(-0.6deg); display: flex; flex-direction: column; gap: 2px;">
-                    <span id="rs-pay-me-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #33291F;">оплачу домик сам</span>
+                    <span id="rs-pay-me-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #33291F;">оплачу домик – это мой вклад (в конверт)</span>
                     <span style="font-family: 'Neucha', cursive; font-size: 14px; color: #4B3227;">минус одна забота у молодожёнов ♥</span>
                     <span id="rs-b-payme" style="display: none; position: absolute; top: -13px; right: -11px; width: 36px; height: 36px; border-radius: 50%; background: #E2588E; color: #FBF8EF; align-items: center; justify-content: center; font-size: 18px; box-shadow: 2px 3px 0 rgba(51,41,31,0.55); transform: rotate(10deg); animation: stampIn 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;">♥</span>
                   </button>
@@ -2789,9 +2794,10 @@
       });
       if (R.stay === 'yes') {
         rows.push({
-          q: 'домик · 220 GEL', key: 'sleep',
+          q: R.pay === 'them' ? 'домик' : 'домик · 220 GEL', key: 'sleep',
           a: R.pay === 'me' ? (n > 1 ? 'оплатим сами' : 'оплачу сам')
-            : R.pay === 'them' ? 'за счёт молодожёнов' : '—'
+            : R.pay === 'them' ? 'за счёт молодожёнов' : '—',
+          rich: R.pay === 'me' ? 'эту строчку видят только богатые' : null
         });
       }
     }
@@ -2811,6 +2817,13 @@
       a.style.cssText = "font-family:'Neucha',cursive;font-size:17px;color:#33291F;margin-top:3px;";
       a.textContent = r.a;
       txt.appendChild(q); txt.appendChild(a);
+      if (r.rich) {
+        var rich = document.createElement('div');
+        rich.className = 'rs-rich';
+        rich.style.cssText = "display:inline-block;font-family:'Caveat',cursive;font-weight:700;font-size:16px;line-height:1.15;margin-top:4px;letter-spacing:0.3px;";
+        rich.textContent = r.rich;
+        txt.appendChild(rich);
+      }
       row.appendChild(txt);
       if (withEdit) {
         var btn = document.createElement('button');
@@ -2906,7 +2919,7 @@
     rsEls['rs-stay-no-l'].textContent = n > 1 ? 'нет, уедем в ночь((' : 'нет, уеду в ночь((';
     rsvpSetBadges({ 'rs-b-stayyes': R.stay === 'yes', 'rs-b-stayno': R.stay === 'no' });
     rsEls['rs-sleep-sub'].style.display = R.stay === 'yes' ? 'block' : 'none';
-    rsEls['rs-pay-me-t'].textContent = n > 1 ? 'оплатим домик сами' : 'оплачу домик сам';
+    rsEls['rs-pay-me-t'].textContent = n > 1 ? 'оплатим домик – это наш вклад (в конверт)' : 'оплачу домик – это мой вклад (в конверт)';
     rsEls['rs-pay-them-t'].textContent = n > 1 ? 'гуляем за счёт молодожёнов' : 'гуляю за счёт молодожёнов';
     rsvpSetBadges({ 'rs-b-payme': R.pay === 'me', 'rs-b-paythem': R.pay === 'them' });
 
