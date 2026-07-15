@@ -1048,8 +1048,10 @@
   <div id="rsvp-root" style="display: none;">
 
     <!-- сплошная «бумажная» подложка под всеми листами: закрывает просвет на главную
-         (в т.ч. подвал «сделано Никитой») в момент свайпа-перехода между листами -->
-    <div style="position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; pointer-events: none;">
+         (в т.ч. подвал «сделано Никитой») в момент свайпа-перехода между листами.
+         При закрытии анкеты её прячем, чтобы уезжающий лист открывал настоящую главную,
+         а не пустую бумагу (id для этого) -->
+    <div id="rsvp-paper" style="position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; pointer-events: none;">
       <div style="width: 100%; max-width: 600px; height: 100%; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px;"></div>
     </div>
 
@@ -2561,6 +2563,7 @@
   R.open = false;
 
   var elRsvpRoot = document.getElementById('rsvp-root');
+  var elRsvpPaper = document.getElementById('rsvp-paper');
   var rsEls = {};
   ['rs-pose-loader', 'rs-pose-secret', 'rs-pose-hello', 'rs-pose-come', 'rs-pose-road', 'rs-pose-sleep', 'rs-pose-check', 'rs-pose-done',
    'rs-ldr-bar', 'rs-ldr-cap', 'rs-ldr-pct', 'rs-word', 'rs-wordbox', 'rs-word-go', 'rs-err', 'rs-err-msg', 'rs-errlots', 'rs-hints',
@@ -3243,6 +3246,7 @@
     wordBtn.style.opacity = '';
     wordBtn.textContent = 'впусти меня →';
     elRsvpRoot.style.display = 'block';
+    if (elRsvpPaper) elRsvpPaper.style.display = '';   // вернуть бумажную подложку (её прячет закрытие)
     lockScroll(true);
     if (push) { try { history.pushState({ nuRsvp: 1 }, '', '/rsvp'); } catch (e) {} }
     // главная под оверлеем: слегка «утапливаем» (как при l2 → main) и глушим для таба
@@ -3299,6 +3303,9 @@
     R.phase = 'closed';
     R.ldrIn = false;
     rsvpRenderPoses();
+    // прячем бумажную подложку: пусть уезжающий лист открывает настоящую главную,
+    // а не пустой кремовый слой (только если под анкетой действительно есть главная)
+    if (elRsvpPaper && phase === 'main') elRsvpPaper.style.display = 'none';
     try { elMainWrap.inert = false; elGate.inert = false; } catch (e) {}
     elMuteWrap.style.zIndex = '';
     if (phase === 'main') elMainWrap.style.transform = 'none';
