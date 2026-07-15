@@ -2509,6 +2509,29 @@
     }, 990 + l2PlayMs() + 1000);
   }
 
+  // мгновенно собрать и показать главную, минуя бут-лоудер / гейт / l2 —
+  // используется при возврате с /rsvp (standalone), чтобы листы анкеты уехали
+  // и открыли настоящую главную, а не пустую «бумагу»
+  function showMainInstant() {
+    if (phase === 'main') return;
+    try {
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.documentElement.style.scrollBehavior = '';
+    } catch (e) {}
+    phase = 'main';
+    elBoot.style.display = 'none';
+    elGate.style.display = 'none';
+    elChosen.style.display = 'none';
+    elL2.style.display = 'none';
+    elMainWrap.style.display = 'block';
+    elMainWrap.style.transform = 'none';
+    if (!mainStarted) { mainStarted = true; initMain(); }
+    elMuteWrap.style.display = 'block';
+    setMuteIcon();
+  }
+
   // ==================== RSVP-АНКЕТА (порт rsvp.dc.html) ====================
   // Оверлей из «листов» поверх сайта. Открывается кнопкой «заполнить анкету»
   // (history.pushState('/rsvp')) или прямым заходом на /rsvp (nginx отдаёт index.html).
@@ -3287,7 +3310,17 @@
   }
 
   function rsvpExit() {
-    if (rsvpStandalone) { location.href = '/'; return; }
+    if (rsvpStandalone) {
+      // прямой заход на /rsvp: раньше делали жёсткий location.href='/' — полная
+      // перезагрузка с бут-лоудером и гейтом, «последний кадр» = пустая бумага.
+      // Теперь собираем главную на лету и уводим листы анкеты вниз, открывая её —
+      // так же бесшовно, как обычный возврат с pushState.
+      rsvpStandalone = false;
+      try { history.replaceState({}, '', '/'); } catch (e) {}
+      showMainInstant();
+      rsvpClose();
+      return;
+    }
     if (history.state && history.state.nuRsvp) history.back();
     else rsvpClose();
   }
