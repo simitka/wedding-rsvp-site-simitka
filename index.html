@@ -3,6 +3,53 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+/* Телефон в лендскейпе: ПК-версия и так включается по @media (orientation: landscape),
+   но в родном вьюпорте (~840x340) коллаж не влезает. Подменяем meta viewport на
+   фиксированную ширину лейаута — браузер вписывает её в экран (initial-scale < 1),
+   и страница рендерится как ужатое окно ПК-браузера. В портрете возвращаем
+   width=device-width. Гейт по короткой стороне экрана (<= 520 CSS px): планшеты не
+   трогаем, десктоп-браузеры meta viewport игнорируют. Скрипт обязан быть синхронным
+   в <head> (первый пейнт уже с нужным вьюпортом) и регистрирует слушатель ПЕРВЫМ:
+   при ротации meta переключается до onMq/captureBases основного скрипта (setupDtop). */
+(function () {
+  var vp = document.querySelector('meta[name="viewport"]');
+  if (!vp || !window.screen || !window.matchMedia) return;
+  var PORTRAIT = 'width=device-width, initial-scale=1';
+  // Целевая «высота экрана» лейаута в CSS px (короткое окно ПК-браузера). Ширина =
+  // аспект экрана * высота; пол клампа 1240 — двухколоночные листы анкеты (done2 1120px
+  // на zoom 1.16), потолок 1720 — страховка для сверхвытянутых экранов.
+  var TARGET_H = 660;
+  var mql = window.matchMedia('(orientation: landscape)');
+  function content() {
+    var short = Math.min(screen.width, screen.height);
+    var long = Math.max(screen.width, screen.height);
+    if (short > 520 || !mql.matches) return PORTRAIT;
+    // фактическая CSS-ширина окна из visualViewport: screen.width не знает про боковую
+    // системную навигацию в лендскейпе, а в мультиоконном режиме окно — лишь доля экрана
+    var vv = window.visualViewport;
+    var winW = (vv && vv.width && vv.scale) ? vv.width * vv.scale : long;
+    // сплит-скрин/поп-ап: окно заметно уже физического экрана — это не «телефон в
+    // лендскейпе», оставляем мобильный вьюпорт (иначе initial-scale выйдет нечитаемо мелким)
+    if (winW < long * 0.9) return PORTRAIT;
+    var w = Math.round(Math.min(1720, Math.max(1240, long / short * TARGET_H)));
+    // initial-scale задаём явно: iOS без него может не пересчитать масштаб при ротации
+    return 'width=' + w + ', initial-scale=' + (winW / w).toFixed(4);
+  }
+  function apply() {
+    var want = content();
+    if (vp.getAttribute('content') !== want) vp.setAttribute('content', want);
+  }
+  apply();
+  if (mql.addEventListener) mql.addEventListener('change', apply);
+  else if (mql.addListener) mql.addListener(apply);
+  window.addEventListener('orientationchange', apply);
+  // resize: фолды (складывание/раскладывание) и вход/выход из сплит-скрина меняют метрики
+  // без смены ориентации — orientationchange/MQ молчат. content() инвариантен к скрытию
+  // URL-бара и пинч-зуму (ширина окна не меняется), guard в apply() гасит холостые записи.
+  window.addEventListener('resize', apply);
+})();
+</script>
 <title>Никита ♥ Ульяна — 11 сентября 2026, Кахетия</title>
 <link rel="icon" href="favicon.ico" sizes="any" />
 <meta name="description" content="Приглашение на свадьбу Никиты и Ульяны — 11 сентября 2026, Chubini Wine Cellar, Кахетия, Грузия." />
@@ -15,7 +62,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@600;700&family=Neucha&family=Oswald:wght@500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Rubik+Mono+One&family=Unbounded:wght@700;900&family=Yeseva+One&display=swap" />
 <style>
   html, body { margin: 0; padding: 0; background: #3B4A20; }
-  html { overflow-x: hidden; }
+  /* text-size-adjust: без него Android Chrome при фиксированной ширине вьюпорта
+     (телефон-в-лендскейпе, см. скрипт в <head>) раздувает текст font-boosting'ом */
+  html { overflow-x: hidden; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   /* body НЕЛЬЗЯ давать overflow-x: hidden: раз у html overflow не visible, body становится
      ОТДЕЛЬНЫМ скролл-контейнером (overflow-y докомпучивается до auto) со своим «карманом»
      прокрутки (~110px — от гэгов, уехавших transform'ом за низ страницы). Тач-жест латчится
@@ -333,6 +382,14 @@
     /* низ страницы: коричневой плашке футера не даём кончиться — красим канвас (и оверскролл) в её цвет.
        Зелёную «доску» при этом рисует собственный фон #dtop (см. инлайн background-color на #dtop). */
     html, body { background-color: #33291F !important; }
+  }
+
+  /* Короткий лендскейп (телефон-в-лендскейпе с подменённым viewport или низкое окно ПК):
+     одноэкранная композиция хиро не помещается — центральная карточка наезжала на прибитые
+     к низу секции звезду даты и детские фото. Даём секции подрасти: низовые абсолюты уезжают
+     под первый экран и доезжаются скроллом. 700px локальных ≈ 812 видимых (zoom 1.16). */
+  @media (orientation: landscape) and (max-height: 700px) {
+    #dtop > section:first-of-type { min-height: 700px !important; }
   }
 </style>
 </head>
