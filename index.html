@@ -249,6 +249,14 @@
        (hero — full-viewport min-height: calc(100vh/1.16), остальные — vh-паддинги),
        иначе коллаж hero схлопывается и абсолютные фото/дата/лента наезжают. */
 
+    /* декор-конфетти (сердечки/звёзды, инлайновый z-index: 1) всегда ПОД контентом:
+       пока reveal-контейнер анимируется, его transform создаёт stacking context уровня 0,
+       и конфетти уровня 1 всплывало поверх плашек (напр. «место на крыше уже занято!»),
+       а после снятия transform ныряло обратно под них. Уровень 0 + порядок в DOM держат
+       конфетти под контентом в обоих состояниях. Хиро не трогаем: там конфетти намеренно
+       вплетено в коллаж (z-index 4/6). */
+    #dtop > section:not(:first-of-type) [data-mp] { z-index: 0 !important; }
+
     /* Гейт выбора музыки — десктоп-раскладка как в макете (Desktop.dc.html 114-198):
        плавающая повёрнутая карточка на зелёной точечной доске + 2 колонки, CTA «жми на котика» справа над котами */
     #gate-outer { justify-content: center; min-height: 100dvh; padding: 2.5vh 3vw; box-sizing: border-box; background-image: radial-gradient(rgba(242,237,226,0.05) 1.2px, transparent 1.7px); background-size: 26px 26px; }
@@ -379,9 +387,17 @@
     #mute-btn { width: 76px !important; height: 76px !important; }
     #mute-btn > span { transform: scale(1.36); }
 
-    /* низ страницы: коричневой плашке футера не даём кончиться — красим канвас (и оверскролл) в её цвет.
-       Зелёную «доску» при этом рисует собственный фон #dtop (см. инлайн background-color на #dtop). */
+    /* канвас (оверскролл): снизу продолжаем коричневую плашку футера, сверху — зелёную доску.
+       Градиент прибит к вьюпорту (background-attachment: fixed): при овер-скролле сверху
+       выглядывает верхняя (зелёная) половина канваса, снизу — нижняя (коричневая).
+       background-color — фоллбек там, где fixed-attachment не поддержан (iOS Safari):
+       там остаётся прежний коричневый. Зелёную «доску» самой страницы рисует фон #dtop. */
     html, body { background-color: #33291F !important; }
+    html {
+      background-image: linear-gradient(#3B4A20 0 50%, #33291F 50% 100%) !important;
+      background-repeat: no-repeat !important;
+      background-attachment: fixed !important;
+    }
   }
 
   /* Короткий лендскейп (телефон-в-лендскейпе с подменённым viewport или низкое окно ПК):
@@ -719,7 +735,9 @@
         <div style="text-align: center; font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 12px; transform: rotate(-0.5deg);">по ощущениям — полтора фильма или один очень хороший сон</div>
       </div>
 
-      <div data-reveal="drop" style="position: relative; margin-top: 168px;">
+      <!-- z-index: 2 — как у соседних блоков: иначе на время reveal-анимации transform опускает
+           контейнер на уровень 0 и декор-звезда секции (z-index: 1) всплывает поверх плашки машины -->
+      <div data-reveal="drop" style="position: relative; z-index: 2; margin-top: 168px;">
         <div id="car-wrap" style="position: absolute; bottom: calc(100% - 38px); left: 0; width: 240px; z-index: 1; transform: translate3d(-300px, 0, 0); will-change: transform;">
           <img src="assets/car-roof.png" alt="Жених в детстве едет на крыше машины" style="width: 100%; height: auto; animation: rockCar 0.95s ease-in-out infinite alternate; transform-origin: 50% 88%; filter: drop-shadow(0 8px 9px rgba(51,41,31,0.28)); pointer-events: none;" />
           <span style="position: absolute; top: -14px; left: -4px; transform: rotate(-6deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 16px; white-space: nowrap; pointer-events: none;">место на крыше уже занято!</span>
@@ -743,7 +761,7 @@
           </div>
           выезжаем из Тбилиси — и на <span style="background: #EBDF7E; padding: 0 5px;">два с половиной часа</span> прилипаем к окну: холмы, виноградники, и горы всё ближе.
           <div style="height: 12px;"></div>
-          в середине пути будет <span style="text-decoration: underline wavy #6C7ED6 3px; text-underline-offset: 5px; text-decoration-skip-ink: none;">небольшой серпантин</span>. если укачивает — киньте в сумку таблетку <span style="display: inline-block; width: 32px; height: 14px; border: 2.5px solid #33291F; border-radius: 999px; background: linear-gradient(90deg, #E2588E 0 50%, #FBF8EF 50%); transform: rotate(-14deg) translateY(2px); box-shadow: 2px 2px 0 rgba(51,41,31,0.35); margin: 0 3px;"></span> — скажете ей спасибо.
+          в середине пути будет <span style="text-decoration: underline wavy #6C7ED6 3px; text-underline-offset: 5px; text-decoration-skip-ink: none;">небольшой серпантин</span>. если укачивает — киньте в сумку таблетку <span style="display: inline-block; width: 32px; height: 14px; border: 2.5px solid #33291F; border-radius: 999px; background: linear-gradient(90deg, #E2588E 0 50%, #FBF8EF 50%); transform: rotate(-14deg) translateY(2px); box-shadow: 2px 2px 0 rgba(51,41,31,0.35); margin: 0 3px;"></span> — скажете ей спасибо
           <div style="clear: both;"></div>
         </div>
         <div style="position: absolute; top: -12px; left: 18px; width: 84px; height: 24px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-7deg); z-index: 3;"></div>
@@ -752,7 +770,7 @@
       <div data-reveal="left" data-reveal-delay="80" style="position: relative; max-width: 440px; margin: 30px auto 0;">
         <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 20px 20px 18px; transform: rotate(1.2deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45;">
           <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E;">пс-с, про трансфер:</span><br />
-          мы хотим помочь вам — <span style="background: #EBDF7E; padding: 0 5px;">соберём гостей в Тбилиси</span>,&nbsp; рассадим по машинкам, отвезём на винодельню, а после — обратно. отметьте в анкете, что нужны места, и ближе к свадьбе мы всё расскажем.
+          мы хотим помочь вам — <span style="background: #EBDF7E; padding: 0 5px;">соберём гостей в Тбилиси</span>,&nbsp; рассадим по машинкам, отвезём на винодельню, а после — обратно. отметьте в анкете, что нужны места, и ближе к свадьбе мы всё расскажем
         </div>
         <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">довезём!!!</div>
       </div>
@@ -803,6 +821,7 @@
             <span style="font-family: 'Neucha', cursive; font-size: 19px; line-height: 1.35;">торт и медленный танец под звёздами ♥</span>
           </div>
         </div>
+        <div style="position: absolute; bottom: -14px; right: 14px; z-index: 3; max-width: 72%; transform: rotate(2deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1.2; text-align: center;">план примерный — отредактируем ближе к свадьбе</div>
         <div style="position: absolute; top: -11px; right: 26px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(5deg); z-index: 2;"></div>
         <div style="position: absolute; bottom: -10px; left: 22px; width: 84px; height: 24px; background: rgba(180,155,224,0.5); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-6deg); z-index: 2;"></div>
       </div>
@@ -904,7 +923,7 @@
 
       <div data-reveal="drop" style="position: relative; max-width: 430px; margin: 0 auto;">
         <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 24px 24px 20px; transform: rotate(-1deg); text-align: center; font-family: 'Neucha', cursive; font-size: 19px; line-height: 1.4; filter: drop-shadow(4px 6px 0 rgba(51,41,31,0.22));">
-          так что берите <span style="background: #EBDF7E; padding: 0 5px;">купальник и полотенце</span> — после пары тостов открываем заплывы прямо среди виноградников.
+          так что берите <span style="background: #EBDF7E; padding: 0 5px;">купальник и полотенце</span> — после пары тостов открываем заплывы прямо среди виноградников
         </div>
         <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">Это не шутка</div>
       </div>
@@ -967,7 +986,7 @@
           </div>
           оставайтесь на ночь — мы очень приглашаем! после торта веселье <span style="background: #EBDF7E; padding: 0 5px;">только разгоняется</span>: звёзды, танцы и разговоры до утра.
           <div style="height: 12px;"></div>
-          а с утра никто никуда не спешит — и это лучшая часть плана.
+          а с утра никто никуда не спешит — и это лучшая часть плана
           <div style="clear: both;"></div>
         </div>
       </div>
@@ -991,7 +1010,7 @@
       <div data-reveal="right" data-reveal-delay="100" style="position: relative; max-width: 440px; margin: 30px auto 0;">
         <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 20px 20px 18px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45;">
           <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #E2588E;">как остаться:</span><br />
-          отметьте в анкете внизу, что <span style="background: #EBDF7E; padding: 0 5px;">остаётесь на ночь</span>, — и мы закрепим за вами номер. утром — завтрак и заплыв в бассейне.
+          отметьте в анкете внизу, что <span style="background: #EBDF7E; padding: 0 5px;">остаётесь на ночь</span>, — и мы закрепим за вами номер. утром — завтрак и заплыв в бассейне
         </div>
         <div style="position: absolute; top: -16px; right: -4px; transform: rotate(7deg); border: 2.5px dashed #E2588E; color: #E2588E; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.75);">оставайтесь!!!</div>
       </div>
@@ -1011,8 +1030,8 @@
       <div style="display: flex; flex-direction: column; gap: 18px; max-width: 440px; margin: 0 auto;">
         <div data-reveal="left" style="position: relative;">
           <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 18px 20px 16px; transform: rotate(-1.2deg);">
-            <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #A31D4E;">можно с детьми?</div>
-            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">конечно! чем больше банда, тем веселее.</div>
+            <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #A31D4E;">можно кричать горько?</div>
+            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">невеста сказала, что нельзя (мы переспросили — точно нельзя). за нарушение правил — штраф 50 лари в бюджет молодожёнов</div>
           </div>
         </div>
         <div data-reveal="right" style="position: relative; z-index: 1;">
@@ -1026,7 +1045,7 @@
                 <span style="position: absolute; left: 50%; bottom: -12px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 2px 8px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; line-height: 1.15; text-align: center; pointer-events: none;">проверяют,<br />хватит ли хинкали</span>
               </div>
               <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #6C7ED6;">а с плюс-один?</div>
-              <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">Поясним в анкете. Скорее начинай заполнять, кнопка ниже.</div>
+              <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">Поясним в анкете. Скорее начинай заполнять, кнопка ниже</div>
               <div style="clear: both;"></div>
             </div>
           </div>
@@ -1040,13 +1059,13 @@
         <div data-reveal="right" style="position: relative;">
           <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 20px 16px; transform: rotate(1deg);">
             <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #A2A845;">какая будет погода?</div>
-            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">сентябрь в Кахетии — это около +25° и тёплые вечера. накидка на плечи не помешает.</div>
+            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px;">мы не экстрасенсы, но синоптики шепчут: сентябрь в Кахетии — это около +25° и тёплые вечера. накидка на плечи не помешает</div>
           </div>
         </div>
         <div data-reveal="left" style="position: relative;">
           <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 18px 20px 16px; transform: rotate(-1.4deg);">
             <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #E2588E;">остались вопросы?</div>
-            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px; line-height: 1.6;">напишите <a class="faq-link" href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a class="faq-link" href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> в телеграм — ответим быстрее, чем закончится тост.</div>
+            <div style="font-family: 'Neucha', cursive; font-size: 17px; margin-top: 4px; line-height: 1.6;">напишите <a class="faq-link" href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a class="faq-link" href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> в телеграм — ответим быстрее, чем закончится тост</div>
           </div>
         </div>
       </div>
@@ -1348,7 +1367,7 @@
         </div>
         выезжаем из Тбилиси — и на <span style="background: #EBDF7E; padding: 0 5px;">два с половиной часа</span> прилипаем к окну: холмы, виноградники, и горы всё ближе.
         <div style="height: 12px;"></div>
-        в середине пути будет <span style="text-decoration: underline wavy #6C7ED6 3px; text-underline-offset: 5px; text-decoration-skip-ink: none;">небольшой серпантин</span>. если укачивает — киньте в сумку таблетку <span style="display: inline-block; width: 32px; height: 14px; border: 2.5px solid #33291F; border-radius: 999px; background: linear-gradient(90deg, #E2588E 0 50%, #FBF8EF 50%); transform: rotate(-14deg) translateY(2px); box-shadow: 2px 2px 0 rgba(51,41,31,0.35); margin: 0 3px;"></span> — скажете ей спасибо.
+        в середине пути будет <span style="text-decoration: underline wavy #6C7ED6 3px; text-underline-offset: 5px; text-decoration-skip-ink: none;">небольшой серпантин</span>. если укачивает — киньте в сумку таблетку <span style="display: inline-block; width: 32px; height: 14px; border: 2.5px solid #33291F; border-radius: 999px; background: linear-gradient(90deg, #E2588E 0 50%, #FBF8EF 50%); transform: rotate(-14deg) translateY(2px); box-shadow: 2px 2px 0 rgba(51,41,31,0.35); margin: 0 3px;"></span> — скажете ей спасибо
         <div style="clear: both;"></div>
       </div>
       <div style="position: absolute; top: -12px; left: 22px; width: 84px; height: 24px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-7deg); z-index: 3;"></div>
@@ -1356,7 +1375,7 @@
     <div data-reveal="left" data-reveal-delay="80" style="position: relative; margin-top: 20px;">
       <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 26px 26px 22px; transform: rotate(1.2deg); font-family: 'Neucha', cursive; font-size: 21px; line-height: 1.5; filter: drop-shadow(0 12px 20px rgba(10,14,3,0.35));">
         <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 26px; color: #A31D4E;">пс-с, про трансфер:</span><br />
-        мы хотим помочь вам — <span style="background: #EBDF7E; padding: 0 5px;">соберём гостей в Тбилиси</span>, рассадим по машинкам, отвезём на винодельню, а после — обратно. отметьте в анкете, что нужны места, и ближе к свадьбе мы всё расскажем.
+        мы хотим помочь вам — <span style="background: #EBDF7E; padding: 0 5px;">соберём гостей в Тбилиси</span>, рассадим по машинкам, отвезём на винодельню, а после — обратно. отметьте в анкете, что нужны места, и ближе к свадьбе мы всё расскажем
       </div>
       <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.9);">довезём!!!</div>
     </div>
@@ -1416,6 +1435,7 @@
             <span style="font-family: 'Neucha', cursive; font-size: 24px; line-height: 1.35;">торт и медленный танец под звёздами ♥</span>
           </div>
         </div>
+        <div style="position: absolute; bottom: -16px; right: 16px; z-index: 3; transform: rotate(2deg); background: #FBF8EF; padding: 3px 12px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px; line-height: 1.2; white-space: nowrap;">план примерный — отредактируем ближе к свадьбе</div>
         <div style="position: absolute; top: -11px; right: 26px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(5deg); z-index: 3;"></div>
         <div style="position: absolute; bottom: -10px; left: 22px; width: 84px; height: 24px; background: rgba(180,155,224,0.5); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 3;"></div>
       </div>
@@ -1430,7 +1450,7 @@
       <div data-reveal="slap" style="text-align: center; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(23px, 2vw, 33px); color: #F2EDE2; transform: rotate(-1deg); margin-bottom: 24px; text-shadow: 0 2px 0 rgba(10,14,3,0.4);">на территории есть настоящий бассейн</div>
       <div data-reveal="drop" style="position: relative; max-width: 520px; margin: 0 auto;">
         <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 28px 28px 24px; transform: rotate(-1deg); text-align: center; font-family: 'Neucha', cursive; font-size: 23px; line-height: 1.45; filter: drop-shadow(0 14px 22px rgba(10,14,3,0.4));">
-          так что берите <span style="background: #EBDF7E; padding: 0 5px;">купальник и полотенце</span> — после пары тостов открываем заплывы прямо среди виноградников.
+          так что берите <span style="background: #EBDF7E; padding: 0 5px;">купальник и полотенце</span> — после пары тостов открываем заплывы прямо среди виноградников
         </div>
         <div style="position: absolute; top: -16px; right: -6px; transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.9);">Это не шутка</div>
       </div>
@@ -1608,7 +1628,7 @@
           </div>
           оставайтесь на ночь — мы очень приглашаем! после торта веселье <span style="background: #EBDF7E; padding: 0 5px;">только разгоняется</span>: звёзды, танцы и разговоры до утра.
           <div style="height: 12px;"></div>
-          а с утра никто никуда не спешит — и это лучшая часть плана.
+          а с утра никто никуда не спешит — и это лучшая часть плана
           <div style="clear: both;"></div>
         </div>
       </div>
@@ -1630,7 +1650,7 @@
       <div data-reveal="right" data-reveal-delay="100" style="position: relative; max-width: 560px; margin: 30px auto 0;">
         <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 22px 24px 20px; transform: rotate(1deg); font-family: 'Neucha', cursive; font-size: 21px; line-height: 1.5; filter: drop-shadow(0 12px 20px rgba(10,14,3,0.35));">
           <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 25px; color: #E2588E;">как остаться:</span><br />
-          отметьте в анкете внизу, что <span style="background: #EBDF7E; padding: 0 5px;">остаётесь на ночь</span>, — и мы закрепим за вами номер. утром — завтрак и заплыв в бассейне.
+          отметьте в анкете внизу, что <span style="background: #EBDF7E; padding: 0 5px;">остаётесь на ночь</span>, — и мы закрепим за вами номер. утром — завтрак и заплыв в бассейне
         </div>
         <div style="position: absolute; top: -16px; right: -4px; transform: rotate(7deg); border: 2.5px dashed #E2588E; color: #E2588E; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 10px; text-transform: uppercase; background: rgba(247,243,232,0.9);">оставайтесь!!!</div>
       </div>
@@ -1660,8 +1680,8 @@
   <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 30px 3vw; max-width: 1820px; margin: 0 auto;">
     <div data-reveal="left" style="flex: 0 1 clamp(280px, 24vw, 414px); position: relative;">
       <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 22px 24px 20px; transform: rotate(-1.8deg); filter: drop-shadow(0 12px 20px rgba(10,14,3,0.4));">
-        <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 29px; color: #A31D4E;">можно с детьми?</div>
-        <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px;">конечно! чем больше банда, тем веселее.</div>
+        <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 29px; color: #A31D4E;">можно кричать горько?</div>
+        <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px;">невеста сказала, что нельзя (мы переспросили — точно нельзя). за нарушение правил — штраф 50 лари в бюджет молодожёнов</div>
       </div>
     </div>
     <div data-reveal="drop" data-reveal-delay="60" style="flex: 0 1 clamp(320px, 30vw, 506px); position: relative; z-index: 1; margin-top: 26px;">
@@ -1675,7 +1695,7 @@
             <span style="position: absolute; left: 50%; bottom: -12px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 2px 8px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; line-height: 1.15; text-align: center; pointer-events: none;">проверяют,<br />хватит ли хинкали</span>
           </div>
           <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 29px; color: #6C7ED6;">а с плюс-один?</div>
-          <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px;">Поясним в анкете. Скорее начинай заполнять, кнопка ниже.</div>
+          <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px;">Поясним в анкете. Скорее начинай заполнять, кнопка ниже</div>
           <div style="clear: both;"></div>
         </div>
       </div>
@@ -1689,13 +1709,13 @@
     <div data-reveal="left" data-reveal-delay="180" style="flex: 0 1 clamp(300px, 27vw, 460px); position: relative; margin-top: 8px;">
       <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 22px 24px 20px; transform: rotate(-1deg); filter: drop-shadow(0 12px 20px rgba(10,14,3,0.4));">
         <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 29px; color: #A2A845;">какая будет погода?</div>
-        <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px;">сентябрь в Кахетии — это около +25° и тёплые вечера. накидка на плечи не помешает.</div>
+        <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px;">мы не экстрасенсы, но синоптики шепчут: сентябрь в Кахетии — это около +25° и тёплые вечера. накидка на плечи не помешает</div>
       </div>
     </div>
     <div data-reveal="right" data-reveal-delay="240" style="flex: 0 1 clamp(320px, 29vw, 494px); position: relative; margin-top: 22px;">
       <div style="background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 22px 24px 20px; transform: rotate(-1.6deg); filter: drop-shadow(0 12px 20px rgba(10,14,3,0.4));">
         <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 29px; color: #E2588E;">остались вопросы?</div>
-        <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px; line-height: 1.6;">напишите <a class="faq-link" href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a class="faq-link" href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> в телеграм — ответим быстрее, чем закончится тост.</div>
+        <div style="font-family: 'Neucha', cursive; font-size: 21px; margin-top: 5px; line-height: 1.6;">напишите <a class="faq-link" href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a class="faq-link" href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> в телеграм — ответим быстрее, чем закончится тост</div>
       </div>
     </div>
   </div>
@@ -1885,7 +1905,7 @@
       <div id="egg-stamp" style="display: none; position: absolute; inset: 0; z-index: 8; flex-direction: column; align-items: center; justify-content: center; gap: 16px; pointer-events: none;">
         <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 30px; color: #F2EDE2; transform: rotate(-2deg); animation: fadeIn 0.3s ease both;">он додержал!!!</div>
         <div style="border: 4px dashed #EBDF7E; color: #EBDF7E; background: rgba(51,41,31,0.88); font-family: 'Rubik Mono One', monospace; font-size: clamp(16px, 5vw, 30px); letter-spacing: 2px; padding: 14px 18px; max-width: 88vw; box-sizing: border-box; text-align: center; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">АВИАРЕЖИМ: ВКЛ</div>
-        <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #F2EDE2; transform: rotate(-1.5deg); animation: fadeIn 0.4s ease 0.35s both;">наоборотный. теперь всё летает и поёт.</div>
+        <div style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 23px; color: #F2EDE2; transform: rotate(-1.5deg); animation: fadeIn 0.4s ease 0.35s both;">наоборотный. теперь всё летает и поёт</div>
       </div>
     </div>
 
@@ -2035,6 +2055,7 @@
             <div id="rs-errlots" style="display: none; margin-top: 20px; font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; text-align: center; max-width: 320px; animation: fadeIn 0.4s ease both;">слово потерялось? напиши <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(-2deg); padding: 0 2px;">Никите</a> или <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; color: #A31D4E; text-decoration: underline wavy #6C7ED6 2px; text-underline-offset: 3px; font-weight: 700; transform: rotate(1.5deg); padding: 0 2px;">Ульяне</a> — выдадим новое ♥</div>
 
             <div id="rs-hints" style="display: none; margin-top: 34px; font-family: 'Neucha', cursive; font-size: 14px; color: rgba(75,50,39,0.65); border: 2px dashed rgba(75,50,39,0.35); padding: 6px 12px; transform: rotate(-1deg); text-align: center;">для демо: «хинкали» — один гость · «сациви» — пара</div>
+            <div style="margin-top: 26px; font-family: 'Neucha', cursive; font-size: 12px; color: rgba(75,50,39,0.38); text-align: center; max-width: 320px;">не приглашён, но хочется глянуть анкету? — введи слово «хинкали»</div>
             <div style="flex: none; margin-bottom: auto;"></div>
           </section>
         </div>
@@ -2224,7 +2245,7 @@
                 машину удобно взять тут:
                 <a href="https://www.localrent.com/ru/georgia/" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #33291F; color: #F2EDE2; padding: 7px 12px; transform: rotate(-1.5deg); box-shadow: 3px 4px 0 rgba(51,41,31,0.35); margin-left: 6px;">localrent.com →</a>
                 <div style="border-top: 3px dashed rgba(51,41,31,0.25); margin: 16px 0 12px;"></div>
-                <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E;">и раз есть машина —</span> <span id="rs-take-q">подхватишь</span> кого-то из наших? мы напишем ближе к дате и подсадим попутчиков.
+                <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px; color: #A31D4E;">и раз есть машина —</span> <span id="rs-take-q">подхватишь</span> кого-то из наших? мы напишем ближе к дате и подсадим попутчиков
                 <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 16px;">
                   <button type="button" id="rs-minus" class="rs-press-s" style="--rr: 0deg; width: 48px; height: 48px; border-radius: 50%; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Rubik Mono One', monospace; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">−</button>
                   <span id="rs-seats" style="width: 74px; height: 62px; background: #FBF8EF; border: 3px solid #33291F; display: flex; align-items: center; justify-content: center; font-family: 'Rubik Mono One', monospace; font-size: 28px; color: #A31D4E; transform: rotate(-1deg);">0</span>
@@ -2392,7 +2413,7 @@
               </div>
             </div>
             <div id="rs-done-fail" style="display: none; width: 100%;">
-              <div style="font-family: 'Neucha', cursive; font-size: 17px; color: #4B3227; margin: 8px auto 0; text-align: center; max-width: 340px;">будем скучать. по-настоящему!! если планы вдруг поменяются — ты знаешь, кому писать.</div>
+              <div style="font-family: 'Neucha', cursive; font-size: 17px; color: #4B3227; margin: 8px auto 0; text-align: center; max-width: 340px;">будем скучать. по-настоящему!! если планы вдруг поменяются — ты знаешь, кому писать</div>
               <div style="position: relative; width: min(260px, 74%); margin: 22px auto 0;">
                 <div style="animation: wiggle 4.2s ease-in-out infinite; transform-origin: 50% 92%;">
                   <img data-rsvp-src="assets/rsvp/sofa-girl.png" alt="Девочка с пуделем на синем диване" class="rsvp-spin" style="width: 100%; height: auto; filter: drop-shadow(6px 10px 10px rgba(51,41,31,0.35)); cursor: pointer;" />
@@ -2410,8 +2431,8 @@
             <div style="max-width: 430px; width: 100%; margin-top: 22px;">
               <div style="background: #F7F3E8; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 18px 18px 16px; transform: rotate(0.6deg); font-family: 'Neucha', cursive; font-size: 16px; line-height: 1.5; text-align: center;">что-то изменилось? не проходи анкету заново — просто напиши, поправим руками:</div>
               <div style="display: flex; justify-content: center; gap: 14px; margin-top: 14px; flex-wrap: wrap;">
-                <a href="http://t.me/simitka" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; padding: 11px 16px; transform: rotate(-1.5deg);">тг Никиты</a>
-                <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #E2588E; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; padding: 11px 16px; transform: rotate(1.5deg);">тг Ульяны</a>
+                <a href="http://t.me/simitka" target="_blank" rel="noopener" class="rs-press" style="--rr: -1.5deg; display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; padding: 11px 16px; transform: rotate(-1.5deg);">тг Никиты</a>
+                <a href="http://t.me/ulie_beyl" target="_blank" rel="noopener" class="rs-press" style="--rr: 1.5deg; display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; background: #E2588E; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; padding: 11px 16px; transform: rotate(1.5deg);">тг Ульяны</a>
               </div>
             </div>
 
@@ -2421,8 +2442,8 @@
 
             <div style="width: calc(100% + 44px); margin: 34px -22px 0; transform: rotate(-1.4deg); background: #33291F; color: #F2EDE2; overflow: hidden; padding: 10px 0; box-shadow: 0 6px 14px rgba(51,41,31,0.3);">
               <div style="display: flex; width: max-content; animation: marquee 16s linear infinite; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap;">
-                <span class="rs-marquee" style="padding-right: 24px;"></span>
-                <span class="rs-marquee" style="padding-right: 24px;"></span>
+                <span class="rs-marquee"></span>
+                <span class="rs-marquee"></span>
               </div>
             </div>
             <div style="height: 26px;"></div>
@@ -3489,7 +3510,11 @@
   var RS_LDR_CAPS = ['вскрываем конверт…', 'ищем твою анкету…', 'точим карандашик…', 'пересчитываем хинкали…'];
   var RS_ERRS = ['не-а, не то слово((', 'охрана качает головой. ещё разок?', 'хм. может, опечатка?', 'слово где-то рядом, но нет!!'];
   var RS_SEAT_LABELS = ['пока никого — еду налегке', '+1 счастливчик едет с тобой', '+2 — уже компания!', '+3 — целая банда!', '+4 — весёлый экипаж!', '+5 — да это маршрутка!', '+6 — почти автобус!!', '+7 — ты и есть трансфер!!!'];
-  var RS_DEMO_GUESTS = { 'хинкали': ['Саша'], 'сациви': ['Маша', 'Дима'] };
+  // «хинкали» — гостевой просмотр для неприглашённых (подсказка на листе пароля):
+  // пускает в анкету чисто на клиенте, бэкенд не трогаем, ответы живут только в
+  // localStorage и никуда не отправляются (см. rsvpAuth / rsvpSend / rsvpOpen)
+  var RS_GUEST_WORD = 'хинкали';
+  var RS_DEMO_GUESTS = { 'сациви': ['Маша', 'Дима'] };
   var RS_TORN_A = 'polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%)';
   var RS_TORN_B = 'polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%)';
 
@@ -3517,6 +3542,7 @@
 
   function rsvpMotionOn() { return app.getAttribute('data-motion') !== 'off'; }
   function rsvpNorm(w) { return String(w || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, ''); }
+  function rsvpGuestMode() { return R.word === RS_GUEST_WORD; }
 
   function rsvpBootState() {
     var saved = null;
@@ -3607,6 +3633,11 @@
   function rsvpAuth(word, cb) {
     var norm = rsvpNorm(word);
     if (!norm) { cb(null, 'bad'); return; }
+    // гостевой просмотр: пускаем чисто на клиенте, к бэкенду не ходим
+    if (norm === RS_GUEST_WORD) {
+      setTimeout(function () { cb({ names: ['гость'], answers: null, locked: false, preview: true }, null); }, 350);
+      return;
+    }
     if (!RSVP_API) {
       setTimeout(function () {
         var names = RS_DEMO_GUESTS[norm];
@@ -3639,7 +3670,9 @@
       R.stay = a.stay != null ? a.stay : null;
       R.pay = a.pay != null ? a.pay : null;
     }
-    if (RSVP_API) { R.locked = !!data.locked; R.confirmed = !!data.locked; }
+    // гостевой просмотр (preview) живёт как клиентское демо: замок не трогаем,
+    // локальный confirmed — единственный источник правды
+    if (RSVP_API && !data.preview) { R.locked = !!data.locked; R.confirmed = !!data.locked; }
   }
 
   // куда вести гостя после успешного /auth: замок → готово (read-only),
@@ -3664,7 +3697,8 @@
   }
 
   function rsvpSend(payload) {
-    if (!RSVP_API) {
+    // клиентское демо и гостевой просмотр «хинкали»: ответы никуда не отправляем
+    if (!RSVP_API || rsvpGuestMode()) {
       console.log('[RSVP] payload:', JSON.stringify(payload));
       R.sync = 'ok'; R.pending = null; rsvpPersist(); rsvpRenderDone();
       return;
@@ -3847,11 +3881,24 @@
     rsEls['rs-done-rows'].innerHTML = '';
     rsEls['rs-done-rows'].appendChild(rsvpRows(false));
     rsEls['rs-sync-note'].style.display = (RSVP_API && R.sync === 'pending') ? 'block' : 'none';
-    rsEls['rs-reset'].style.display = rsDemoHints ? 'inline-block' : 'none';
+    rsEls['rs-reset'].style.display = (rsDemoHints || rsvpGuestMode()) ? 'inline-block' : 'none';
     var mq = R.come === 'no'
       ? 'будем скучать ♥ напиши нам ♥ Никита и Ульяна ♥ 11.09.2026 ♥'
       : 'ждём ' + (n > 1 ? 'вас' : 'тебя') + ' ♥ 11.09.2026 ♥ Кахетия ♥ Chubini Wine Cellar ♥';
-    Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-marquee'), function (el) { el.textContent = mq; });
+    // бегущая строка: в каждом спане столько копий текста, чтобы контент был не уже
+    // полосы — на широком ПК-лендскейпе две одиночные копии оставляли пустой хвост.
+    // Стык копий и спанов — NBSP: та же ширина, что у пробелов внутри текста (раньше
+    // padding-right: 24px давал двойной зазор). Скорость ленты держим постоянной —
+    // длительность анимации растёт вместе с числом копий.
+    var mqSpans = elRsvpRoot.querySelectorAll('.rs-marquee');
+    var mqUnit = mq + '\u00A0';
+    Array.prototype.forEach.call(mqSpans, function (el) { el.textContent = mqUnit; });
+    var mqTrack = mqSpans[0].parentNode, mqBox = mqTrack.parentNode, mqReps = 1;
+    while (mqReps < 8 && mqSpans[0].offsetWidth > 0 && mqSpans[0].offsetWidth < mqBox.clientWidth) {
+      mqReps++;
+      Array.prototype.forEach.call(mqSpans, function (el) { el.textContent += mqUnit; });
+    }
+    mqTrack.style.animationDuration = (16 * mqReps) + 's';
   }
 
   function rsvpRender() {
@@ -4209,12 +4256,13 @@
         .then(function (d) {
           rsDemoHints = !!(d && d.demo);
           rsEls['rs-hints'].style.display = rsDemoHints ? 'block' : 'none';
-          rsEls['rs-reset'].style.display = rsDemoHints ? 'inline-block' : 'none';
+          rsEls['rs-reset'].style.display = (rsDemoHints || rsvpGuestMode()) ? 'inline-block' : 'none';
         })
         .catch(function () {});
     }
-    if (!RSVP_API) {
-      // ДЕМО (без бэкенда): источник правды — localStorage, поведение как раньше
+    if (!RSVP_API || rsvpGuestMode()) {
+      // ДЕМО (без бэкенда) и гостевой просмотр «хинкали»: источник правды —
+      // localStorage, к серверу не ходим, поведение как раньше
       if (R.phase === 'loader') {
         rsvpStartLoader();
       } else {
