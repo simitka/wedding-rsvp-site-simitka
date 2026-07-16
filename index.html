@@ -2298,7 +2298,7 @@
 (function () {
   // ===== v3 wrapper: настройки (дефолты из дизайна) =====
   var LOADER1_MIN_MS = 5000;   // минимум показа бут-лоудера
-  var LOADER1_MAX_MS = 22000;  // страховка: даже если ассет завис — не держим лоудер дольше
+  var LOADER1_MAX_MS = 20000;  // страховка: если за 20с всё не докачалось — едем дальше (один битый ассет не должен блокировать сайт)
   var LOADER2_MIN_MS = 6000;   // минимум показа лоудера-перехода
   var IDLE_MS = 30000;         // через сколько появляется плашка авто-выбора
   var COUNTDOWN_MS = 10000;    // длительность обратного отсчёта авто-выбора
@@ -2530,6 +2530,7 @@
   var EGG_START_FROM = 10;
   var EGG_PLANE_GAP_MS = 3600;
   var EGG_AUDIO_URL = 'assets/egg/avia-na-moroze.mp3';
+  var eggAudioBlobUrl = null;   // blob-URL песни пасхалки, если её успел скачать бут-лоудер
   var EGG_PHRASES = [
     'о нет. кажется, он догадывается…',
     'там будет ТАКОЕ… может, всё-таки не надо?',
@@ -2586,7 +2587,7 @@
   function eggTm(fn, ms) { var t = setTimeout(fn, ms); eggTimers.push(t); return t; }
   function eggClearTimers() { eggTimers.forEach(clearTimeout); eggTimers = []; }
   function getAvia() {
-    if (!avia) { avia = new Audio(EGG_AUDIO_URL); avia.loop = true; }
+    if (!avia) { avia = new Audio(eggAudioBlobUrl || EGG_AUDIO_URL); avia.loop = true; }
     return avia;
   }
   function eggFadeStop(a) {
@@ -3077,32 +3078,58 @@
   }
   // ==================== /ПАСХАЛКА №1 ====================
 
-  // ---- предзагрузка (картинки + шрифты + песня; дальше не пускаем, пока всё не скачано) ----
+  // ---- предзагрузка: ВСЕ картинки главной и анкеты + шрифты + обе песни;
+  // дальше не пускаем, пока всё не скачано (но не дольше LOADER1_MAX_MS) ----
   var loadedN = 0, loadTotal = 1, smooth = 0, loadDone = false;
+  var preloadKeep = [];   // держим ссылки на Image до гидрации DOM после показа main, чтобы прогретое не выпало из memory cache
   function preload() {
+    // порядок = приоритет: сначала видимое сразу (гейт + коллаж главной), потом
+    // анкета, потом скрытое (секретные фото, пасхалка) — если канал медленный и
+    // сработает страховка по времени, критичное успеет докачаться первым
     var imgs = ['assets/computer-kid.png', 'assets/cat-sound.gif', 'assets/cat-silence.gif',
       'assets/nikita-outlined.png', 'assets/ulyana-outlined.png', 'assets/mushroom.png',
       'assets/ulyana-peek.png', 'assets/palette.jpg', 'assets/bath.png', 'assets/axe.png',
       'assets/car-roof.png', 'assets/car-van.png', 'assets/sleep-kid.png', 'assets/glasses-kid.png',
       'assets/bride-kid.png', 'assets/khinkali-kids.png', 'assets/trio-kids.png'];
-    loadTotal = imgs.length + 2; // + шрифты + песня
+    var seen = {};
+    imgs.forEach(function (s) { seen[s] = 1; });
+    function add(s) { if (s && !seen[s]) { seen[s] = 1; imgs.push(s); } }
+    // фото анкеты и мемы пасхалки собираем прямо из разметки — новые ленивые
+    // картинки попадают в предзагрузку сами, без правки этого списка
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rsvp-src]'), function (im) { add(im.getAttribute('data-rsvp-src')); });
+    add('assets/nikita-secret.png');
+    add('assets/ulyana-secret.png');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-egg-src]'), function (im) { add(im.getAttribute('data-egg-src')); });
+    add('assets/egg/catplane.png');   // самолётики пасхалки собираются из JS-строки, в разметке их нет
+    loadTotal = imgs.length + 3; // + шрифты + песня + песня пасхалки
     function bump() { loadedN++; if (loadedN >= loadTotal) loadDone = true; }
-    imgs.forEach(function (src) { var im = new Image(); im.onload = bump; im.onerror = bump; im.src = src; });
+    imgs.forEach(function (src) { var im = new Image(); preloadKeep.push(im); im.onload = bump; im.onerror = bump; im.src = src; });
     try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(bump, bump); else bump(); } catch (e) { bump(); }
-    // песня: тянем целиком через fetch и подсовываем как blob, чтобы гарантированно докачать
-    var fetched = false;
-    try {
-      fetch(AUDIO_URL).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.blob(); }).then(function (b) {
-        try {
-          var url = URL.createObjectURL(b);
-          var a = getAudio();
-          a.src = url; a.load();
-        } catch (e) {}
-        fetched = true; bump();
-      }).catch(function () { fetched = true; bump(); });
-    } catch (e) { fetched = true; bump(); }
-    // страховка на случай зависшего fetch: не держим лоудер вечно
-    setTimeout(function () { if (!fetched) { fetched = true; bump(); } }, 20000);
+    // песни: тянем целиком через fetch и подсовываем как blob, чтобы гарантированно докачать
+    function fetchSong(url, apply) {
+      var done = false;
+      function fin() { if (!done) { done = true; bump(); } }
+      try {
+        fetch(url).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.blob(); }).then(function (b) {
+          try { apply(URL.createObjectURL(b)); } catch (e) {}
+          fin();
+        }).catch(fin);
+      } catch (e) { fin(); }
+      // страховка на случай зависшего fetch: счётчик не держим дольше общего капа
+      setTimeout(fin, LOADER1_MAX_MS);
+    }
+    fetchSong(AUDIO_URL, function (u) {
+      // поздний resolve (лоудер уехал по капу, гость уже включил музыку): не трогаем
+      // элемент — load() молча оборвал бы играющий трек, а musicPlaying остался бы true
+      var a = getAudio();
+      if (a.paused && !musicPlaying) { a.src = u; a.load(); }
+    });
+    fetchSong(EGG_AUDIO_URL, function (u) {
+      eggAudioBlobUrl = u;
+      // если элемент пасхалки уже создан (тап по кнопке звука был раньше resolve),
+      // перекидываем его на blob, пока он на паузе, — иначе mp3 скачается второй раз
+      if (avia && avia.paused) { try { avia.src = u; avia.load(); } catch (e) {} }
+    });
   }
 
   // ---- состояние оркестрации ----
@@ -4903,8 +4930,9 @@
     else if (mq.addListener) mq.addListener(onMq);
   })();
 
-  // --- прогрев ассетов пасхалки: src подставляем только после показа main,
-  // чтобы 3 МБ мемов не соревновались с ассетами лоудера за канал ---
+  // --- гидрация ассетов пасхалки после показа main: на обычном пути всё уже
+  // скачано бут-лоудером (src подставится из кеша), а на standalone /rsvp
+  // (без LOVE.EXE) этот блок — единственный фоновый прогрев ---
   setTimeout(function () {
     Array.prototype.forEach.call(document.querySelectorAll('[data-egg-src]'), function (im) {
       im.src = im.getAttribute('data-egg-src');
@@ -4916,8 +4944,9 @@
       p.src = s;
     });
   }, 1200);
-  // фоновая догрузка фото анкеты, чтобы к моменту «заполнить анкету» всё уже было в кеше
-  setTimeout(rsvpHydrate, 3200);
+  // подстановка src фото анкеты (обычный путь — из кеша лоудера; standalone гидрирует rsvpOpen);
+  // после гидрации DOM сам держит все картинки — ссылки предзагрузки больше не нужны
+  setTimeout(function () { rsvpHydrate(); preloadKeep.length = 0; }, 3200);
   }
 })();
 </script>
