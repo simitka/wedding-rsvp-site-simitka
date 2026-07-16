@@ -3451,7 +3451,7 @@
    'rs-react', 'rs-react-yes', 'rs-react-no', 'rs-react-text', 'rs-confetti'
   ].forEach(function (id) { rsEls[id] = document.getElementById(id); });
 
-  var rsInT, rsLdrIv, rsLdrTo, rsAdvT, rsCloseT, rsFwRaf, rsHydrated = false;
+  var rsInT, rsLdrIv, rsLdrTo, rsAdvT, rsCloseT, rsPaperT, rsFwRaf, rsHydrated = false;
   var rsSession = 0;   // инвалидация колбэков auth при закрытии/переоткрытии оверлея
   // координация «лоудер как шлюз + ответ сервера»: маршрут ставится, когда готово И то, И другое
   var rsLoaderDone = false, rsRefreshTarget;  // undefined = ещё ждём сервер
@@ -4121,7 +4121,20 @@
     wordBtn.style.opacity = '';
     wordBtn.textContent = 'впусти меня →';
     elRsvpRoot.style.display = 'block';
-    if (elRsvpPaper) elRsvpPaper.style.display = '';   // вернуть бумажную подложку (её прячет закрытие)
+    // бумажная подложка: при открытии поверх живой главной держим её спрятанной,
+    // пока лист въезжает (иначе кремовый слой перекрывает главную мгновенно, без
+    // хореографии — зеркало rsvpClose, где подложку прячут перед уездом листа).
+    // Возвращаем после конца въезда (90мс задержка + 0.9с transition): дальше она
+    // снова закрывает просветы при перелистывании между листами.
+    clearTimeout(rsPaperT);
+    if (elRsvpPaper) {
+      if (!rsvpStandalone && phase === 'main') {
+        elRsvpPaper.style.display = 'none';
+        rsPaperT = setTimeout(function () { if (R.open) elRsvpPaper.style.display = 'flex'; }, 1050);
+      } else {
+        elRsvpPaper.style.display = 'flex';   // standalone /rsvp: под листами нет главной — подложка сразу
+      }
+    }
     lockScroll(true);
     if (push) { try { history.pushState({ nuRsvp: 1 }, '', '/rsvp'); } catch (e) {} }
     // главная под оверлеем: слегка «утапливаем» (как при l2 → main) и глушим для таба
@@ -4146,7 +4159,11 @@
       if (R.phase === 'loader') {
         rsvpStartLoader();
       } else {
-        // подтверждённый гость: сразу «ПРИНЯТО» со сводкой, без лоудера — но с въездом листа
+        // подтверждённый гость: сразу «ПРИНЯТО» со сводкой, без лоудера — но с въездом листа.
+        // Подложку возвращаем сразу: прыжок 'closed'→'done' метёт промежуточные листы
+        // (218% пути против 106% у въезжающего), и к концу твина между ними приоткрывается
+        // щель ~6vh — бесшовный вход тут не работает, оставляем старое поведение
+        if (elRsvpPaper) { clearTimeout(rsPaperT); elRsvpPaper.style.display = 'flex'; }
         R.ldrIn = true;
         var target = R.phase;
         R.phase = 'closed';
@@ -4171,7 +4188,7 @@
     if (!R.open) return;
     R.open = false;
     rsSession++;
-    clearTimeout(rsInT); clearTimeout(rsLdrTo); clearTimeout(rsAdvT);
+    clearTimeout(rsInT); clearTimeout(rsLdrTo); clearTimeout(rsAdvT); clearTimeout(rsPaperT);
     clearInterval(rsLdrIv);
     cancelAnimationFrame(rsFwRaf);
     rsvpHideReaction();
