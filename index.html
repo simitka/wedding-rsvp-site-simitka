@@ -138,7 +138,7 @@
   @keyframes eggShake2 { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(4px, -3px) rotate(0.3deg); } 50% { transform: translate(-4px, 3px) rotate(-0.3deg); } 75% { transform: translate(3px, 4px) rotate(0.2deg); } 100% { transform: translate(-3px, -4px) rotate(-0.2deg); } }
   @keyframes eggShake1 { 0% { transform: translate(0, 0) rotate(0deg); } 20% { transform: translate(7px, -5px) rotate(0.6deg); } 40% { transform: translate(-6px, 5px) rotate(-0.6deg); } 60% { transform: translate(5px, 6px) rotate(0.4deg); } 80% { transform: translate(-7px, -4px) rotate(-0.5deg); } 100% { transform: translate(4px, -6px) rotate(0.3deg); } }
   @keyframes eggPanicBg { from { opacity: 0.45; } to { opacity: 0.85; } }
-  @keyframes eggStripes { from { background-position: 0 0; } to { background-position: 45.25px 0; } }
+  @keyframes eggStripes { from { transform: translateX(0); } to { transform: translateX(45.2548px); } }
   @keyframes eggArm { 0% { transform: scale(2) rotate(0deg); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(1.03) rotate(300deg); opacity: 1; } }
   @keyframes eggFlyL { 0% { transform: translate(0, 0) rotate(-12deg); } 50% { transform: translate(calc(50vw + 140px), -9vh) rotate(5deg); } 100% { transform: translate(calc(100vw + 580px), 3vh) rotate(16deg); } }
   @keyframes eggFlyR { 0% { transform: translate(0, 0) rotate(10deg); } 50% { transform: translate(calc(-50vw - 140px), -7vh) rotate(-6deg); } 100% { transform: translate(calc(-100vw - 580px), 4vh) rotate(-16deg); } }
@@ -1814,8 +1814,10 @@
       <!-- пульс паники (последние 3 секунды) -->
       <div id="egg-panic" style="display: none;">
         <div style="position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 45%, rgba(163,29,78,0.6), rgba(74,8,26,0.8)); animation: eggPanicBg 0.85s ease-in-out infinite alternate;"></div>
-        <div style="position: absolute; top: 0; left: 0; right: 0; height: 16px; z-index: 5; background: repeating-linear-gradient(45deg, #EBDF7E 0 16px, #33291F 16px 32px); animation: eggStripes 0.55s linear infinite; box-shadow: 0 3px 0 rgba(0,0,0,0.35);"></div>
-        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 16px; z-index: 5; background: repeating-linear-gradient(-45deg, #EBDF7E 0 16px, #33291F 16px 32px); animation: eggStripes 0.55s linear infinite; box-shadow: 0 -3px 0 rgba(0,0,0,0.35);"></div>
+        <!-- полосы едут transform'ом (не background-position): сдвиг фона тайлит градиент
+             картинкой шириной в элемент, и на стыке тайлов виден шов фазы диагоналей -->
+        <div style="position: absolute; top: 0; left: -46px; right: 0; height: 16px; z-index: 5; background: repeating-linear-gradient(45deg, #EBDF7E 0 16px, #33291F 16px 32px); animation: eggStripes 0.55s linear infinite; box-shadow: 0 3px 0 rgba(0,0,0,0.35);"></div>
+        <div style="position: absolute; bottom: 0; left: -46px; right: 0; height: 16px; z-index: 5; background: repeating-linear-gradient(-45deg, #EBDF7E 0 16px, #33291F 16px 32px); animation: eggStripes 0.55s linear infinite; box-shadow: 0 -3px 0 rgba(0,0,0,0.35);"></div>
       </div>
       <div id="egg-final1" style="display: none; position: absolute; inset: 0; z-index: 1; background: rgba(163,29,78,0.4); animation: eggPanicBg 0.32s ease-in-out infinite alternate;"></div>
 
