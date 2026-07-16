@@ -214,50 +214,103 @@
     #gate-outer [data-gc-arrows] { display: none !important; }
     #gate-outer .gate-btn-a, #gate-outer .gate-btn-b { width: clamp(180px, 21vh, 250px) !important; max-width: none !important; }
 
-    /* Бут-лоудер LOVE.EXE: кремовый лист на весь вьюпорт (в макете inset:0), а не 600px-колонка.
-       Контент (computer-kid 225px, бар 233px, тексты) остаётся центрированным и тех же размеров. */
+    /* Бут-лоудер LOVE.EXE и лоудер 2: кремовый лист на весь вьюпорт (в макете inset:0), а не 600px-колонка.
+       zoom 1.16 — как у #dtop: в макете лоудеры живут внутри зумленного дерева. */
     #boot > div { max-width: none !important; width: 100% !important; }
+    #l2 > div { max-width: none !important; width: 100% !important; box-shadow: 0 -30px 90px rgba(0,0,0,0.55) !important; }
+    #boot, #l2 { zoom: 1.16; }
 
-    /* ============ RSVP-АНКЕТА: десктоп-раскладка ============ */
-    /* подложка — на всю ширину (кремовая), чтобы за краями листов не сквозила главная */
-    #rsvp-paper > div { max-width: none !important; width: 100% !important; }
-    /* все листы — широкие десктоп-карточки по центру */
-    #rs-pose-loader > div, #rs-pose-hello > div, #rs-pose-come > div,
-    #rs-pose-sleep > div, #rs-pose-done > div {
-      max-width: min(760px, 92vw) !important;
+    /* ============ RSVP-АНКЕТА: десктоп-раскладка (порт Desktop.dc.html, блоки «АНКЕТА») ============ */
+    /* Каждый лист в макете — position:fixed inset:0 на весь экран, а не 600px-колонка:
+       тогда «← назад», бейджи и декор-звёзды сами встают к краям экрана, а тёмная
+       box-shadow листа уходит за вьюпорт. zoom 1.16 — как у #dtop (в макете анкета зумлена). */
+    #rsvp-paper > div,
+    #rs-pose-loader > div, #rs-pose-secret > div, #rs-pose-hello > div, #rs-pose-come > div,
+    #rs-pose-road > div, #rs-pose-sleep > div, #rs-pose-check > div, #rs-pose-done > div {
+      max-width: none !important; width: 100% !important;
     }
-    /* листы с фото-«стражем» — 2 колонки (фото слева, форма справа) */
-    #rs-pose-secret > div, #rs-pose-check > div { max-width: min(940px, 94vw) !important; }
-    #rs-pose-secret > div > section, #rs-pose-check > div > section {
+    #rsvp-paper > div, #rs-pose-loader, #rs-pose-secret, #rs-pose-hello, #rs-pose-come,
+    #rs-pose-road, #rs-pose-sleep, #rs-pose-check, #rs-pose-done, #rs-react { zoom: 1.16; }
+    /* скотчи по центру верха листов — атрибут мобильной колонки, в ПК-макете их нет */
+    #rsvp-root [data-rc="tape"] { display: none !important; }
+    /* реакция на «да/нет» — размеры как в макете */
+    #rs-react-yes { width: min(30vw, 320px) !important; }
+    #rs-react-no { width: min(24vw, 250px) !important; }
+    /* чипсы-прогресс: на широком экране «← назад» не мешает — прижимаем к верху как в макете */
+    #rsvp-root section > div:has(> .rs-chips) { margin-top: 30px !important; }
+
+    /* заголовки листов: в макете размер идёт от высоты экрана (vh), мобильные vw-клампы на ПК упираются в кап */
+    #rs-pose-secret section > h1 > span:nth-child(-n+2) { font-size: clamp(32px, 3.6vh, 46px) !important; }
+    #rs-pose-secret section > h1 > span:nth-child(3) { font-size: clamp(24px, 2.7vh, 34px) !important; }
+    #rs-pose-hello section > h1 > span:first-child { font-size: clamp(28px, 3vh, 36px) !important; }
+    #rs-pose-hello #rs-name-a { font-size: clamp(38px, 4.5vh, 56px) !important; }
+    #rs-pose-hello #rs-hello-couple > span:first-child { font-size: clamp(24px, 2.6vh, 30px) !important; }
+    #rs-pose-hello #rs-name-b { font-size: clamp(36px, 4.2vh, 52px) !important; }
+    #rs-pose-hello section > h1 > span:last-child { font-size: clamp(30px, 3.4vh, 42px) !important; }
+    #rs-come-h-single > span:nth-child(1), #rs-come-h-couple > span:nth-child(1),
+    #rs-pose-road section > h1 > span:nth-child(1), #rs-pose-check section > h1 > span:nth-child(1) { font-size: clamp(26px, 3.2vh, 38px) !important; }
+    #rs-come-h-single > span:nth-child(2), #rs-come-h-couple > span:nth-child(2),
+    #rs-pose-road section > h1 > span:nth-child(2), #rs-pose-check section > h1 > span:nth-child(2) { font-size: clamp(28px, 3.5vh, 42px) !important; }
+    #rs-come-h-single > span:nth-child(3), #rs-come-h-couple > span:nth-child(3),
+    #rs-pose-road section > h1 > span:nth-child(3), #rs-pose-check section > h1 > span:nth-child(3),
+    #rs-pose-sleep section > h1 > span:nth-child(3) { font-size: clamp(22px, 2.6vh, 30px) !important; }
+    #rs-pose-sleep section > h1 > span:nth-child(-n+2) { font-size: clamp(28px, 3.4vh, 40px) !important; }
+
+    /* лист «пароль»: 2 колонки — охрана слева, форма справа (макет: flex-ряд, фото clamp(190,18vh,260)) */
+    #rs-pose-secret > div > section {
       display: grid !important;
-      grid-template-columns: minmax(200px, 300px) minmax(0, 480px);
+      grid-template-columns: clamp(190px, 18vh, 260px) minmax(0, 480px);
       column-gap: clamp(30px, 5vw, 90px);
       justify-content: safe center; align-content: safe center;
     }
-    #rs-pose-secret > div > section > *, #rs-pose-check > div > section > * { grid-column: 2; justify-self: center; }
-    #rs-pose-secret > div > section > [data-rc="aside"], #rs-pose-check > div > section > [data-rc="aside"] {
-      grid-column: 1; grid-row: 1 / span 50; align-self: center; margin-top: 0 !important;
+    #rs-pose-secret > div > section > * { grid-column: 2; justify-self: center; }
+    /* абсолютным элементам (выход, декор-звёзды) грид-зону не задаём — иначе их containing block
+       становится 2-я колонка, а не весь лист */
+    #rs-pose-secret > div > section > [style*="position: absolute"] { grid-column: auto !important; grid-row: auto !important; }
+    #rs-pose-secret > div > section > [data-rc="aside"] {
+      grid-column: 1; grid-row: 1 / span 50; align-self: center; margin-top: 0 !important; width: 100% !important;
     }
     /* flex-спейсеры вертикального центрирования в гриде не нужны */
     #rs-pose-secret > div > section > div[style*="margin-top: auto"],
-    #rs-pose-secret > div > section > div[style*="margin-bottom: auto"],
-    #rs-pose-check > div > section > div[style*="margin-top: auto"],
-    #rs-pose-check > div > section > div[style*="margin-bottom: auto"] { display: none !important; }
-    #rs-pose-secret [data-rc="aside"] { width: clamp(200px, 20vh, 260px) !important; }
-    #rs-pose-check [data-rc="aside"] { width: 176px !important; }
-
-    /* ============ ЛОУДЕР 2: кремовый лист на весь вьюпорт (в макете inset:0), а не 600px-колонка ============ */
-    #l2 > div { max-width: none !important; width: 100% !important; box-shadow: 0 -30px 90px rgba(0,0,0,0.55) !important; }
-
-    /* ---- RSVP: доводка листов «дорога/пароль/привет» под десктоп-макет ---- */
-    /* лист «дорога»: широкий ряд + две карточки трансфера бок о бок (макет ~980px) */
-    #rs-pose-road > div { max-width: min(980px, 94vw) !important; }
-    #rs-pose-road [data-rc="road2"] { flex-direction: row !important; width: min(980px, 100%) !important; gap: clamp(16px, 2vw, 30px) !important; align-items: stretch !important; }
-    #rs-pose-road [data-rc="road2"] > button { flex: 1 1 440px; min-width: 0; }
-    #rs-pose-road #rs-road-sub { width: min(480px, 100%) !important; }
-    /* поле пароля и инфо-карточки привета — ближе к десктоп-ширинам */
+    #rs-pose-secret > div > section > div[style*="margin-bottom: auto"] { display: none !important; }
     #rs-pose-secret #rs-wordbox { width: min(380px, 100%) !important; }
-    #rs-pose-hello #rs-info-single, #rs-pose-hello #rs-info-couple { max-width: 480px !important; }
+
+    /* лист «привет»: карточка «а теперь серьёзно» и «важное» — бок о бок (макет: ряд 500px + 460px, до 1060px) */
+    #rs-pose-hello [data-rc="hello2"] { display: flex !important; align-items: flex-start; justify-content: center; gap: clamp(20px, 2.5vw, 40px); width: 100%; max-width: 1060px; margin-top: 34px; }
+    #rs-pose-hello [data-rc="hello2"] > div:first-child { flex: 0 1 500px; min-width: 0; max-width: none !important; margin-top: 0 !important; }
+    #rs-pose-hello #rs-info-single, #rs-pose-hello #rs-info-couple { flex: 0 1 460px; min-width: 0; max-width: none !important; margin-top: 0 !important; }
+
+    /* лист «кто будет»: колонка ответов шире, как в макете */
+    #rs-pose-come #rs-come-single, #rs-pose-come #rs-come-couple { width: min(420px, 100%) !important; margin-top: 4vh !important; }
+
+    /* лист «дорога»: две карточки трансфера бок о бок (макет ~980px) */
+    #rs-pose-road [data-rc="road2"] { flex-direction: row !important; width: min(980px, 100%) !important; gap: clamp(16px, 2vw, 30px) !important; align-items: stretch !important; margin-top: 4vh !important; }
+    #rs-pose-road [data-rc="road2"] > button { flex: 1 1 440px; min-width: 0; }
+    #rs-pose-road [data-rc="road2"] > button > img { width: 96px !important; }
+    #rs-pose-road #rs-road-sub { width: min(480px, 100%) !important; }
+
+    /* лист «ночёвка»: ширины ответов/подвопроса и кувыркающийся ребёнок — как в макете */
+    #rs-pose-sleep section > div:has(> #rs-stay-yes) { width: min(420px, 100%) !important; margin-top: 4vh !important; }
+    #rs-pose-sleep #rs-sleep-sub { width: min(480px, 100%) !important; }
+    #rs-pose-sleep section > div[style*="left: 4%"] { width: clamp(150px, 13vh, 190px) !important; }
+
+    /* лист «чек»: ответы слева, кнопка отправки + фото справа (макет: ряд 520px + колонка, до 1000px) */
+    #rs-pose-check [data-rc="chk2"] { display: grid !important; grid-template-columns: minmax(0, 520px) auto; column-gap: clamp(24px, 3vw, 50px); justify-content: center; align-items: start; width: 100%; max-width: 1000px; margin-top: 3.5vh; }
+    #rs-pose-check #rs-sum-rows { grid-column: 1; grid-row: 1 / span 2; width: 100% !important; margin-top: 0 !important; }
+    #rs-pose-check [data-rc="chk2"] > div:has(> #rs-confirm) { grid-column: 2; grid-row: 1; margin-top: 0 !important; justify-self: center; }
+    #rs-pose-check [data-rc="chk2"] > div:nth-child(3) { grid-column: 1; grid-row: 3; margin-top: 6px !important; max-width: none !important; justify-self: center; }
+    #rs-pose-check [data-rc="aside"] { grid-column: 2; grid-row: 2; justify-self: center; align-self: start; margin-top: 4vh !important; width: clamp(120px, 12vh, 150px) !important; }
+
+    /* лист «готово»: слева ПРИНЯТО + дети, справа сводка ответов (макет: ряд 480px + 500px, до 1120px) */
+    #rs-pose-done [data-rc="done2"] { display: flex !important; align-items: flex-start; justify-content: center; gap: clamp(26px, 3.5vw, 60px); width: 100%; max-width: 1120px; }
+    #rs-pose-done [data-rc="donel"] { display: flex !important; flex-direction: column; align-items: center; flex: 0 1 480px; min-width: 0; }
+    #rs-pose-done [data-rc="doner"] { display: flex !important; flex-direction: column; flex: 0 1 500px; min-width: 0; padding-top: 14px; }
+    #rs-pose-done [data-rc="donel"] > div:first-child { font-size: clamp(22px, 2.8vh, 32px) !important; }
+    #rs-pose-done #rs-recap-t { margin-top: 0 !important; }
+    #rs-pose-done #rs-done-rows { width: 100% !important; }
+    #rs-pose-done [data-rc="doner"] > div[style*="max-width: 430px"] { max-width: none !important; }
+    #rs-pose-done #rs-sync-note { align-self: center; }
+    #rs-pose-done #rs-reset { align-self: center; }
 
     /* ============ ГЕЙТ (выбор музыки): доводка ПК-раскладки ============ */
     /* карточка не режет наклейку «вы по адресу» и скотч по краям — «скрапбук»-оверхэнг поверх листа */
@@ -1888,7 +1941,7 @@
             <span aria-hidden="true" style="position: absolute; bottom: 66px; right: 11%; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 30px; color: #ECA02B; transform: rotate(-12deg); animation: pulseStar 2.4s ease-in-out 0.5s infinite alternate; pointer-events: none; z-index: 1;">★</span>
             <span aria-hidden="true" style="position: absolute; bottom: 104px; left: 13%; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 22px; color: #A2A845; transform: rotate(8deg); animation: pulseStar 2.1s ease-in-out 0.2s infinite alternate; pointer-events: none; z-index: 1;">✦</span>
             <button type="button" class="rs-exit rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← на сайт</button>
-            <div style="position: absolute; top: -8px; left: 50%; margin-left: -110px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+            <div data-rc="tape" style="position: absolute; top: -8px; left: 50%; margin-left: -110px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
             <div style="position: absolute; top: 14px; right: -6px; z-index: 7;">
               <div style="transform: rotate(7deg); border: 2.5px dashed #6C7ED6; color: #6C7ED6; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2.5px; padding: 7px 20px 7px 12px; text-transform: uppercase; background: rgba(247,243,232,0.6);">фейс-контроль</div>
             </div>
@@ -1937,7 +1990,7 @@
             <span aria-hidden="true" style="position: absolute; top: 12px; right: 18px; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 30px; color: #E2588E; transform: rotate(12deg); animation: pulseStar 1.7s ease-in-out infinite alternate; pointer-events: none; z-index: 1;">♥</span>
             <span aria-hidden="true" style="position: absolute; top: 16px; left: 44%; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 22px; color: #6C7ED6; transform: rotate(-14deg); animation: pulseStar 2.2s ease-in-out 0.4s infinite alternate; pointer-events: none; z-index: 1;">★</span>
             <button type="button" class="rs-goback rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← пароль</button>
-            <div style="position: absolute; top: -8px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+            <div data-rc="tape" style="position: absolute; top: -8px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
 
             <div style="flex: none; margin-top: auto;"></div>
             <div style="margin-top: 26px; border: 3px dashed #3B4A20; color: #3B4A20; background: rgba(247,243,232,0.85); font-family: 'Rubik Mono One', monospace; font-size: 15px; letter-spacing: 2px; padding: 9px 14px; animation: stampIn 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;">ПАРОЛЬ ПРИНЯТ!!!</div>
@@ -1953,6 +2006,8 @@
               <span style="display: inline-block; font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(28px, 9vw, 38px); color: #A31D4E; transform: rotate(3deg); margin-left: 4px;">!</span>
             </h1>
 
+            <!-- ПК-лендскейп: hello2 ставит карточки «серьёзно» и «важное» бок о бок; в портрете display:contents — мобильная колонка не меняется -->
+            <div data-rc="hello2" style="display: contents;">
             <div style="position: relative; max-width: 430px; width: 100%; margin-top: 30px;">
               <div style="position: relative; background: #FBF8EF; clip-path: polygon(0% 4%, 6% 0%, 15% 3%, 27% 1%, 38% 4%, 50% 0%, 62% 3%, 74% 1%, 86% 4%, 95% 1%, 100% 6%, 99% 50%, 100% 93%, 94% 100%, 82% 97%, 70% 100%, 57% 96%, 44% 100%, 31% 97%, 18% 100%, 7% 96%, 0% 92%); padding: 20px 18px 18px; transform: rotate(-0.8deg); font-family: 'Neucha', cursive; font-size: 17px; line-height: 1.45;">
                 <div style="float: right; width: 42%; max-width: 170px; margin: -6px -4px 6px 12px; position: relative;">
@@ -1985,6 +2040,7 @@
                 <span style="position: absolute; left: 50%; bottom: -8px; width: max-content; transform: translateX(-50%) rotate(-4deg); background: #FBF8EF; padding: 1px 7px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 12px; text-align: center; line-height: 1.1; pointer-events: none;">я подожду,<br />посмотрю</span>
               </div>
             </div>
+            </div><!-- /hello2 -->
 
             <div style="position: relative; display: inline-block; margin-top: 34px;">
               <button type="button" id="rs-start" class="rs-press" style="--rr: 0deg; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(15px, 4.6vw, 19px); text-transform: uppercase; letter-spacing: 1px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 19px 26px; cursor: pointer; animation: wiggle 2.4s ease-in-out infinite;">поехали!!! →</button>
@@ -2220,6 +2276,8 @@
               <span style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(24px, 7.5vw, 34px); background: #ECA02B; color: #33291F; padding: 8px 12px 6px; transform: rotate(-2deg);">всё</span><span style="display: inline-block; font-family: 'Yeseva One', serif; font-size: clamp(26px, 8vw, 38px); background: #6C7ED6; color: #FFFFFF; padding: 6px 12px 4px; transform: rotate(2.5deg) translateY(3px); margin-left: 4px;">сходится</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #A31D4E; color: #FFFFFF; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
             </h1>
 
+            <!-- ПК-лендскейп: chk2 раскладывает ответы слева, кнопку с фото справа; в портрете display:contents — мобильная колонка не меняется -->
+            <div data-rc="chk2" style="display: contents;">
             <div id="rs-sum-rows" style="display: flex; flex-direction: column; gap: 14px; width: min(430px, 100%); margin-top: 26px;"></div>
 
             <div style="position: relative; display: inline-block; margin-top: 34px;">
@@ -2233,6 +2291,7 @@
               </div>
               <span style="position: absolute; left: 50%; bottom: -10px; width: max-content; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 9px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 14px; pointer-events: none;">отдел контроля проверит в четыре глаза</span>
             </div>
+            </div><!-- /chk2 -->
           </section>
         </div>
       </div>
@@ -2245,8 +2304,11 @@
           <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 34px 22px 0; position: relative;">
             <span aria-hidden="true" style="position: absolute; top: 16px; right: 16px; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 30px; color: #E2588E; transform: rotate(12deg); animation: pulseStar 1.7s ease-in-out infinite alternate; pointer-events: none; z-index: 1;">♥</span>
             <button type="button" class="rs-exit rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← на сайт</button>
-            <div style="position: absolute; top: -8px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
+            <div data-rc="tape" style="position: absolute; top: -8px; left: 50%; margin-left: -46px; width: 92px; height: 26px; background: rgba(233,222,158,0.72); box-shadow: 0 2px 5px rgba(51,41,31,0.15); clip-path: polygon(2% 0%, 98% 3%, 100% 34%, 97% 100%, 3% 96%, 0% 62%); transform: rotate(-4deg); z-index: 7;"></div>
 
+            <!-- ПК-лендскейп: done2 делит лист на «ПРИНЯТО + дети» слева и сводку справа; в портрете display:contents — мобильная колонка не меняется -->
+            <div data-rc="done2" style="display: contents;">
+            <div data-rc="donel" style="display: contents;">
             <div style="margin-top: 14px; border: 4px dashed #A31D4E; color: #A31D4E; background: rgba(251,248,239,0.92); font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6.5vw, 30px); letter-spacing: 2px; padding: 14px 20px; animation: stampIn 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;">ПРИНЯТО!!!</div>
             <div id="rs-done-thanks" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: clamp(22px, 7vw, 27px); color: #33291F; transform: rotate(-1.5deg); margin-top: 18px; text-align: center;">спасибо!</div>
 
@@ -2279,6 +2341,8 @@
                 <span style="position: absolute; left: 50%; bottom: -10px; width: max-content; transform: translateX(-50%) rotate(-3deg); background: #FBF8EF; padding: 2px 10px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; pointer-events: none;">твоё место на диване уже занято((</span>
               </div>
             </div>
+            </div><!-- /donel -->
+            <div data-rc="doner" style="display: contents;">
 
             <div id="rs-recap-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #A31D4E; transform: rotate(-2deg); margin-top: 30px;">твои ответы:</div>
             <div id="rs-done-rows" style="display: flex; flex-direction: column; gap: 12px; width: min(430px, 100%); margin-top: 12px;"></div>
@@ -2293,6 +2357,8 @@
             </div>
 
             <button type="button" id="rs-reset" style="display: none; margin-top: 26px; background: transparent; border: 2px dashed rgba(75,50,39,0.35); color: rgba(75,50,39,0.65); font-family: 'Neucha', cursive; font-size: 14px; padding: 6px 12px; transform: rotate(-1deg); cursor: pointer;">демо: сбросить ответы и пройти заново</button>
+            </div><!-- /doner -->
+            </div><!-- /done2 -->
 
             <div style="width: calc(100% + 44px); margin: 34px -22px 0; transform: rotate(-1.4deg); background: #33291F; color: #F2EDE2; overflow: hidden; padding: 10px 0; box-shadow: 0 6px 14px rgba(51,41,31,0.3);">
               <div style="display: flex; width: max-content; animation: marquee 16s linear infinite; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap;">
