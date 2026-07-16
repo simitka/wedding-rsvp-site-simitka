@@ -13,7 +13,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@600;700&family=Neucha&family=Oswald:wght@500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Rubik+Mono+One&family=Unbounded:wght@700;900&family=Yeseva+One&display=swap" />
 <style>
-  html, body { margin: 0; padding: 0; background: #3B4A20; overflow-x: hidden; }
+  html, body { margin: 0; padding: 0; background: #3B4A20; }
+  html { overflow-x: hidden; }
+  /* body НЕЛЬЗЯ давать overflow-x: hidden: раз у html overflow не visible, body становится
+     ОТДЕЛЬНЫМ скролл-контейнером (overflow-y докомпучивается до auto) со своим «карманом»
+     прокрутки (~110px — от гэгов, уехавших transform'ом за низ страницы). Тач-жест латчится
+     на body, и первый свайп после смены направления целиком уходит в этот карман — страница
+     «залипает». clip клипает без создания скроллера; hidden впереди — фоллбек для старых
+     браузеров (там остаётся прежнее поведение). */
+  body { overflow-x: hidden; overflow: clip; }
   body { -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none; }
   img { display: block; max-width: 100%; -webkit-user-drag: none; -webkit-touch-callout: none; }
   a { color: #A31D4E; }
@@ -2332,7 +2340,9 @@
 
   function lockScroll(on) {
     document.documentElement.style.overflow = on ? 'hidden' : '';
-    document.body.style.overflow = on ? 'hidden' : '';
+    // body: clip, а не hidden — hidden превращает body в скролл-контейнер, и тач-жесты
+    // «скроллят» его карман за оверлеем (после закрытия контент оказался бы сдвинут)
+    document.body.style.overflow = on ? 'clip' : '';
   }
 
   // ---- аудио: один элемент на всё окно, чтобы никогда не играло два трека ----
@@ -4567,7 +4577,10 @@
     });
   }
   fitLines();
-  window.addEventListener('resize', fitLines);
+  // debounce: на телефонах показ/скрытие URL-бара стреляет resize прямо посреди
+  // скролл-жеста — синхронный reflow-цикл fitLines в этот момент даёт фриз кадра
+  var fitT = 0;
+  window.addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fitLines, 200); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLines);
 
   // --- scroll reveals (reversible: same animation plays backwards on scroll up) ---
@@ -4581,9 +4594,15 @@
   // когда элемент ушёл за вьюпорт дальше 120px. Скрывающие позы сдвигают/увеличивают
   // элемент максимум на ~90px, поэтому спрятанный блок не может сам заехать обратно
   // за порог показа — без запаса observer зацикливается и блоки дёргаются у грани экрана
+  // Прятанье — мгновенное (transition: none): в момент hide элемент уже минимум в 120px
+  // за вьюпортом, пружину никто не видит, а невидимый 0.7s-транзишен стоит промоушена
+  // слоя и ре-растра большой карточки. Пружина возвращается на show (порядок важен:
+  // transition восстанавливаем ДО записи видимой позы — transition-* берутся из
+  // after-change стиля, так что записи в одном тике анимируются штатно).
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
       if (en.intersectionRatio >= 0.12) {
+        en.target.style.transition = en.target._revealTr || '';
         en.target.style.opacity = '1';
         en.target.style.transform = 'none';
       }
@@ -4592,6 +4611,7 @@
   var ioHide = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
       if (!en.isIntersecting) {
+        en.target.style.transition = 'none';
         en.target.style.opacity = '0';
         en.target.style.transform = en.target._revealHidden;
       }
@@ -4612,7 +4632,8 @@
         el.style.opacity = '0';
         el.style.transform = el._revealHidden;
       }
-      el.style.transition = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
+      el._revealTr = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
+      el.style.transition = el._revealTr;
       io.observe(el);
       ioHide.observe(el);
     });
@@ -4756,8 +4777,9 @@
     Array.prototype.forEach.call(dt.querySelectorAll('[style*="animation"]'), function (el) { aio.observe(el); });
 
     // --- reveals (свои observer'ы; позы считаем только когда #dtop реально виден) ---
-    var dio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.intersectionRatio >= 0.12) { en.target.style.opacity = '1'; en.target.style.transform = 'none'; } }); }, { threshold: 0.12 });
-    var dioHide = new IntersectionObserver(function (es) { es.forEach(function (en) { if (!en.isIntersecting) { en.target.style.opacity = '0'; en.target.style.transform = en.target._rh; } }); }, { rootMargin: '120px 0px 120px 0px', threshold: 0 });
+    // hide мгновенный, пружина только на show — см. комментарий у мобильных io/ioHide
+    var dio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.intersectionRatio >= 0.12) { en.target.style.transition = en.target._rt || ''; en.target.style.opacity = '1'; en.target.style.transform = 'none'; } }); }, { threshold: 0.12 });
+    var dioHide = new IntersectionObserver(function (es) { es.forEach(function (en) { if (!en.isIntersecting) { en.target.style.transition = 'none'; en.target.style.opacity = '0'; en.target.style.transform = en.target._rh; } }); }, { rootMargin: '120px 0px 120px 0px', threshold: 0 });
     function armReveals() {
       Array.prototype.forEach.call(dt.querySelectorAll('[data-reveal]'), function (el) {
         if (!motionOn()) { el.style.opacity = '1'; el.style.transform = 'none'; return; }
@@ -4767,7 +4789,8 @@
         var r = el.getBoundingClientRect();
         if (r.top < window.innerHeight * 0.85) { el.style.opacity = '1'; el.style.transform = 'none'; }
         else { el.style.opacity = '0'; el.style.transform = el._rh; }
-        el.style.transition = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
+        el._rt = 'transform 0.7s cubic-bezier(0.2, 1.3, 0.35, 1) ' + delay + 'ms, opacity 0.35s ease ' + delay + 'ms';
+        el.style.transition = el._rt;
         dio.observe(el); dioHide.observe(el);
       });
     }
@@ -4860,7 +4883,10 @@
     function activate() {
       if (activated) return; activated = true;
       armReveals(); captureBases(); layoutTub();
-      window.addEventListener('resize', function () { if (!mq.matches) return; captureBases(); layoutTub(); });
+      // debounce: на телефоне URL-бар стреляет resize при смене направления скролла,
+      // а captureBases — это принудительный полный reflow коллажа посреди жеста
+      var rzT = 0;
+      window.addEventListener('resize', function () { if (!mq.matches) return; clearTimeout(rzT); rzT = setTimeout(function () { if (mq.matches) { captureBases(); layoutTub(); } }, 200); });
       window.addEventListener('mousemove', function (e) { tmx = (e.clientX / window.innerWidth - 0.5) * 2; tmy = (e.clientY / window.innerHeight - 0.5) * 2; });
       lastY = window.scrollY;
       if (motionOn()) draf = requestAnimationFrame(dloop); else staticPoses();
