@@ -2644,7 +2644,12 @@
     if (pr && pr.then) {
       pr.then(function () {
         if (onOutcome) onOutcome(true);
-      }, function () {
+      }, function (err) {
+        // AbortError — это наш же pause() во время буферизации (тап «выкл», уход со
+        // вкладки, пасхалка): состояние уже обновил вызвавший pause() код — не перетираем
+        // и не ре-армим автостарт, иначе следующий тап где угодно врубит музыку заново.
+        // Особенно горячо на standalone /rsvp, где mp3 всегда стримится холодным
+        if (err && err.name === 'AbortError') { if (onOutcome) onOutcome(true); return; }
         // автостарт заблокирован браузером: честно показываем «выкл» и ждём первый жест
         clearInterval(fadeIv);
         musicPlaying = false; setMuteIcon();
@@ -2661,7 +2666,8 @@
     a.volume = 0;
     var pr = a.play();
     musicPlaying = true; setMuteIcon();
-    if (pr && pr.then) pr.then(function () {}, function () {
+    if (pr && pr.then) pr.then(function () {}, function (err) {
+      if (err && err.name === 'AbortError') return;   // наш же pause() — состояние уже обновлено
       clearInterval(fadeIv);
       musicPlaying = false; setMuteIcon();
       armAutoStart();
@@ -4409,14 +4415,37 @@
   })();
   // ==================== /RSVP-АНКЕТА ====================
 
+  // гидрация ассетов пасхалки и секретных фото: на обычном пути всё уже скачано
+  // бут-лоудером (src подставится из кеша), а на standalone /rsvp (без LOVE.EXE)
+  // этот прогрев — единственный; зовётся из initMain и standalone-ветки старта
+  var eggHydrated = false;
+  function hydrateEggAssets() {
+    if (eggHydrated) return;
+    eggHydrated = true;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-egg-src]'), function (im) {
+      im.src = im.getAttribute('data-egg-src');
+    });
+    var pre = new Image();
+    pre.src = 'assets/egg/catplane.png';
+    ['assets/nikita-secret.png', 'assets/ulyana-secret.png'].forEach(function (s) {
+      var p = new Image();
+      p.src = s;
+    });
+  }
+
   // ---- старт бут-лоудера ----
   try { clearTimeout(window.__nuIdle); clearInterval(window.__nuCd); } catch (e) {}
   lockScroll(true);
   if (rsvpStandalone) {
-    // прямой заход на /rsvp: без LOVE.EXE, выбора музыки и главной — сразу анкета
+    // прямой заход на /rsvp: без LOVE.EXE, выбора музыки и главной — сразу анкета.
+    // Кнопка звука живёт и тут: музыка не прогрета (standalone её не качает), но
+    // тап по кнопке — это жест, startMusic создаст Audio и запустит трек на лету
     elBoot.style.display = 'none';
     elGate.style.display = 'none';
     rsvpOpen(false);
+    elMuteWrap.style.display = 'block';
+    setMuteIcon();
+    setTimeout(hydrateEggAssets, 1200);
   } else {
     preload();
     bootT0 = Date.now();
@@ -5162,20 +5191,9 @@
     else if (mq.addListener) mq.addListener(onMq);
   })();
 
-  // --- гидрация ассетов пасхалки после показа main: на обычном пути всё уже
-  // скачано бут-лоудером (src подставится из кеша), а на standalone /rsvp
-  // (без LOVE.EXE) этот блок — единственный фоновый прогрев ---
-  setTimeout(function () {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-egg-src]'), function (im) {
-      im.src = im.getAttribute('data-egg-src');
-    });
-    var pre = new Image();
-    pre.src = 'assets/egg/catplane.png';
-    ['assets/nikita-secret.png', 'assets/ulyana-secret.png'].forEach(function (s) {
-      var p = new Image();
-      p.src = s;
-    });
-  }, 1200);
+  // --- гидрация ассетов пасхалки после показа main (общая с standalone-веткой:
+  // на обычном пути всё уже скачано бут-лоудером, src подставится из кеша) ---
+  setTimeout(hydrateEggAssets, 1200);
   // подстановка src фото анкеты (обычный путь — из кеша лоудера; standalone гидрирует rsvpOpen);
   // после гидрации DOM сам держит все картинки — ссылки предзагрузки больше не нужны
   setTimeout(function () { rsvpHydrate(); preloadKeep.length = 0; }, 3200);
