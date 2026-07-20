@@ -2,3 +2,4 @@
 node_modules/
 CLAUDE.md
 .playwright-mcp/
+.design-sync/
