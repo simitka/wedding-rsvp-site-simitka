@@ -1,15 +1,15 @@
 // Простой пер-IP лимитер скользящим окном. API живёт за nginx того же сайта,
 // наружу не торчит, так что этого достаточно против перебора слов.
 const WINDOW_MS = 10 * 60 * 1000;
-const LIMITS = { auth: 30, submit: 12 };
+const LIMITS = { auth: 30, submit: 12, photo: 40 };
 
-const hits = new Map(); // ip → { t0, auth, submit }
+const hits = new Map(); // ip → { t0, auth, submit, photo }
 
 export function allow(ip, kind) {
   const now = Date.now();
   let rec = hits.get(ip);
   if (!rec || now - rec.t0 > WINDOW_MS) {
-    rec = { t0: now, auth: 0, submit: 0 };
+    rec = { t0: now, auth: 0, submit: 0, photo: 0 };
     hits.set(ip, rec);
   }
   // сборка мусора: выкидываем только протухшие окна, а не всех разом —

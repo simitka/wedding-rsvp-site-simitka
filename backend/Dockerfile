@@ -3,6 +3,11 @@ FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=3000 DATA_DIR=/data
 
+# libvips для конвертации фото гостей в PNG (любой формат, включая HEIC с айфонов):
+# vips-tools даёт vipsthumbnail, vips-heif — делегат HEIC/HEIF. Ставим как root
+# до «USER node».
+RUN apk add --no-cache vips-tools vips-heif
+
 COPY package.json ./
 COPY src ./src
 

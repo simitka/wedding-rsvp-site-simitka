@@ -6,6 +6,7 @@ import { config } from './config.js';
 
 const journalPath = () => path.join(config.dataDir, 'answers.log.jsonl');
 const outboxPath = () => path.join(config.dataDir, 'outbox.json');
+const photoOutboxPath = () => path.join(config.dataDir, 'photo-outbox.json');
 const guestsCachePath = () => path.join(config.dataDir, 'guests-cache.json');
 
 export function ensureDataDir() {
@@ -63,6 +64,24 @@ export function outboxPut(rec) {
 export function outboxRemoveById(qids) {
   const drop = new Set(Array.isArray(qids) ? qids : [qids]);
   writeJsonAtomic(outboxPath(), outboxRead().filter((e) => !drop.has(e.qid)));
+}
+
+// Фото-outbox: запись ссылки на фото в ячейку таблицы могла не доехать (таблица
+// моргнула), сам файл при этом уже сохранён и раздаётся. Держим по одной записи
+// на пару слово+слот (последняя побеждает — при замене нужен свежий url).
+export function photoOutboxRead() {
+  return readJson(photoOutboxPath(), []);
+}
+
+export function photoOutboxPut(entry) {
+  const box = photoOutboxRead().filter((e) => !(e.word === entry.word && e.guestIndex === entry.guestIndex));
+  box.push({ qid: Date.now().toString(36) + '-p' + (++qseq), ...entry });
+  writeJsonAtomic(photoOutboxPath(), box);
+}
+
+export function photoOutboxRemoveById(qids) {
+  const drop = new Set(Array.isArray(qids) ? qids : [qids]);
+  writeJsonAtomic(photoOutboxPath(), photoOutboxRead().filter((e) => !drop.has(e.qid)));
 }
 
 export function guestsCacheRead() {

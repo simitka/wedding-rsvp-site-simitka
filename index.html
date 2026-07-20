@@ -192,6 +192,12 @@
   /* «богатая» строчка в сводке (оплачу домик сам): золотое переливание */
   @keyframes richShine { to { background-position: -200% center; } }
   @keyframes richFloat { 0%, 100% { transform: rotate(-1.6deg) translateY(0); } 50% { transform: rotate(1.4deg) translateY(-2px); } }
+  /* проявка полароида: от засвеченного к нормальному (эффект «фото проявляется») */
+  @keyframes photoDevelop { 0% { filter: brightness(2.1) contrast(0.45) saturate(0.4); opacity: 0.25; } 55% { filter: brightness(1.25) contrast(0.85) saturate(0.85); opacity: 1; } 100% { filter: brightness(1) contrast(1) saturate(1); opacity: 1; } }
+  @keyframes photoPopIn { 0% { opacity: 0; transform: scale(0.9) rotate(-1deg); } 60% { opacity: 1; transform: scale(1.03) rotate(0.5deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+  /* пульс рамки-дропзоны, когда над ней тащат файл */
+  @keyframes dropGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(163,29,78,0.45); } 50% { box-shadow: 0 0 0 7px rgba(163,29,78,0.12); } }
+  .rs-drop-over { animation: dropGlow 1s ease-in-out infinite; background: #FDEBF1 !important; border-color: #A31D4E !important; }
   .rs-rich { background: linear-gradient(100deg, #9C7A22 0%, #EBDF7E 18%, #FFF7C6 30%, #EBDF7E 42%, #C79A2E 58%, #FFF7C6 70%, #EBDF7E 82%, #9C7A22 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-shadow: 0 1px 0 rgba(156,122,34,0.18); animation: richShine 2.6s linear infinite, richFloat 3.4s ease-in-out infinite; will-change: background-position, transform; }
   .rs-rich::after { content: ' ✦'; -webkit-text-fill-color: #ECA02B; color: #ECA02B; }
   /* нажатия кнопок анкеты: «вдавливание» в бумагу; --rr хранит родной наклон кнопки */
@@ -283,11 +289,11 @@
        box-shadow листа уходит за вьюпорт. zoom 1.16 — как у #dtop (в макете анкета зумлена). */
     #rsvp-paper > div,
     #rs-pose-loader > div, #rs-pose-secret > div, #rs-pose-hello > div, #rs-pose-come > div,
-    #rs-pose-road > div, #rs-pose-sleep > div, #rs-pose-check > div, #rs-pose-done > div {
+    #rs-pose-road > div, #rs-pose-sleep > div, #rs-pose-photo > div, #rs-pose-check > div, #rs-pose-done > div {
       max-width: none !important; width: 100% !important;
     }
     #rsvp-paper > div, #rs-pose-loader, #rs-pose-secret, #rs-pose-hello, #rs-pose-come,
-    #rs-pose-road, #rs-pose-sleep, #rs-pose-check, #rs-pose-done, #rs-react { zoom: 1.16; }
+    #rs-pose-road, #rs-pose-sleep, #rs-pose-photo, #rs-pose-check, #rs-pose-done, #rs-react { zoom: 1.16; }
     /* скотчи по центру верха листов — атрибут мобильной колонки, в ПК-макете их нет */
     #rsvp-root [data-rc="tape"] { display: none !important; }
     /* реакция на «да/нет» — размеры как в макете */
@@ -350,6 +356,11 @@
     #rs-pose-sleep section > div:has(> #rs-stay-yes) { width: min(420px, 100%) !important; margin-top: 4vh !important; }
     #rs-pose-sleep #rs-sleep-sub { width: min(480px, 100%) !important; }
     #rs-pose-sleep section > div[style*="left: 4%"] { width: clamp(150px, 13vh, 190px) !important; }
+
+    /* лист «фото»: заголовок от высоты экрана; слоты-полароиды пошире и в ряд */
+    #rs-pose-photo section > h1 > span:nth-child(-n+2) { font-size: clamp(28px, 3.4vh, 40px) !important; }
+    #rs-pose-photo section > h1 > span:nth-child(3) { font-size: clamp(22px, 2.6vh, 30px) !important; }
+    #rs-pose-photo #rs-photo-slots { gap: clamp(24px, 3vw, 48px) !important; margin-top: 3vh !important; }
 
     /* лист «чек»: ответы слева, кнопка отправки + фото справа (макет: ряд 520px + колонка, до 1000px) */
     #rs-pose-check [data-rc="chk2"] { display: grid !important; grid-template-columns: minmax(0, 520px) auto; column-gap: clamp(24px, 3vw, 50px); justify-content: center; align-items: start; width: 100%; max-width: 1000px; margin-top: 3.5vh; }
@@ -2343,6 +2354,51 @@
       </div>
     </div>
 
+    <!-- лист: вопрос 4 — фото (секретный шаг). Слот-полароиды строит JS в #rs-photo-slots -->
+    <div style="position: fixed; inset: 0; z-index: 111; transform: translateY(106%); will-change: transform; pointer-events: none;">
+      <div id="rs-pose-photo" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
+        <div style="width: 100%; max-width: 600px; height: 100%; color: #33291F; background-color: #F2EDE2; background-image: radial-gradient(rgba(75,50,39,0.055) 1.1px, transparent 1.5px); background-size: 22px 22px; box-shadow: 0 0 90px rgba(0,0,0,0.55); overflow-y: auto; overflow-x: clip; position: relative;">
+          <section style="min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 18px 22px 130px; position: relative;">
+            <span aria-hidden="true" style="position: absolute; top: 14px; right: 16px; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 28px; color: #6C7ED6; transform: rotate(11deg); animation: pulseStar 1.9s ease-in-out infinite alternate; pointer-events: none; z-index: 1;">✦</span>
+            <span aria-hidden="true" style="position: absolute; top: 20px; left: 41%; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 22px; color: #E2588E; transform: rotate(-13deg); animation: pulseStar 2.4s ease-in-out 0.35s infinite alternate; pointer-events: none; z-index: 1;">★</span>
+            <span aria-hidden="true" style="position: absolute; bottom: 70px; right: 11%; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 26px; color: #ECA02B; transform: rotate(8deg); animation: pulseStar 2.6s ease-in-out 0.2s infinite alternate; pointer-events: none; z-index: 1;">♥</span>
+            <button type="button" id="rs-photo-back" class="rs-press-s" style="--rr: -3deg; position: absolute; top: 16px; left: 12px; z-index: 8; background: #FBF8EF; border: none; padding: 4px 14px; box-shadow: 3px 4px 0 rgba(51,41,31,0.8); font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #33291F; transform: rotate(-3deg); cursor: pointer;">← назад</button>
+
+            <div style="margin-top: 56px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="rs-chips" style="display: flex; align-items: flex-start; justify-content: center; gap: 14px;"></div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                <div style="width: 170px; border: 3px solid #33291F; background: #FBF8EF; padding: 3px;">
+                  <div class="rs-prog-fill" style="height: 10px; background: #A31D4E; width: 0%; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+                </div>
+                <span class="rs-prog-text" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px; color: #4B3227; transform: rotate(-2deg);"></span>
+              </div>
+            </div>
+
+            <div style="font-family: 'Caveat', cursive; font-weight: 600; font-size: 22px; color: #4B3227; transform: rotate(-2deg); margin-top: 34px;">вопрос №4 · совсекретный 🤫</div>
+            <h1 style="margin: 12px 0 0; line-height: 1; font-weight: 400; text-align: center;">
+              <span style="display: inline-block; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(26px, 8vw, 38px); background: #6C7ED6; color: #FFFFFF; padding: 6px 14px 4px; transform: rotate(-1.5deg);">пришли</span><span style="display: inline-block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: clamp(26px, 8vw, 38px); background: #A31D4E; color: #F2EDE2; padding: 6px 14px 4px; transform: rotate(2deg) translateY(4px); margin-left: 5px;">фото</span><span style="display: inline-block; font-family: 'Rubik Mono One', monospace; font-size: clamp(20px, 6vw, 28px); background: #ECA02B; color: #33291F; padding: 10px 12px; border-radius: 50%; transform: rotate(8deg) translateY(-2px); margin-left: 5px;">?</span>
+            </h1>
+
+            <!-- секретный хинт: зачем — не скажем, но очень просим -->
+            <div style="position: relative; max-width: 380px; margin-top: 16px;">
+              <div style="background: #FBF8EF; clip-path: polygon(2% 8%, 12% 0%, 30% 5%, 47% 0%, 65% 6%, 83% 1%, 98% 7%, 100% 55%, 96% 96%, 78% 100%, 58% 94%, 38% 100%, 17% 95%, 0% 100%, 1% 50%); padding: 14px 20px 13px; transform: rotate(-0.6deg); box-shadow: 4px 5px 0 rgba(51,41,31,0.18); font-family: 'Neucha', cursive; font-size: 15.5px; line-height: 1.5; color: #4B3227; text-align: center;">
+                <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #A31D4E;">зачем — секрет 🤐</span> но это единственный шаг, который мы держим в тайне до праздника. <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #6C7ED6;">доверься нам — оно того стоит ♥</span>
+              </div>
+            </div>
+
+            <!-- слоты-полароиды (1 или 2) строит rsvpRenderPhoto -->
+            <div id="rs-photo-slots" style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: clamp(18px, 4vw, 30px); width: 100%; margin-top: 26px;"></div>
+
+            <div id="rs-photo-nudge" style="display: none; margin-top: 16px; font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; color: #A31D4E; background: #FBF8EF; padding: 4px 14px; box-shadow: 2px 3px 0 rgba(51,41,31,0.8); transform: rotate(-1.5deg);">сначала загрузи фото или нажми «пройти без фото» ↑</div>
+
+            <div style="text-align: center; margin-top: 26px;">
+              <button type="button" id="rs-photo-next" class="rs-press" style="--rr: -1deg; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 5px 6px 0 #33291F; padding: 14px 24px; cursor: pointer; transform: rotate(-1deg);">дальше →</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
     <!-- лист: проверка ответов -->
     <div style="position: fixed; inset: 0; z-index: 112; transform: translateY(106%); will-change: transform; pointer-events: none;">
       <div id="rs-pose-check" style="position: absolute; inset: 0; display: flex; justify-content: center; transform: rotate(2.5deg); transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.22, 1); will-change: transform; pointer-events: auto;">
@@ -2438,6 +2494,7 @@
 
             <div id="rs-recap-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #A31D4E; transform: rotate(-2deg); margin-top: 30px;">твои ответы:</div>
             <div id="rs-done-rows" style="display: flex; flex-direction: column; gap: 12px; width: min(430px, 100%); margin-top: 12px;"></div>
+            <button type="button" id="rs-done-photo" class="rs-press-s" style="display: none; margin-top: 14px; --rr: -1.5deg; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 11px 16px; cursor: pointer; transform: rotate(-1.5deg);">📸 заменить секретное фото</button>
             <div id="rs-sync-note" style="display: none; margin-top: 14px; font-family: 'Neucha', cursive; font-size: 14px; color: rgba(75,50,39,0.75); border: 2px dashed rgba(163,29,78,0.45); padding: 5px 12px; transform: rotate(-1deg); text-align: center; max-width: 320px;">интернет моргнул — ответы сохранились на этом устройстве, отправим при следующем открытии анкеты</div>
 
             <div style="max-width: 430px; width: 100%; margin-top: 22px;">
@@ -3527,7 +3584,7 @@
   var rsHintsChecked = false;
 
   var RS_KEY = 'nu-rsvp-v1';
-  var RS_ORDER = ['loader', 'secret', 'hello', 'come', 'road', 'sleep', 'check', 'done'];
+  var RS_ORDER = ['loader', 'secret', 'hello', 'come', 'road', 'sleep', 'photo', 'check', 'done'];
   var RS_LDR_CAPS = ['вскрываем конверт…', 'ищем твою анкету…', 'точим карандашик…', 'пересчитываем хинкали…'];
   var RS_ERRS = ['не-а, не то слово((', 'охрана качает головой. ещё разок?', 'хм. может, опечатка?', 'слово где-то рядом, но нет!!'];
   var RS_SEAT_LABELS = ['пока никого — еду налегке', '+1 счастливчик едет с тобой', '+2 — уже компания!', '+3 — целая банда!', '+4 — весёлый экипаж!', '+5 — да это маршрутка!', '+6 — почти автобус!!', '+7 — ты и есть трансфер!!!'];
@@ -3545,7 +3602,8 @@
   var elRsvpRoot = document.getElementById('rsvp-root');
   var elRsvpPaper = document.getElementById('rsvp-paper');
   var rsEls = {};
-  ['rs-pose-loader', 'rs-pose-secret', 'rs-pose-hello', 'rs-pose-come', 'rs-pose-road', 'rs-pose-sleep', 'rs-pose-check', 'rs-pose-done',
+  ['rs-pose-loader', 'rs-pose-secret', 'rs-pose-hello', 'rs-pose-come', 'rs-pose-road', 'rs-pose-sleep', 'rs-pose-photo', 'rs-pose-check', 'rs-pose-done',
+   'rs-photo-slots', 'rs-photo-next', 'rs-photo-nudge', 'rs-photo-back', 'rs-done-photo',
    'rs-ldr-bar', 'rs-ldr-cap', 'rs-ldr-pct', 'rs-word', 'rs-wordbox', 'rs-word-go', 'rs-err', 'rs-err-msg', 'rs-errlots', 'rs-hints',
    'rs-name-a', 'rs-name-b', 'rs-hello-couple', 'rs-serious', 'rs-info-single', 'rs-info-couple', 'rs-start',
    'rs-come-h-single', 'rs-come-h-couple', 'rs-come-single', 'rs-come-couple', 'rs-come-a-name', 'rs-come-b-name',
@@ -3572,7 +3630,11 @@
       phase: 'loader', ldrIn: false, ldrPct: 0,
       word: '', fails: 0, guest: null,
       come: null, transfer: null, seats: 0, stay: null, pay: null,
-      confirmed: false, locked: false, reaction: null, visited: {}, sync: null, pending: null
+      confirmed: false, locked: false, reaction: null, visited: {}, sync: null, pending: null,
+      // фото гостей: слоты a/b, статус empty|picked|uploading|done|skipped|error.
+      // Персистятся только устойчивые состояния (done с url / skipped) — превью-файл
+      // в localStorage не кладём; при загрузке нестабильные состояния → empty.
+      photoA: { status: 'empty', url: null }, photoB: { status: 'empty', url: null }
     };
     if (saved && saved.word && saved.names && saved.names.length) {
       base.guest = { names: saved.names };
@@ -3587,6 +3649,8 @@
       base.visited = saved.visited || {};
       base.sync = saved.sync || null;
       base.pending = saved.pending || null;
+      base.photoA = rsvpPhotoRestore(saved.photoA);
+      base.photoB = rsvpPhotoRestore(saved.photoB);
       if (base.confirmed) { base.phase = 'done'; base.ldrIn = true; }
     }
     return base;
@@ -3598,7 +3662,8 @@
       localStorage.setItem(RS_KEY, JSON.stringify({
         word: R.word, names: R.guest.names, come: R.come, transfer: R.transfer,
         seats: R.seats, stay: R.stay, pay: R.pay, confirmed: R.confirmed, locked: R.locked,
-        visited: R.visited, sync: R.sync, pending: R.pending
+        visited: R.visited, sync: R.sync, pending: R.pending,
+        photoA: rsvpPhotoPersistable(R.photoA), photoB: rsvpPhotoPersistable(R.photoB)
       }));
     } catch (e) {}
   }
@@ -3624,6 +3689,7 @@
     if (R.come !== 'no') {
       if (R.transfer == null) return 'road';
       if (R.stay == null || (R.stay === 'yes' && R.pay == null)) return 'sleep';
+      if (!rsvpPhotoResolved()) return 'photo';
     }
     return 'check';
   }
@@ -3644,7 +3710,7 @@
   }
 
   function rsvpGoBack() {
-    var map = { hello: 'secret', come: 'hello', road: 'come', sleep: 'road', check: rsvpIsNo() ? 'come' : 'sleep' };
+    var map = { hello: 'secret', come: 'hello', road: 'come', sleep: 'road', photo: 'sleep', check: rsvpIsNo() ? 'come' : 'photo' };
     if (map[R.phase]) rsvpGo(map[R.phase]);
   }
 
@@ -3690,6 +3756,9 @@
       R.seats = a.seats || 0;
       R.stay = a.stay != null ? a.stay : null;
       R.pay = a.pay != null ? a.pay : null;
+      // фото из таблицы (url в =IMAGE): если есть — слот загружен (read-only показ)
+      if (a.photoA) R.photoA = { status: 'done', url: a.photoA };
+      if (a.photoB) R.photoB = { status: 'done', url: a.photoB };
     }
     // гостевой просмотр (preview) живёт как клиентское демо: замок не трогаем,
     // локальный confirmed — единственный источник правды
@@ -3762,7 +3831,8 @@
       { key: 'come', n: '1', label: couple ? 'кто будет?' : 'придёшь?', done: R.come != null, skip: false },
       { key: 'road', n: '2', label: 'дорога', done: R.transfer != null && !skip, skip: skip },
       { key: 'sleep', n: '3', label: 'ночёвка', done: !skip && R.stay != null && (R.stay === 'no' || R.pay != null), skip: skip },
-      { key: 'check', n: '4', label: 'чек', done: R.confirmed, skip: false }
+      { key: 'photo', n: '4', label: 'фото', done: !skip && rsvpPhotoResolved(), skip: skip },
+      { key: 'check', n: '5', label: 'чек', done: R.confirmed, skip: false }
     ];
   }
 
@@ -3797,10 +3867,11 @@
       });
     });
     var skip = rsvpIsNo();
-    var total = skip ? 2 : 4, done = 0;
+    var total = skip ? 2 : 5, done = 0;
     if (R.come != null) done++;
     if (!skip && R.transfer != null) done++;
     if (!skip && R.stay != null && (R.stay === 'no' || R.pay != null)) done++;
+    if (!skip && rsvpPhotoResolved()) done++;
     if (R.confirmed) done++;
     done = Math.min(done, total);
     Array.prototype.forEach.call(elRsvpRoot.querySelectorAll('.rs-prog-fill'), function (el) {
@@ -3843,6 +3914,7 @@
           rich: R.pay === 'me' ? 'эту строчку видят только богатые' : null
         });
       }
+      rows.push({ q: 'секретное фото', a: rsvpPhotoSummary(), key: 'photo' });
     }
     var frag = document.createDocumentFragment();
     rows.forEach(function (r, i) {
@@ -3897,6 +3969,7 @@
     rsEls['rs-done-thanks'].textContent = 'спасибо, ' + (attend.length ? attend : names).join(' и ') + '!';
     rsEls['rs-done-pass'].style.display = R.come !== 'no' ? 'block' : 'none';
     rsEls['rs-done-fail'].style.display = R.come === 'no' ? 'block' : 'none';
+    rsEls['rs-done-photo'].style.display = R.come !== 'no' ? 'inline-block' : 'none';
     rsEls['rs-done-wait'].textContent = n > 1 ? 'ждём вас 11 сентября!' : 'ждём тебя 11 сентября!';
     rsEls['rs-recap-t'].textContent = couple ? 'ваши ответы:' : 'твои ответы:';
     rsEls['rs-done-rows'].innerHTML = '';
@@ -3978,6 +4051,9 @@
     rsEls['rs-pay-me-t'].textContent = n > 1 ? 'оплатим домик – это наш вклад (в конверт)' : 'оплачу домик – это мой вклад (в конверт)';
     rsEls['rs-pay-them-t'].textContent = n > 1 ? 'гуляем за счёт молодожёнов' : 'гуляю за счёт молодожёнов';
     rsvpSetBadges({ 'rs-b-payme': R.pay === 'me', 'rs-b-paythem': R.pay === 'them' });
+
+    // фото
+    rsvpRenderPhoto();
 
     // чек
     rsEls['rs-sum-rows'].innerHTML = '';
@@ -4194,7 +4270,7 @@
   function rsvpConfirm() {
     if (R.confirmed || !R.guest || R.come == null) return;
     // на чек можно допрыгнуть чипом с неотвеченными вопросами — сначала доотвечать
-    if (R.come !== 'no' && (R.transfer == null || R.stay == null || (R.stay === 'yes' && R.pay == null))) {
+    if (R.come !== 'no' && (R.transfer == null || R.stay == null || (R.stay === 'yes' && R.pay == null) || !rsvpPhotoResolved())) {
       rsvpGo(rsvpFlowNext());
       return;
     }
@@ -4206,6 +4282,347 @@
     rsvpSend(rsvpBuildPayload());
     clearTimeout(rsAdvT);
     rsAdvT = setTimeout(function () { rsvpGo('done'); }, 450);
+  }
+
+  // ==================== ФОТО (секретный шаг №4) ====================
+  // Слоты a/b (по гостю). Загрузка сразу на бэкенд (гейт по слову), поэтому замена
+  // работает и после «Заполнено». Демо/гостевой просмотр — только локальное превью.
+  var rsPhotoBlob = { a: null, b: null };   // { file, preview } до подтверждения (транзиент)
+  var rsSkipAsk = { a: false, b: false };   // показан ли шуточный переспрос «точно без фото?»
+  var rsPhotoFresh = { a: false, b: false };// анимировать «проявку» только у только что загруженного
+
+  function rsvpPhotoRestore(saved) {
+    var st = saved && (saved.status === 'done' || saved.status === 'skipped') ? saved.status : 'empty';
+    return { status: st, url: st === 'done' && saved && saved.url ? saved.url : null };
+  }
+  function rsvpPhotoPersistable(slot) {
+    if (!slot) return { status: 'empty', url: null };
+    var st = slot.status === 'done' || slot.status === 'skipped' ? slot.status : 'empty';
+    return { status: st, url: st === 'done' ? (slot.url || null) : null };
+  }
+  function rsvpSlot(which) { return which === 'b' ? R.photoB : R.photoA; }
+  function rsvpPhotoSlots() {
+    var names = R.guest ? R.guest.names : ['…'];
+    if (rsvpCouple()) return [{ which: 'a', idx: 0, name: names[0] }, { which: 'b', idx: 1, name: names[1] }];
+    return [{ which: 'a', idx: 0, name: names[0] }];
+  }
+  function rsvpPhotoResolved() {
+    return rsvpPhotoSlots().every(function (s) {
+      var st = rsvpSlot(s.which).status;
+      return st === 'done' || st === 'skipped';
+    });
+  }
+  function rsvpPhotoSummary() {
+    var slots = rsvpPhotoSlots();
+    var doneN = slots.filter(function (s) { return rsvpSlot(s.which).status === 'done'; }).length;
+    if (slots.length > 1) return doneN === 2 ? 'оба фото на месте ✓' : doneN === 1 ? 'одно фото из двух' : 'без фото';
+    return doneN ? 'загружено ✓' : 'без фото';
+  }
+
+  function rsvpRevokePreview(which) {
+    if (rsPhotoBlob[which] && rsPhotoBlob[which].preview) {
+      try { URL.revokeObjectURL(rsPhotoBlob[which].preview); } catch (e) {}
+    }
+    rsPhotoBlob[which] = null;
+  }
+
+  // выбор файла (клик/дроп): показываем превью, ждём подтверждения
+  function rsvpPhotoPick(which, file) {
+    if (!file) return;
+    var okType = /^image\//.test(file.type || '') || /\.(heic|heif|jpe?g|png|webp|gif|bmp|tiff?)$/i.test(file.name || '');
+    if (!okType) return;
+    rsvpRevokePreview(which);
+    var prev = null;
+    try { prev = URL.createObjectURL(file); } catch (e) {}
+    rsPhotoBlob[which] = { file: file, preview: prev };
+    var slot = rsvpSlot(which);
+    slot.status = 'picked'; slot.url = null; slot.err = null;
+    rsSkipAsk[which] = false;
+    rsEls['rs-photo-nudge'].style.display = 'none';
+    rsvpRenderPhoto();
+  }
+
+  // клиентский даунскейл для форматов, что браузер умеет декодировать (JPEG/PNG/WebP)
+  // — меньше аплоад; HEIC и любой сбой шлём оригиналом, PNG соберёт сервер (vips)
+  function rsvpPhotoShrink(file, cb) {
+    var name = file.name || '';
+    if (/\.(heic|heif)$/i.test(name) || file.type === 'image/heic' || file.type === 'image/heif' || !file.type) { cb(file); return; }
+    var url;
+    try { url = URL.createObjectURL(file); } catch (e) { cb(file); return; }
+    var img = new Image();
+    var settled = false;
+    var to = setTimeout(function () { if (!settled) { settled = true; try { URL.revokeObjectURL(url); } catch (e) {} cb(file); } }, 8000);
+    img.onload = function () {
+      if (settled) return; settled = true; clearTimeout(to);
+      try {
+        var w = img.naturalWidth, h = img.naturalHeight, max = 1600;
+        if (!w || !h) { URL.revokeObjectURL(url); cb(file); return; }
+        var scale = Math.min(1, max / Math.max(w, h));
+        if (scale >= 1 && file.size < 1500000) { URL.revokeObjectURL(url); cb(file); return; }
+        var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+        var cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+        cv.getContext('2d').drawImage(img, 0, 0, cw, ch);
+        cv.toBlob(function (b) { try { URL.revokeObjectURL(url); } catch (e) {} cb(b && b.size ? b : file); }, 'image/jpeg', 0.9);
+      } catch (e) { try { URL.revokeObjectURL(url); } catch (e2) {} cb(file); }
+    };
+    img.onerror = function () { if (settled) return; settled = true; clearTimeout(to); try { URL.revokeObjectURL(url); } catch (e) {} cb(file); };
+    img.src = url;
+  }
+
+  // подтверждение → загрузка на бэкенд
+  function rsvpPhotoConfirm(which) {
+    var slot = rsvpSlot(which), blob = rsPhotoBlob[which];
+    if (!blob || slot.status === 'uploading') return;
+    slot.status = 'uploading'; slot.err = null;
+    rsvpRenderPhoto();
+    // демо/гостевой просмотр: на сервер не ходим, «загружено» локально (без url)
+    if (!RSVP_API || rsvpGuestMode()) {
+      setTimeout(function () {
+        if (rsvpSlot(which).status !== 'uploading') return;
+        slot.status = 'done'; slot.url = null; rsPhotoFresh[which] = true;
+        rsvpPersist(); rsvpRenderPhoto();
+      }, 650);
+      return;
+    }
+    var idx = which === 'b' ? 1 : 0;
+    var sess = rsSession;
+    rsvpPhotoShrink(blob.file, function (uploadBlob) {
+      if (sess !== rsSession) return;
+      fetch(RSVP_API + '/photo?word=' + encodeURIComponent(rsvpNorm(R.word)) + '&g=' + idx, {
+        method: 'POST',
+        headers: { 'Content-Type': (uploadBlob && uploadBlob.type) || 'application/octet-stream' },
+        body: uploadBlob
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (sess !== rsSession) return;
+          if (d && d.ok && d.url) {
+            slot.status = 'done'; slot.url = d.url; slot.err = null; rsPhotoFresh[which] = true;
+            rsvpPersist(); rsvpRenderPhoto();
+          } else {
+            slot.status = 'error';
+            slot.err = d && d.error === 'convert' ? 'не смогли прочитать это фото — попробуй другое'
+              : d && d.error === 'too-large' ? 'фото великовато — выбери другое'
+              : d && d.error === 'slow-down' ? 'слишком часто — подожди минутку'
+              : 'не вышло загрузить, ещё разок?';
+            rsvpRenderPhoto();
+          }
+        })
+        .catch(function () {
+          if (sess !== rsSession) return;
+          slot.status = 'error'; slot.err = 'интернет моргнул — ещё разок?';
+          rsvpRenderPhoto();
+        });
+    });
+  }
+
+  // удалить/заменить: сброс слота (+ чистим файл на сервере, если было загружено)
+  function rsvpPhotoClear(which) {
+    var slot = rsvpSlot(which), idx = which === 'b' ? 1 : 0;
+    var wasDone = slot.status === 'done';
+    rsvpRevokePreview(which);
+    slot.status = 'empty'; slot.url = null; slot.err = null;
+    rsSkipAsk[which] = false; rsPhotoFresh[which] = false;
+    rsvpPersist(); rsvpRenderPhoto();
+    if (wasDone && RSVP_API && !rsvpGuestMode()) {
+      fetch(RSVP_API + '/photo/clear', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word: rsvpNorm(R.word), g: idx })
+      }).catch(function () {});
+    }
+  }
+
+  function rsvpPhotoAskSkip(which) { rsSkipAsk[which] = true; rsvpRenderPhoto(); }
+  function rsvpPhotoUnskipAsk(which) { rsSkipAsk[which] = false; rsvpRenderPhoto(); }
+  function rsvpPhotoSkip(which) {
+    rsvpRevokePreview(which);
+    var slot = rsvpSlot(which);
+    slot.status = 'skipped'; slot.url = null; slot.err = null;
+    rsSkipAsk[which] = false;
+    rsEls['rs-photo-nudge'].style.display = 'none';
+    rsvpPersist(); rsvpRenderPhoto();
+  }
+  function rsvpPhotoUnskip(which) {
+    var slot = rsvpSlot(which);
+    slot.status = 'empty'; slot.url = null;
+    rsvpPersist(); rsvpRenderPhoto();
+  }
+
+  function rsvpPhotoProceed() {
+    if (!rsvpPhotoResolved()) {
+      rsEls['rs-photo-nudge'].style.display = 'block';
+      if (rsEls['rs-photo-nudge'].animate && rsvpMotionOn()) {
+        rsEls['rs-photo-nudge'].animate([{ transform: 'rotate(-1.5deg) translateX(0)' }, { transform: 'rotate(-1.5deg) translateX(-7px)' }, { transform: 'rotate(-1.5deg) translateX(6px)' }, { transform: 'rotate(-1.5deg) translateX(0)' }], { duration: 320 });
+      }
+      return;
+    }
+    rsvpGo(R.confirmed ? 'done' : rsvpFlowNext());
+  }
+  function rsvpPhotoBack() { rsvpGo(R.confirmed ? 'done' : 'sleep'); }
+
+  // хелперы построения кнопок/элементов слота
+  function rsPhotoBtn(label, kind, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'rs-press-s'; b.textContent = label;
+    var base = "border:3px solid #33291F;padding:9px 14px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;box-shadow:3px 4px 0 rgba(51,41,31,0.8);--rr:-1deg;transform:rotate(-1deg);";
+    var col = kind === 'primary' ? 'background:#A31D4E;color:#F2EDE2;'
+      : kind === 'go' ? 'background:#3B4A20;color:#EBDF7E;'
+      : kind === 'ghost' ? 'background:transparent;color:#4B3227;border-style:dashed;box-shadow:none;'
+      : 'background:#FBF8EF;color:#33291F;';
+    b.style.cssText = base + col;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  // сборка одного слота-полароида
+  function rsvpBuildPhotoSlot(s, i) {
+    var slot = rsvpSlot(s.which);
+    var tilt = i % 2 ? 1.6 : -1.6;
+    var col = document.createElement('div');
+    col.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:min(240px,78vw);';
+
+    // полароид-рамка
+    var frame = document.createElement('div');
+    frame.style.cssText = 'position:relative;background:#FBF8EF;border:3px solid #33291F;box-shadow:6px 8px 0 rgba(51,41,31,0.85);padding:12px 12px 0;transform:rotate(' + tilt + 'deg);width:100%;box-sizing:border-box;';
+    var tape = document.createElement('div');
+    tape.style.cssText = 'position:absolute;top:-9px;left:50%;margin-left:-42px;width:84px;height:24px;background:rgba(233,222,158,0.8);box-shadow:0 2px 5px rgba(51,41,31,0.15);clip-path:polygon(2% 0%,98% 3%,100% 34%,97% 100%,3% 96%,0% 62%);transform:rotate(-4deg);z-index:3;';
+    frame.appendChild(tape);
+
+    // окно фото (квадрат)
+    var win = document.createElement('div');
+    win.style.cssText = 'position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#EFE7D6;display:flex;align-items:center;justify-content:center;text-align:center;';
+
+    var src = (rsPhotoBlob[s.which] && rsPhotoBlob[s.which].preview) || slot.url;
+
+    if (slot.status === 'empty') {
+      win.style.cssText += 'border:3px dashed #A31D4E;background:#FDF6EC;cursor:pointer;padding:10px;';
+      win.innerHTML = '<div style="pointer-events:none;">'
+        + '<div style="font-family:\'Rubik Mono One\',monospace;font-size:34px;color:#A31D4E;line-height:1;">＋</div>'
+        + '<div style="font-family:\'Caveat\',cursive;font-weight:700;font-size:18px;color:#33291F;margin-top:6px;">перетащи фото сюда</div>'
+        + '<div style="font-family:\'Neucha\',cursive;font-size:12.5px;color:#6b5a49;margin-top:2px;">или нажми, чтобы выбрать</div>'
+        + '<div style="font-family:\'Neucha\',cursive;font-size:11px;color:#8a7967;margin-top:6px;">🖼 галерея · 📁 файлы</div>'
+        + '</div>';
+      var input = document.createElement('input');
+      input.type = 'file'; input.accept = 'image/*,.heic,.heif'; input.style.display = 'none';
+      input.addEventListener('change', function () { if (input.files && input.files[0]) rsvpPhotoPick(s.which, input.files[0]); input.value = ''; });
+      win.appendChild(input);
+      win.addEventListener('click', function () { input.click(); });
+      // drag&drop (ПК)
+      win.addEventListener('dragover', function (e) { e.preventDefault(); win.classList.add('rs-drop-over'); });
+      win.addEventListener('dragenter', function (e) { e.preventDefault(); win.classList.add('rs-drop-over'); });
+      win.addEventListener('dragleave', function (e) { win.classList.remove('rs-drop-over'); });
+      win.addEventListener('drop', function (e) {
+        e.preventDefault(); win.classList.remove('rs-drop-over');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) rsvpPhotoPick(s.which, e.dataTransfer.files[0]);
+      });
+    } else if (slot.status === 'skipped') {
+      win.style.background = '#EFE7D6';
+      var sad = document.createElement('img');
+      sad.src = 'assets/rsvp/sad-kid.png'; sad.alt = 'Загрузка фото пропущена';
+      sad.style.cssText = 'max-width:78%;max-height:78%;object-fit:contain;opacity:0.92;';
+      win.appendChild(sad);
+      var badge = document.createElement('div');
+      badge.style.cssText = 'position:absolute;bottom:8px;left:50%;transform:translateX(-50%) rotate(-3deg);background:#FBF8EF;padding:2px 10px;box-shadow:2px 3px 0 rgba(51,41,31,0.8);font-family:\'Caveat\',cursive;font-weight:700;font-size:15px;color:#A31D4E;white-space:nowrap;';
+      badge.textContent = 'без фото((';
+      win.appendChild(badge);
+    } else {
+      // picked / uploading / done / error — показываем превью-картинку
+      var img = document.createElement('img');
+      img.alt = 'Фото ' + (s.name || '');
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      if (slot.status === 'done' && rsPhotoFresh[s.which] && rsvpMotionOn()) {
+        img.style.animation = 'photoDevelop 1.2s ease-out both';
+        rsPhotoFresh[s.which] = false;
+      }
+      var ph = document.createElement('div');
+      ph.style.cssText = 'display:none;padding:14px;font-family:\'Neucha\',cursive;font-size:13px;color:#4B3227;';
+      ph.innerHTML = '<div style="font-size:30px;">🖼</div><div style="margin-top:6px;">фото выбрано</div><div style="font-size:11px;color:#8a7967;margin-top:2px;">превью недоступно, но загрузится</div>';
+      img.onerror = function () { img.style.display = 'none'; ph.style.display = 'block'; };
+      if (src) img.src = src; else { img.style.display = 'none'; ph.style.display = 'block'; }
+      win.appendChild(img); win.appendChild(ph);
+
+      if (slot.status === 'uploading') {
+        var ov = document.createElement('div');
+        ov.style.cssText = 'position:absolute;inset:0;background:rgba(251,248,239,0.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;';
+        ov.innerHTML = '<div style="width:30px;height:30px;border:4px solid rgba(163,29,78,0.25);border-top-color:#A31D4E;border-radius:50%;animation:eggSpin 0.8s linear infinite;"></div>'
+          + '<div style="font-family:\'Caveat\',cursive;font-weight:700;font-size:17px;color:#A31D4E;">проявляем…</div>';
+        win.appendChild(ov);
+      } else if (slot.status === 'done') {
+        var stamp = document.createElement('div');
+        stamp.style.cssText = 'position:absolute;top:8px;right:8px;width:38px;height:38px;border-radius:50%;background:#3B4A20;color:#EBDF7E;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:2px 3px 0 rgba(51,41,31,0.6);animation:stampIn 0.5s cubic-bezier(0.2,1.3,0.4,1) both;';
+        stamp.textContent = '✓';
+        win.appendChild(stamp);
+      } else if (slot.status === 'error') {
+        var eo = document.createElement('div');
+        eo.style.cssText = 'position:absolute;inset:0;background:rgba(163,29,78,0.14);display:flex;align-items:flex-end;justify-content:center;padding:10px;';
+        var em = document.createElement('div');
+        em.style.cssText = 'background:#FBF8EF;padding:4px 10px;box-shadow:2px 3px 0 rgba(51,41,31,0.8);font-family:\'Caveat\',cursive;font-weight:700;font-size:15px;color:#A31D4E;text-align:center;';
+        em.textContent = slot.err || 'ошибка';
+        eo.appendChild(em); win.appendChild(eo);
+      }
+    }
+    frame.appendChild(win);
+
+    // подпись полароида (имя гостя)
+    var cap = document.createElement('div');
+    cap.style.cssText = 'padding:10px 4px 12px;text-align:center;';
+    var nm = document.createElement('div');
+    nm.style.cssText = "font-family:'Caveat',cursive;font-weight:700;font-size:20px;color:#33291F;line-height:1;";
+    nm.textContent = s.name || '';
+    cap.appendChild(nm);
+    frame.appendChild(cap);
+    col.appendChild(frame);
+
+    // управление под полароидом
+    var ctr = document.createElement('div');
+    ctr.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;min-height:1px;';
+
+    if (rsSkipAsk[s.which]) {
+      // шуточный переспрос
+      var ask = document.createElement('div');
+      ask.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:8px;max-width:230px;';
+      var at = document.createElement('div');
+      at.style.cssText = "font-family:'Neucha',cursive;font-size:14px;color:#4B3227;text-align:center;line-height:1.4;";
+      at.innerHTML = '<span style="font-family:\'Caveat\',cursive;font-weight:700;font-size:19px;color:#A31D4E;">мы очень-очень просим ♥</span><br>точно хочешь пройти без секретного фото?';
+      var arow = document.createElement('div');
+      arow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;justify-content:center;';
+      arow.appendChild(rsPhotoBtn('ладно, выберу', 'primary', function () { rsvpPhotoUnskipAsk(s.which); }));
+      arow.appendChild(rsPhotoBtn('всё же без фото', 'ghost', function () { rsvpPhotoSkip(s.which); }));
+      ask.appendChild(at); ask.appendChild(arow);
+      ctr.appendChild(ask);
+    } else if (slot.status === 'empty') {
+      ctr.appendChild(rsPhotoBtn('выбрать фото', 'primary', function () { win.querySelector('input') ? win.querySelector('input').click() : null; }));
+      ctr.appendChild(rsPhotoBtn('пройти без фото', 'ghost', function () { rsvpPhotoAskSkip(s.which); }));
+    } else if (slot.status === 'picked') {
+      ctr.appendChild(rsPhotoBtn('подтвердить ✓', 'go', function () { rsvpPhotoConfirm(s.which); }));
+      ctr.appendChild(rsPhotoBtn('удалить', 'ghost', function () { rsvpPhotoClear(s.which); }));
+    } else if (slot.status === 'uploading') {
+      var wait = document.createElement('div');
+      wait.style.cssText = "font-family:'Caveat',cursive;font-weight:700;font-size:16px;color:#4B3227;";
+      wait.textContent = 'загружаем…';
+      ctr.appendChild(wait);
+    } else if (slot.status === 'done') {
+      ctr.appendChild(rsPhotoBtn('заменить', 'default', function () { rsvpPhotoClear(s.which); }));
+    } else if (slot.status === 'error') {
+      ctr.appendChild(rsPhotoBtn('ещё раз', 'primary', function () { rsvpPhotoConfirm(s.which); }));
+      ctr.appendChild(rsPhotoBtn('другое фото', 'ghost', function () { rsvpPhotoClear(s.which); }));
+    } else if (slot.status === 'skipped') {
+      ctr.appendChild(rsPhotoBtn('всё-таки добавлю', 'primary', function () { rsvpPhotoUnskip(s.which); }));
+    }
+    col.appendChild(ctr);
+    return col;
+  }
+
+  function rsvpRenderPhoto() {
+    var box = rsEls['rs-photo-slots'];
+    if (!box) return;
+    box.innerHTML = '';
+    var slots = rsvpPhotoSlots();
+    slots.forEach(function (s, i) { box.appendChild(rsvpBuildPhotoSlot(s, i)); });
+    // кнопка «дальше/готово» и подпись назад — зависят от того, правим ли после отправки
+    if (rsEls['rs-photo-next']) rsEls['rs-photo-next'].textContent = R.confirmed ? 'готово →' : 'дальше →';
+    if (rsEls['rs-photo-back']) rsEls['rs-photo-back'].textContent = R.confirmed ? '← к ответам' : '← назад';
+    if (rsvpPhotoResolved()) rsEls['rs-photo-nudge'].style.display = 'none';
   }
 
   // ---------- вертушка фото по клику ----------
@@ -4240,6 +4657,8 @@
     clearTimeout(rsCloseT);
     rsSession++;
     rsvpHydrate();
+    rsvpRevokePreview('a'); rsvpRevokePreview('b');
+    rsSkipAsk = { a: false, b: false }; rsPhotoFresh = { a: false, b: false };
     R = rsvpBootState();
     R.open = true;
     rsEls['rs-word'].value = R.word || '';
@@ -4411,6 +4830,9 @@
       R.pay = 'them'; rsvpPersist(); rsvpRender(); rsvpAdvance(430);
     });
     rsEls['rs-confirm'].addEventListener('click', rsvpConfirm);
+    rsEls['rs-photo-next'].addEventListener('click', rsvpPhotoProceed);
+    rsEls['rs-photo-back'].addEventListener('click', rsvpPhotoBack);
+    rsEls['rs-done-photo'].addEventListener('click', function () { rsvpGo('photo'); });
     rsEls['rs-reset'].addEventListener('click', function () {
       try { localStorage.removeItem(RS_KEY); } catch (e) {}
       location.reload();
