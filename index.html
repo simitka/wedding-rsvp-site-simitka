@@ -221,7 +221,7 @@
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
   .rsvp-btn:hover { background: #EBDF7E !important; }
   .rsvp-btn:active { transform: translate(7px, 8px) !important; box-shadow: 0 0 0 #33291F !important; }
-  /* на узких экранах прижимаем бейджик «до 1 августа!» к кнопке, чтобы не резался краем экрана */
+  /* на узких экранах прижимаем бейджик «до 15 августа!» к кнопке, чтобы не резался краем экрана */
   @media (max-width: 460px) { .rsvp-badge { right: -10px !important; top: -28px !important; } }
   /* дресс-код: две карточки (палитра + джинсы/Ульяна) держим в ряд и ужимаем вместе; в столбик — только на совсем узких экранах */
   @media (max-width: 340px) { .dress-cards { flex-wrap: wrap !important; } }
@@ -1100,7 +1100,7 @@
 
       <div data-reveal="slap" data-reveal-delay="200" style="position: relative; display: inline-block;">
         <a class="rsvp-btn" id="rsvp-open-btn" href="/rsvp" style="display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(14px, 4.6vw, 20px); text-transform: uppercase; letter-spacing: 1px; text-decoration: none; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 7px 8px 0 #33291F; padding: 20px clamp(14px, 4.5vw, 28px); animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
-        <span class="rsvp-badge" style="position: absolute; top: -22px; right: -30px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 1<br />августа!</span>
+        <span class="rsvp-badge" style="position: absolute; top: -22px; right: -30px; display: flex; align-items: center; justify-content: center; width: 74px; height: 74px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 15px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 15<br />августа!</span>
       </div>
 
       <div data-reveal="slap" data-reveal-delay="300" style="font-family: 'Neucha', cursive; font-size: 16px; color: #4B3227; margin-top: 22px; transform: rotate(1deg);">не заполнишь — мы всё равно позвоним (мы такие)</div>
@@ -1761,7 +1761,7 @@
   <div data-reveal="drop" data-reveal-delay="100" style="font-family: 'Caveat', cursive; font-weight: 600; font-size: clamp(23px, 1.9vw, 32px); color: rgba(242,237,226,0.9); transform: rotate(-1deg); margin: 20px 0 30px; text-shadow: 0 2px 0 rgba(10,14,3,0.4);">очень ждём! заполни анкету — это займёт две минуты, честно</div>
   <div data-reveal="slap" data-reveal-delay="200" style="position: relative; display: inline-block;">
     <a href="/rsvp" data-rsvp-open class="rsvp-btn" style="all: unset; box-sizing: border-box; display: inline-block; font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(17px, 1.5vw, 26px); text-transform: uppercase; letter-spacing: 1px; background: #ECA02B; color: #33291F; border: 3px solid #33291F; box-shadow: 8px 9px 0 #1E150D; padding: 24px 34px; animation: wiggle 2.4s ease-in-out infinite; cursor: pointer;">заполнить анкету →</a>
-    <span style="position: absolute; top: -26px; right: -36px; display: flex; align-items: center; justify-content: center; width: 84px; height: 84px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 1<br />августа!</span>
+    <span style="position: absolute; top: -26px; right: -36px; display: flex; align-items: center; justify-content: center; width: 84px; height: 84px; background: #E2588E; color: #FBF8EF; clip-path: polygon(50% 0%, 59.3% 15.2%, 75% 6.7%, 75.5% 24.5%, 93.3% 25%, 84.8% 40.7%, 100% 50%, 84.8% 59.3%, 93.3% 75%, 75.5% 75.5%, 75% 93.3%, 59.3% 84.8%, 50% 100%, 40.7% 84.8%, 25% 93.3%, 24.5% 75.5%, 6.7% 75%, 15.2% 59.3%, 0% 50%, 15.2% 40.7%, 6.7% 25%, 24.5% 24.5%, 25% 6.7%, 40.7% 15.2%); font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; line-height: 1; transform: rotate(12deg); animation: pulseStar 1.4s ease-in-out infinite alternate; pointer-events: none;">до 15<br />августа!</span>
   </div>
   <div data-reveal="slap" data-reveal-delay="300" style="font-family: 'Neucha', cursive; font-size: 20px; color: rgba(242,237,226,0.75); margin-top: 26px; transform: rotate(1deg);">не заполнишь — мы всё равно позвоним (мы такие)</div>
 
@@ -4303,8 +4303,15 @@
   function rsvpSlot(which) { return which === 'b' ? R.photoB : R.photoA; }
   function rsvpPhotoSlots() {
     var names = R.guest ? R.guest.names : ['…'];
-    if (rsvpCouple()) return [{ which: 'a', idx: 0, name: names[0] }, { which: 'b', idx: 1, name: names[1] }];
-    return [{ which: 'a', idx: 0, name: names[0] }];
+    if (!rsvpCouple()) return [{ which: 'a', idx: 0, name: names[0] }];
+    // пара: фото просим только у тех, кто реально приедет (оба / только он / только она).
+    // which='a'/'b' привязан к R.photoA/R.photoB и колонке K/L, поэтому «только Гость 2»
+    // грузит именно в свой слот b (g=1), а не смещается в слот a
+    var out = [];
+    if (R.come === 'both' || R.come === 'onlyA') out.push({ which: 'a', idx: 0, name: names[0] });
+    if (R.come === 'both' || R.come === 'onlyB') out.push({ which: 'b', idx: 1, name: names[1] });
+    if (!out.length) out = [{ which: 'a', idx: 0, name: names[0] }, { which: 'b', idx: 1, name: names[1] }];
+    return out;
   }
   function rsvpPhotoResolved() {
     return rsvpPhotoSlots().every(function (s) {
@@ -4330,7 +4337,12 @@
   function rsvpPhotoPick(which, file) {
     if (!file) return;
     var okType = /^image\//.test(file.type || '') || /\.(heic|heif|jpe?g|png|webp|gif|bmp|tiff?)$/i.test(file.name || '');
-    if (!okType) return;
+    if (!okType) {
+      var nd = rsEls['rs-photo-nudge'];
+      nd.textContent = 'это не похоже на фото — выбери картинку (jpg · png · heic…)';
+      nd.style.display = 'block';
+      return;
+    }
     rsvpRevokePreview(which);
     var prev = null;
     try { prev = URL.createObjectURL(file); } catch (e) {}
@@ -4450,6 +4462,7 @@
 
   function rsvpPhotoProceed() {
     if (!rsvpPhotoResolved()) {
+      rsEls['rs-photo-nudge'].textContent = 'сначала загрузи фото или нажми «пройти без фото» ↑';
       rsEls['rs-photo-nudge'].style.display = 'block';
       if (rsEls['rs-photo-nudge'].animate && rsvpMotionOn()) {
         rsEls['rs-photo-nudge'].animate([{ transform: 'rotate(-1.5deg) translateX(0)' }, { transform: 'rotate(-1.5deg) translateX(-7px)' }, { transform: 'rotate(-1.5deg) translateX(6px)' }, { transform: 'rotate(-1.5deg) translateX(0)' }], { duration: 320 });
@@ -4490,7 +4503,7 @@
 
     // окно фото (квадрат)
     var win = document.createElement('div');
-    win.style.cssText = 'position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#EFE7D6;display:flex;align-items:center;justify-content:center;text-align:center;';
+    win.style.cssText = 'position:relative;box-sizing:border-box;width:100%;aspect-ratio:1/1;overflow:hidden;background:#EFE7D6;display:flex;align-items:center;justify-content:center;text-align:center;';
 
     var src = (rsPhotoBlob[s.which] && rsPhotoBlob[s.which].preview) || slot.url;
 
@@ -4503,7 +4516,9 @@
         + '<div style="font-family:\'Neucha\',cursive;font-size:11px;color:#8a7967;margin-top:6px;">🖼 галерея · 📁 файлы</div>'
         + '</div>';
       var input = document.createElement('input');
-      input.type = 'file'; input.accept = 'image/*,.heic,.heif'; input.style.display = 'none';
+      // без accept: на Android системный пикер предлагает и Галерею, и Файлы
+      // (с accept="image/*" Samsung/A35 открывал только галерею); формат проверяем сами
+      input.type = 'file'; input.style.display = 'none';
       input.addEventListener('change', function () { if (input.files && input.files[0]) rsvpPhotoPick(s.which, input.files[0]); input.value = ''; });
       win.appendChild(input);
       win.addEventListener('click', function () { input.click(); });
