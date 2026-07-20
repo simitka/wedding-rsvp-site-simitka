@@ -7,14 +7,19 @@
 // формулами поверх этих колонок. Клиенту не верим: имена берём из списка гостей,
 // значения — из белых списков.
 import { config, demoMode } from './config.js';
-import { valuesGet, valuesUpdate, valuesAppend, listSheetTitles, addSheet, sheetRange } from './sheets.js';
-import { journalAppend, outboxPut, outboxRemoveById, outboxRead } from './store.js';
+import { valuesGet, valuesGetFormula, valuesUpdate, valuesAppend, listSheetTitles, addSheet, sheetRange } from './sheets.js';
+import { journalAppend, outboxPut, outboxRemoveById, outboxRead, photoOutboxPut, photoOutboxRead, photoOutboxRemoveById } from './store.js';
 import { normWord } from './guests.js';
 
 export const ANSWER_HEADERS = [
   'Секретное слово', 'Гость 1', 'Гость 2', 'Приедут?', 'Трансфер',
   'Мест для попутчиков', 'Ночёвка', 'Оплата домика', 'Заполнено?', 'Обновлено',
+  'Фото Гость 1', 'Фото Гость 2', // K/L: =IMAGE(url) — миниатюра + прямая ссылка
 ];
+
+// K (guestIndex 0) / L (guestIndex 1) — колонки со ссылками на фото
+const PHOTO_COL = ['K', 'L'];
+const IMG_URL_RE = /=IMAGE\("([^"]+)"/i;
 
 export function sanitizePayload(raw, guest) {
   let come = ['yes', 'no', 'both', 'onlyA', 'onlyB'].includes(raw.comeAnswer) ? raw.comeAnswer : null;
@@ -125,19 +130,31 @@ export async function readGuestAnswer(guest) {
   try {
     await ensureSheets();
     const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:J'), true);
-    for (const row of rows) {
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
       if (normWord(row[0]) === guest.word) {
+        // фото из K/L читаем формулами: в ячейке лежит =IMAGE("url") — вытаскиваем url
+        const photo = await readPhotoUrls(i + 2).catch(() => ({ photoA: null, photoB: null }));
         const p = parseAnswerRow(row, guest);
         // замок засчитываем только при валидном «Приедут?»: галочка на пустой/битой
         // строке (ручная правка) не должна запирать гостя на фиктивном ответе
         const has = p.comeAnswer != null;
-        return { answers: has ? p : null, locked: has && p.locked };
+        // фото отдаём всегда (грузится отдельным эндпоинтом, замка не касается)
+        return { answers: (has || photo.photoA || photo.photoB) ? { ...p, ...photo } : null, locked: has && p.locked };
       }
     }
   } catch (e) {
     console.error('[rsvp] не удалось прочитать ответ гостя:', e.message);
   }
   return { answers: null, locked: false };
+}
+
+// url'ы фото из ячеек K/L конкретной строки (формула =IMAGE("url"))
+async function readPhotoUrls(rowNum) {
+  const rows = await valuesGetFormula(sheetRange(config.answersSheet, 'K' + rowNum + ':L' + rowNum));
+  const cells = rows[0] || [];
+  const pick = (v) => { const m = IMG_URL_RE.exec(String(v || '')); return m ? m[1] : null; };
+  return { photoA: pick(cells[0]), photoB: pick(cells[1]) };
 }
 
 // Все записи в таблицу идут по одной — последовательная очередь вместо гонок
@@ -171,6 +188,59 @@ async function upsertRow(rec) {
   await valuesAppend(sheetRange(config.answersSheet, 'A1'), [toRow(rec)]);
 }
 
+// Запись ссылки на фото в ячейку K/L строки гостя. Значение — формула
+// =IMAGE("url") (USER_ENTERED), поэтому в таблице видна миниатюра, а сам url
+// доступен в строке формул. Пустая строка очищает ячейку («убрать фото»).
+async function writePhotoUrl(word, guestIndex, url) {
+  await ensureSheets();
+  const col = await valuesGet(sheetRange(config.answersSheet, 'A2:A'));
+  const w = normWord(word);
+  const cell = PHOTO_COL[guestIndex] || PHOTO_COL[0];
+  const value = url ? '=IMAGE("' + String(url).replace(/"/g, '') + '")' : '';
+  for (let i = 0; i < col.length; i++) {
+    if (normWord(col[i][0]) === w) {
+      await valuesUpdate(sheetRange(config.answersSheet, cell + (i + 2)), [[value]], 'USER_ENTERED');
+      return true;
+    }
+  }
+  return false; // строки гостя нет (не должно случаться — слово из списка приглашённых)
+}
+
+// Публичная точка: сохранить/очистить ссылку на фото в таблице. Демо — только
+// журнал. При сбое таблицы кладём в фото-outbox (файл уже сохранён и раздаётся).
+export async function submitPhotoCell(word, guestIndex, url) {
+  journalAppend({ type: 'photo', demo: demoMode, word, guestIndex, url: url || '' });
+  if (demoMode) return { ok: true, demo: true };
+  try {
+    await serialized(() => writePhotoUrl(word, guestIndex, url));
+    return { ok: true };
+  } catch (e) {
+    console.error('[rsvp] запись фото в таблицу не удалась, кладём в outbox:', e.message);
+    photoOutboxPut({ word, guestIndex, url: url || '' });
+    return { ok: true, queued: true };
+  }
+}
+
+let flushingPhoto = false;
+async function flushPhotoOutbox() {
+  if (demoMode || flushingPhoto) return;
+  flushingPhoto = true;
+  try {
+    for (const e of photoOutboxRead()) {
+      try {
+        await serialized(() => writePhotoUrl(e.word, e.guestIndex, e.url));
+        photoOutboxRemoveById(e.qid);
+        console.log('[rsvp] дослали фото в таблицу:', e.word, e.guestIndex);
+      } catch (err) {
+        console.error('[rsvp] таблица недоступна, фото остаётся в outbox:', err.message);
+        return;
+      }
+    }
+  } finally {
+    flushingPhoto = false;
+  }
+}
+
 let flushing = false;
 async function flushOutbox() {
   if (demoMode || flushing) return;
@@ -193,8 +263,9 @@ async function flushOutbox() {
 
 export function startOutboxLoop() {
   if (demoMode) return;
-  setInterval(flushOutbox, 30 * 1000).unref();
+  setInterval(function () { flushOutbox(); flushPhotoOutbox(); }, 30 * 1000).unref();
   flushOutbox();
+  flushPhotoOutbox();
 }
 
 // Вкладку готовим сразу при старте: без «Ответы на rsvp» не пройдёт ни один auth

@@ -23,6 +23,9 @@ export const config = {
   answersSheet: process.env.ANSWERS_SHEET || 'Ответы на rsvp',
   guestsTtlMs: 60 * 1000,
   serviceAccount: readServiceAccount(),
+  // публичный адрес сайта — из него собираем прямые ссылки на загруженные фото
+  // (=IMAGE(...) в таблице и скачивание). За тем же nginx: /api/rsvp/photo/<id>.png.
+  publicBaseUrl: (process.env.PUBLIC_BASE_URL || 'https://wedding.simitka.io').replace(/\/+$/, ''),
 };
 
 export const demoMode = !config.serviceAccount;

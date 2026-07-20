@@ -16,6 +16,9 @@ services:
     build: backend
     environment:
       DATA_DIR: /data
+      # прямые ссылки на загруженные фото собираются из этого адреса (локально сайт
+      # с API живёт на :8080); на проде дефолт — https://wedding.simitka.io
+      PUBLIC_BASE_URL: "http://localhost:8080"
       # GOOGLE_SA_JSON_BASE64: "<base64 ключа сервис-аккаунта>"  # реальная запись в таблицу
       # SPREADSHEET_ID: "13UFjGy42iBV9rhGtWehsmoCnbq1rJSWOBPR_mCXTX0U"
     volumes:

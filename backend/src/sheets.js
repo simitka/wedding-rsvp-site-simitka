@@ -70,8 +70,16 @@ export async function valuesGet(range, unformatted) {
   return data.values || [];
 }
 
-export async function valuesUpdate(range, values) {
-  return api('/values/' + enc(range) + '?valueInputOption=RAW', {
+// mode RAW — значения как есть; USER_ENTERED — с интерпретацией формул (=IMAGE(...))
+// значения как формулы (=IMAGE("url") → сама строка формулы, а не картинка):
+// нужно, чтобы при гидрации вытащить url ранее загруженного фото обратно
+export async function valuesGetFormula(range) {
+  const data = await api('/values/' + enc(range) + '?valueRenderOption=FORMULA');
+  return data.values || [];
+}
+
+export async function valuesUpdate(range, values, mode = 'RAW') {
+  return api('/values/' + enc(range) + '?valueInputOption=' + mode, {
     method: 'PUT',
     body: JSON.stringify({ values }),
   });
