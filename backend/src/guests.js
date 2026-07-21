@@ -1,6 +1,7 @@
 // Список приглашённых берём из «Ответы на rsvp» (A секретное слово | B Гость 1 |
-// C Гость 2) — та же вкладка, куда пишутся ответы; отдельной «Гости» больше нет.
-// Кешируется в памяти и на диске — если таблица моргнула, анкета не ложится.
+// D Гость 2 — между ними столбцы фото C/E) — та же вкладка, куда пишутся ответы;
+// отдельной «Гости» больше нет. Кешируется в памяти и на диске — если таблица
+// моргнула, анкета не ложится.
 import { config, demoMode } from './config.js';
 import { valuesGet, sheetRange } from './sheets.js';
 import { guestsCacheRead, guestsCacheWrite } from './store.js';
@@ -17,12 +18,13 @@ export function normWord(w) {
 }
 
 async function fetchGuests() {
-  const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:C'));
+  // A слово | B Гость 1 | C Фото 1 | D Гость 2 | E Фото 2 — имена в B и D
+  const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:E'));
   const guests = [];
   for (const row of rows) {
     const word = normWord(row[0]);
     if (!word) continue;
-    const names = [row[1], row[2]].map((v) => String(v || '').trim()).filter(Boolean);
+    const names = [row[1], row[3]].map((v) => String(v || '').trim()).filter(Boolean);
     if (names.length) guests.push({ word, names });
   }
   return guests;

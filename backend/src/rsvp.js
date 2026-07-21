@@ -1,24 +1,26 @@
 // Бизнес-логика RSVP: валидация ответов и upsert строки в «Ответы на rsvp».
-// Схема вкладки (по строке на анкету, повторная отправка обновляет строку):
-//   A Секретное слово | B Гость 1 | C Гость 2 | D Приедут? | E Трансфер |
-//   F Мест для попутчиков | G Ночёвка | H Оплата домика | I Заполнено? | J Обновлено
-// D/E/G/H — тексты из белых списков (совпадают с выпадающими списками таблицы),
-// I — boolean-чекбокс (true = анкета отправлена и залочена), «Сводка» считает всё
-// формулами поверх этих колонок. Клиенту не верим: имена берём из списка гостей,
-// значения — из белых списков.
+// Схема вкладки (по строке на анкету, повторная отправка обновляет строку). Столбцы
+// фото стоят рядом со «своим» гостем:
+//   A Секретное слово | B Гость 1 | C Фото Гость 1 | D Гость 2 | E Фото Гость 2 |
+//   F Приедут? | G Трансфер | H Мест для попутчиков | I Ночёвка | J Оплата домика |
+//   K Заполнено? | L Обновлено
+// F/G/I/J — тексты из белых списков (совпадают с выпадающими списками таблицы),
+// K — boolean-чекбокс (true = анкета отправлена и залочена), C/E — =IMAGE(url) фото.
+// Ответы бэкенд пишет в блок F:L (имена B/D и фото C/E не трогает). Клиенту не верим:
+// имена берём из списка гостей, значения — из белых списков.
 import { config, demoMode } from './config.js';
 import { valuesGet, valuesGetFormula, valuesUpdate, valuesAppend, listSheetTitles, addSheet, sheetRange } from './sheets.js';
 import { journalAppend, outboxPut, outboxRemoveById, outboxRead, photoOutboxPut, photoOutboxRead, photoOutboxRemoveById } from './store.js';
 import { normWord } from './guests.js';
 
 export const ANSWER_HEADERS = [
-  'Секретное слово', 'Гость 1', 'Гость 2', 'Приедут?', 'Трансфер',
-  'Мест для попутчиков', 'Ночёвка', 'Оплата домика', 'Заполнено?', 'Обновлено',
-  'Фото Гость 1', 'Фото Гость 2', // K/L: =IMAGE(url) — миниатюра + прямая ссылка
+  'Секретное слово', 'Гость 1', 'Фото Гость 1', 'Гость 2', 'Фото Гость 2',
+  'Приедут?', 'Трансфер', 'Мест для попутчиков', 'Ночёвка', 'Оплата домика',
+  'Заполнено?', 'Обновлено',
 ];
 
-// K (guestIndex 0) / L (guestIndex 1) — колонки со ссылками на фото
-const PHOTO_COL = ['K', 'L'];
+// C (guestIndex 0) / E (guestIndex 1) — колонки со ссылками на фото (=IMAGE)
+const PHOTO_COL = ['C', 'E'];
 const IMG_URL_RE = /=IMAGE\("([^"]+)"/i;
 
 export function sanitizePayload(raw, guest) {
@@ -81,23 +83,28 @@ function comeCell(rec) {
   }
 }
 
-function toRow(rec) {
+// Блок ответов F:L (7 ячеек) — им обновляем строку гостя, не трогая имена B/D и
+// фото C/E (их ведут вручную / отдельным эндпоинтом).
+function answerCells(rec) {
   const t = rec.transfer || {};
   const o = rec.overnight || {};
   const coming = rec.isComing;
-  const g = rec.guests || [];
   return [
-    rec.word,                                                 // A Секретное слово
-    g[0] || '',                                               // B Гость 1
-    g[1] || '',                                               // C Гость 2
-    comeCell(rec),                                            // D Приедут?
-    !coming ? '' : t.mode === 'need' ? 'Нужен' : t.mode === 'self' ? 'Не нужен' : '', // E Трансфер
-    !coming || t.mode !== 'self' ? '' : t.seatsOffered,       // F Мест для попутчиков
-    !coming ? '' : o.staying ? 'Остаюсь' : 'Не остаюсь',      // G Ночёвка
-    !coming || !o.staying ? '' : o.housePayment === 'me' ? 'Заплачу' : o.housePayment === 'them' ? 'Не заплачу' : '', // H Оплата домика
-    true,                                                     // I Заполнено? (отправка = замок)
-    tbilisiNow(),                                             // J Обновлено (Тбилиси)
+    comeCell(rec),                                            // F Приедут?
+    !coming ? '' : t.mode === 'need' ? 'Нужен' : t.mode === 'self' ? 'Не нужен' : '', // G Трансфер
+    !coming || t.mode !== 'self' ? '' : t.seatsOffered,       // H Мест для попутчиков
+    !coming ? '' : o.staying ? 'Остаюсь' : 'Не остаюсь',      // I Ночёвка
+    !coming || !o.staying ? '' : o.housePayment === 'me' ? 'Заплачу' : o.housePayment === 'them' ? 'Не заплачу' : '', // J Оплата домика
+    true,                                                     // K Заполнено? (отправка = замок)
+    tbilisiNow(),                                             // L Обновлено (Тбилиси)
   ];
+}
+
+// Полная строка A:L — только для фолбэка-append (строки гостя нет в списке).
+// Фото C/E оставляем пустыми.
+function fullAppendRow(rec) {
+  const g = rec.guests || [];
+  return [rec.word, g[0] || '', '', g[1] || '', '', ...answerCells(rec)];
 }
 
 // Разбор строки таблицы обратно в состояние анкеты (для гидрации фронтенда при
@@ -105,21 +112,21 @@ function toRow(rec) {
 export function parseAnswerRow(row, guest) {
   const couple = guest.names.length > 1;
   const s = (i) => String(row[i] == null ? '' : row[i]).trim();
-  const d = s(3);
+  const d = s(5); // F Приедут?
   const come = d === 'Нет' ? 'no'
     : d === 'Да, оба' ? 'both'
     : d === 'Да, Гость 1' ? (couple ? 'onlyA' : 'yes')
     : d === 'Да, Гость 2' ? 'onlyB'
     : null;
-  const e = s(4);
+  const e = s(6); // G Трансфер
   const transfer = e === 'Нужен' ? 'need' : e === 'Не нужен' ? 'self' : null;
-  const seatsN = parseInt(row[5], 10);
+  const seatsN = parseInt(row[7], 10); // H Мест
   const seats = Number.isFinite(seatsN) ? Math.max(0, Math.min(7, seatsN)) : 0;
-  const g = s(6);
+  const g = s(8); // I Ночёвка
   const stay = g === 'Остаюсь' ? 'yes' : g === 'Не остаюсь' ? 'no' : null;
-  const h = s(7);
+  const h = s(9); // J Оплата домика
   const pay = h === 'Заплачу' ? 'me' : h === 'Не заплачу' ? 'them' : null;
-  const locked = row[8] === true || String(row[8]).trim().toLowerCase() === 'true';
+  const locked = row[10] === true || String(row[10]).trim().toLowerCase() === 'true'; // K Заполнено?
   return { comeAnswer: come, transfer, seats, stay, pay, locked };
 }
 
@@ -129,11 +136,11 @@ export async function readGuestAnswer(guest) {
   if (demoMode) return { answers: null, locked: false };
   try {
     await ensureSheets();
-    const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:J'), true);
+    const rows = await valuesGet(sheetRange(config.answersSheet, 'A2:L'), true);
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (normWord(row[0]) === guest.word) {
-        // фото из K/L читаем формулами: в ячейке лежит =IMAGE("url") — вытаскиваем url
+        // фото из C/E читаем формулами: в ячейке лежит =IMAGE("url") — вытаскиваем url
         const photo = await readPhotoUrls(i + 2).catch(() => ({ photoA: null, photoB: null }));
         const p = parseAnswerRow(row, guest);
         // замок засчитываем только при валидном «Приедут?»: галочка на пустой/битой
@@ -149,12 +156,13 @@ export async function readGuestAnswer(guest) {
   return { answers: null, locked: false };
 }
 
-// url'ы фото из ячеек K/L конкретной строки (формула =IMAGE("url"))
+// url'ы фото из ячеек C и E конкретной строки (формула =IMAGE("url")). Читаем
+// диапазон C:E, фото гостя 1 — в C (индекс 0), фото гостя 2 — в E (индекс 2).
 async function readPhotoUrls(rowNum) {
-  const rows = await valuesGetFormula(sheetRange(config.answersSheet, 'K' + rowNum + ':L' + rowNum));
+  const rows = await valuesGetFormula(sheetRange(config.answersSheet, 'C' + rowNum + ':E' + rowNum));
   const cells = rows[0] || [];
   const pick = (v) => { const m = IMG_URL_RE.exec(String(v || '')); return m ? m[1] : null; };
-  return { photoA: pick(cells[0]), photoB: pick(cells[1]) };
+  return { photoA: pick(cells[0]), photoB: pick(cells[2]) };
 }
 
 // Все записи в таблицу идут по одной — последовательная очередь вместо гонок
@@ -181,14 +189,17 @@ async function upsertRow(rec) {
   const col = await valuesGet(sheetRange(config.answersSheet, 'A2:A'));
   for (let i = 0; i < col.length; i++) {
     if (normWord(col[i][0]) === rec.word) {
-      await valuesUpdate(sheetRange(config.answersSheet, 'A' + (i + 2) + ':J' + (i + 2)), [toRow(rec)]);
+      // строка гостя есть — обновляем только блок ответов F:L (имена B/D и фото C/E
+      // не трогаем, иначе затрём ручной список и загруженные фото)
+      const r = i + 2;
+      await valuesUpdate(sheetRange(config.answersSheet, 'F' + r + ':L' + r), [answerCells(rec)]);
       return;
     }
   }
-  await valuesAppend(sheetRange(config.answersSheet, 'A1'), [toRow(rec)]);
+  await valuesAppend(sheetRange(config.answersSheet, 'A1'), [fullAppendRow(rec)]);
 }
 
-// Запись ссылки на фото в ячейку K/L строки гостя. Значение — формула
+// Запись ссылки на фото в ячейку C/E строки гостя. Значение — формула
 // =IMAGE("url") (USER_ENTERED), поэтому в таблице видна миниатюра, а сам url
 // доступен в строке формул. Пустая строка очищает ячейку («убрать фото»).
 async function writePhotoUrl(word, guestIndex, url) {

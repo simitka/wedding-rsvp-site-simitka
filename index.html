@@ -2494,7 +2494,6 @@
 
             <div id="rs-recap-t" style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 22px; color: #A31D4E; transform: rotate(-2deg); margin-top: 30px;">твои ответы:</div>
             <div id="rs-done-rows" style="display: flex; flex-direction: column; gap: 12px; width: min(430px, 100%); margin-top: 12px;"></div>
-            <button type="button" id="rs-done-photo" class="rs-press-s" style="display: none; margin-top: 14px; --rr: -1.5deg; background: #6C7ED6; color: #FFFFFF; border: 3px solid #33291F; box-shadow: 4px 5px 0 #33291F; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 11px 16px; cursor: pointer; transform: rotate(-1.5deg);">📸 заменить секретное фото</button>
             <div id="rs-sync-note" style="display: none; margin-top: 14px; font-family: 'Neucha', cursive; font-size: 14px; color: rgba(75,50,39,0.75); border: 2px dashed rgba(163,29,78,0.45); padding: 5px 12px; transform: rotate(-1deg); text-align: center; max-width: 320px;">интернет моргнул — ответы сохранились на этом устройстве, отправим при следующем открытии анкеты</div>
 
             <div style="max-width: 430px; width: 100%; margin-top: 22px;">
@@ -3603,7 +3602,7 @@
   var elRsvpPaper = document.getElementById('rsvp-paper');
   var rsEls = {};
   ['rs-pose-loader', 'rs-pose-secret', 'rs-pose-hello', 'rs-pose-come', 'rs-pose-road', 'rs-pose-sleep', 'rs-pose-photo', 'rs-pose-check', 'rs-pose-done',
-   'rs-photo-slots', 'rs-photo-next', 'rs-photo-nudge', 'rs-photo-back', 'rs-done-photo',
+   'rs-photo-slots', 'rs-photo-next', 'rs-photo-nudge', 'rs-photo-back',
    'rs-ldr-bar', 'rs-ldr-cap', 'rs-ldr-pct', 'rs-word', 'rs-wordbox', 'rs-word-go', 'rs-err', 'rs-err-msg', 'rs-errlots', 'rs-hints',
    'rs-name-a', 'rs-name-b', 'rs-hello-couple', 'rs-serious', 'rs-info-single', 'rs-info-couple', 'rs-start',
    'rs-come-h-single', 'rs-come-h-couple', 'rs-come-single', 'rs-come-couple', 'rs-come-a-name', 'rs-come-b-name',
@@ -3969,7 +3968,6 @@
     rsEls['rs-done-thanks'].textContent = 'спасибо, ' + (attend.length ? attend : names).join(' и ') + '!';
     rsEls['rs-done-pass'].style.display = R.come !== 'no' ? 'block' : 'none';
     rsEls['rs-done-fail'].style.display = R.come === 'no' ? 'block' : 'none';
-    rsEls['rs-done-photo'].style.display = R.come !== 'no' ? 'inline-block' : 'none';
     rsEls['rs-done-wait'].textContent = n > 1 ? 'ждём вас 11 сентября!' : 'ждём тебя 11 сентября!';
     rsEls['rs-recap-t'].textContent = couple ? 'ваши ответы:' : 'твои ответы:';
     rsEls['rs-done-rows'].innerHTML = '';
@@ -4333,7 +4331,7 @@
     rsPhotoBlob[which] = null;
   }
 
-  // выбор файла (клик/дроп): показываем превью, ждём подтверждения
+  // выбор файла (клик/дроп): сразу грузим на бэкенд, без отдельного «подтвердить»
   function rsvpPhotoPick(which, file) {
     if (!file) return;
     var okType = /^image\//.test(file.type || '') || /\.(heic|heif|jpe?g|png|webp|gif|bmp|tiff?)$/i.test(file.name || '');
@@ -4348,10 +4346,10 @@
     try { prev = URL.createObjectURL(file); } catch (e) {}
     rsPhotoBlob[which] = { file: file, preview: prev };
     var slot = rsvpSlot(which);
-    slot.status = 'picked'; slot.url = null; slot.err = null;
+    slot.status = 'empty'; slot.url = null; slot.err = null;   // rsvpPhotoUpload переведёт в uploading
     rsSkipAsk[which] = false;
     rsEls['rs-photo-nudge'].style.display = 'none';
-    rsvpRenderPhoto();
+    rsvpPhotoUpload(which);
   }
 
   // клиентский даунскейл для форматов, что браузер умеет декодировать (JPEG/PNG/WebP)
@@ -4381,8 +4379,10 @@
     img.src = url;
   }
 
-  // подтверждение → загрузка на бэкенд
-  function rsvpPhotoConfirm(which) {
+  // загрузка выбранного фото на бэкенд (вызывается сразу из rsvpPhotoPick, а также
+  // кнопкой «ещё раз» на ошибке). Ошибки любого рода переводят слот в 'error' с
+  // человеко-понятным текстом; жёсткий таймаут страхует от зависшего аплоада.
+  function rsvpPhotoUpload(which) {
     var slot = rsvpSlot(which), blob = rsPhotoBlob[which];
     if (!blob || slot.status === 'uploading') return;
     slot.status = 'uploading'; slot.err = null;
@@ -4398,32 +4398,47 @@
     }
     var idx = which === 'b' ? 1 : 0;
     var sess = rsSession;
+    var fail = function (msg) {
+      if (sess !== rsSession) return;
+      if (rsvpSlot(which).status !== 'uploading') return;
+      slot.status = 'error'; slot.err = msg;
+      rsvpRenderPhoto();
+    };
     rsvpPhotoShrink(blob.file, function (uploadBlob) {
       if (sess !== rsSession) return;
+      if (!uploadBlob || !uploadBlob.size) { fail('пустой файл — выбери другое фото'); return; }
+      // жёсткий таймаут: если аплоад завис, не оставляем слот вечно в «загружаем…»
+      var ac = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      var to = setTimeout(function () { try { ac && ac.abort(); } catch (e) {} fail('долго не грузится — попробуй ещё раз'); }, 60000);
       fetch(RSVP_API + '/photo?word=' + encodeURIComponent(rsvpNorm(R.word)) + '&g=' + idx, {
         method: 'POST',
         headers: { 'Content-Type': (uploadBlob && uploadBlob.type) || 'application/octet-stream' },
-        body: uploadBlob
+        body: uploadBlob,
+        signal: ac ? ac.signal : undefined
       })
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+          if (!r.ok) throw new Error('http-' + r.status);
+          return r.json();
+        })
         .then(function (d) {
+          clearTimeout(to);
           if (sess !== rsSession) return;
           if (d && d.ok && d.url) {
             slot.status = 'done'; slot.url = d.url; slot.err = null; rsPhotoFresh[which] = true;
             rsvpPersist(); rsvpRenderPhoto();
           } else {
-            slot.status = 'error';
-            slot.err = d && d.error === 'convert' ? 'не смогли прочитать это фото — попробуй другое'
-              : d && d.error === 'too-large' ? 'фото великовато — выбери другое'
-              : d && d.error === 'slow-down' ? 'слишком часто — подожди минутку'
-              : 'не вышло загрузить, ещё разок?';
-            rsvpRenderPhoto();
+            fail(d && d.error === 'convert' ? 'не смогли прочитать это фото — попробуй другое'
+              : d && d.error === 'too-large' ? 'фото великовато (до 25 МБ) — выбери другое'
+              : d && d.error === 'slow-down' ? 'слишком часто — подожди минутку и «ещё раз»'
+              : d && (d.error === 'word' || d.error === 'guest') ? 'что-то со входом — обнови страницу'
+              : 'не вышло загрузить, попробуй ещё раз');
           }
         })
-        .catch(function () {
-          if (sess !== rsSession) return;
-          slot.status = 'error'; slot.err = 'интернет моргнул — ещё разок?';
-          rsvpRenderPhoto();
+        .catch(function (e) {
+          clearTimeout(to);
+          // abort уже показал свою ошибку в setTimeout — не перетираем
+          if (e && e.name === 'AbortError') return;
+          fail('интернет моргнул — попробуй ещё раз');
         });
     });
   }
@@ -4488,16 +4503,20 @@
     if (unresolved.length) {
       // Называем конкретного гостя: у пары частая путаница — «без фото» нажали
       // одному, второй слот остался пустым, а общий текст сбивал с толку. Отдельно
-      // ловим «фото выбрано, но не подтверждено» (статус picked — превью видно, но
-      // кнопку «подтвердить» ещё не нажали).
-      var pickedNames = unresolved.filter(function (s) { return rsvpSlot(s.which).status === 'picked'; }).map(function (s) { return s.name; });
-      var emptyNames = unresolved.filter(function (s) { return rsvpSlot(s.which).status !== 'picked'; }).map(function (s) { return s.name; });
+      // ловим «ещё грузится» и «ошибка загрузки».
+      var st = function (s) { return rsvpSlot(s.which).status; };
+      var uploading = unresolved.filter(function (s) { return st(s) === 'uploading'; });
+      var errored = unresolved.filter(function (s) { return st(s) === 'error'; });
+      var emptyNames = unresolved.filter(function (s) { return st(s) === 'empty'; }).map(function (s) { return s.name; });
       var couple = rsvpPhotoSlots().length > 1;
       var msg;
-      if (pickedNames.length) {
+      if (uploading.length) {
+        msg = 'фото ещё загружается — секундочку…';
+      } else if (errored.length) {
+        var enames = errored.map(function (s) { return s.name; });
         msg = couple
-          ? 'подтверди фото: ' + pickedNames.join(' и ') + ' — кнопкой «подтвердить ✓»'
-          : 'нажми «подтвердить ✓», чтобы сохранить фото';
+          ? 'фото не загрузилось у: ' + enames.join(' и ') + ' — «ещё раз» или «пройти без фото»'
+          : 'фото не загрузилось — нажми «ещё раз» или «пройти без фото»';
       } else if (couple) {
         msg = 'ещё нет фото у: ' + emptyNames.join(' и ') + ' — загрузи или нажми «пройти без фото»';
       } else {
@@ -4651,9 +4670,6 @@
     } else if (slot.status === 'empty') {
       ctr.appendChild(rsPhotoBtn('выбрать фото', 'primary', function () { win.querySelector('input') ? win.querySelector('input').click() : null; }));
       ctr.appendChild(rsPhotoBtn('пройти без фото', 'ghost', function () { rsvpPhotoAskSkip(s.which); }));
-    } else if (slot.status === 'picked') {
-      ctr.appendChild(rsPhotoBtn('подтвердить ✓', 'go', function () { rsvpPhotoConfirm(s.which); }));
-      ctr.appendChild(rsPhotoBtn('удалить', 'ghost', function () { rsvpPhotoClear(s.which); }));
     } else if (slot.status === 'uploading') {
       var wait = document.createElement('div');
       wait.style.cssText = "font-family:'Caveat',cursive;font-weight:700;font-size:16px;color:#4B3227;";
@@ -4662,8 +4678,9 @@
     } else if (slot.status === 'done') {
       ctr.appendChild(rsPhotoBtn('заменить', 'default', function () { rsvpPhotoClear(s.which); }));
     } else if (slot.status === 'error') {
-      ctr.appendChild(rsPhotoBtn('ещё раз', 'primary', function () { rsvpPhotoConfirm(s.which); }));
-      ctr.appendChild(rsPhotoBtn('другое фото', 'ghost', function () { rsvpPhotoClear(s.which); }));
+      ctr.appendChild(rsPhotoBtn('ещё раз', 'primary', function () { rsvpPhotoUpload(s.which); }));
+      ctr.appendChild(rsPhotoBtn('другое фото', 'default', function () { rsvpPhotoClear(s.which); }));
+      ctr.appendChild(rsPhotoBtn('пройти без фото', 'ghost', function () { rsvpPhotoAskSkip(s.which); }));
     } else if (slot.status === 'skipped') {
       ctr.appendChild(rsPhotoBtn('всё-таки добавлю', 'primary', function () { rsvpPhotoUnskip(s.which); }));
     }
@@ -4890,7 +4907,6 @@
     rsEls['rs-confirm'].addEventListener('click', rsvpConfirm);
     rsEls['rs-photo-next'].addEventListener('click', rsvpPhotoProceed);
     rsEls['rs-photo-back'].addEventListener('click', rsvpPhotoBack);
-    rsEls['rs-done-photo'].addEventListener('click', function () { rsvpGo('photo'); });
     rsEls['rs-reset'].addEventListener('click', function () {
       try { localStorage.removeItem(RS_KEY); } catch (e) {}
       location.reload();
