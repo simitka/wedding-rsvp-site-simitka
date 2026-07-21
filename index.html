@@ -4460,13 +4460,56 @@
     rsvpPersist(); rsvpRenderPhoto();
   }
 
+  // подсветить и подскроллить конкретный слот (чей слот держит гостя на шаге)
+  function rsvpFlashSlot(which) {
+    var slots = rsvpPhotoSlots();
+    var i = -1;
+    for (var k = 0; k < slots.length; k++) if (slots[k].which === which) { i = k; break; }
+    var box = rsEls['rs-photo-slots'];
+    var col = box && i >= 0 ? box.children[i] : null;
+    if (!col) return;
+    try { col.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {}
+    var frame = col.firstChild;
+    if (frame && frame.animate && rsvpMotionOn()) {
+      var base = frame.style.transform || '';
+      frame.animate([
+        { transform: base + ' scale(1)' },
+        { transform: base + ' scale(1.05)' },
+        { transform: base + ' scale(1)' }
+      ], { duration: 460, iterations: 2, easing: 'ease-in-out' });
+    }
+  }
+
   function rsvpPhotoProceed() {
-    if (!rsvpPhotoResolved()) {
-      rsEls['rs-photo-nudge'].textContent = 'сначала загрузи фото или нажми «пройти без фото» ↑';
-      rsEls['rs-photo-nudge'].style.display = 'block';
-      if (rsEls['rs-photo-nudge'].animate && rsvpMotionOn()) {
-        rsEls['rs-photo-nudge'].animate([{ transform: 'rotate(-1.5deg) translateX(0)' }, { transform: 'rotate(-1.5deg) translateX(-7px)' }, { transform: 'rotate(-1.5deg) translateX(6px)' }, { transform: 'rotate(-1.5deg) translateX(0)' }], { duration: 320 });
+    var unresolved = rsvpPhotoSlots().filter(function (s) {
+      var st = rsvpSlot(s.which).status;
+      return st !== 'done' && st !== 'skipped';
+    });
+    if (unresolved.length) {
+      // Называем конкретного гостя: у пары частая путаница — «без фото» нажали
+      // одному, второй слот остался пустым, а общий текст сбивал с толку. Отдельно
+      // ловим «фото выбрано, но не подтверждено» (статус picked — превью видно, но
+      // кнопку «подтвердить» ещё не нажали).
+      var pickedNames = unresolved.filter(function (s) { return rsvpSlot(s.which).status === 'picked'; }).map(function (s) { return s.name; });
+      var emptyNames = unresolved.filter(function (s) { return rsvpSlot(s.which).status !== 'picked'; }).map(function (s) { return s.name; });
+      var couple = rsvpPhotoSlots().length > 1;
+      var msg;
+      if (pickedNames.length) {
+        msg = couple
+          ? 'подтверди фото: ' + pickedNames.join(' и ') + ' — кнопкой «подтвердить ✓»'
+          : 'нажми «подтвердить ✓», чтобы сохранить фото';
+      } else if (couple) {
+        msg = 'ещё нет фото у: ' + emptyNames.join(' и ') + ' — загрузи или нажми «пройти без фото»';
+      } else {
+        msg = 'загрузи фото или нажми «пройти без фото» ↑';
       }
+      var nd = rsEls['rs-photo-nudge'];
+      nd.textContent = msg;
+      nd.style.display = 'block';
+      if (nd.animate && rsvpMotionOn()) {
+        nd.animate([{ transform: 'rotate(-1.5deg) translateX(0)' }, { transform: 'rotate(-1.5deg) translateX(-7px)' }, { transform: 'rotate(-1.5deg) translateX(6px)' }, { transform: 'rotate(-1.5deg) translateX(0)' }], { duration: 320 });
+      }
+      rsvpFlashSlot(unresolved[0].which);
       return;
     }
     rsvpGo(R.confirmed ? 'done' : rsvpFlowNext());
