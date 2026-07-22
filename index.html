@@ -208,6 +208,16 @@
   #rsvp-root input { user-select: text; -webkit-user-select: text; }
   #rsvp-root input::placeholder { color: rgba(75,50,39,0.38); font-size: clamp(17px, 5.4vw, 21px); }
   #rsvp-root button { -webkit-tap-highlight-color: transparent; }
+  /* Все слои анкеты (подложка, листы, реакция, конфетти) — fixed inset: 0, т.е. по высоте
+     они равны LAYOUT-вьюпорту. На Android Chrome быстрый свайп по листу прячет адресную
+     строку: layout-вьюпорт мгновенно вырастает на её высоту, а пересчёт fixed-слоёв идёт
+     на main-thread и опаздывает на пару кадров — снизу на долю секунды обнажалась тёмная
+     полоса из-под листа (подвал главной #33291F, притемнённый box-shadow'ом листа).
+     Пришпиливаем слои к «большому» вьюпорту (lvh = вьюпорт со спрятанным тулбаром): при
+     сворачивании адресной строки обнажать уже нечего, а при развёрнутой лист просто уходит
+     на её высоту под низ экрана (докручивается скроллом, который тулбар и прячет).
+     100vh — фоллбек для браузеров без lvh: там vh и так меряется по большому вьюпорту. */
+  #rsvp-root > div, #rsvp-root > canvas { height: 100vh !important; height: 100lvh !important; }
   /* hover/active перекрывают инлайн-стили кнопок, поэтому всюду !important */
   .gate-btn-a:active .gc-inner { transform: translate(5px, 6px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
   .gate-btn-b:active .gc-inner { transform: translate(-5px, 6px) !important; box-shadow: 0 0 0 rgba(51,41,31,0.85) !important; }
