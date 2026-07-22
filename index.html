@@ -4598,7 +4598,7 @@
     var src = (rsPhotoBlob[s.which] && rsPhotoBlob[s.which].preview) || slot.url;
 
     if (slot.status === 'empty') {
-      win.style.cssText += 'border:3px dashed #A31D4E;background:#FDF6EC;cursor:pointer;padding:10px 10px 46px;';
+      win.style.cssText += 'border:3px dashed #A31D4E;background:#FDF6EC;cursor:pointer;padding:10px 10px 46px;-webkit-tap-highlight-color:rgba(0,0,0,0);';
       win.innerHTML = '<div style="pointer-events:none;">'
         + '<div style="font-family:\'Rubik Mono One\',monospace;font-size:34px;color:#A31D4E;line-height:1;">＋</div>'
         + '<div style="font-family:\'Caveat\',cursive;font-weight:700;font-size:18px;color:#33291F;margin-top:6px;">перетащи фото сюда</div>'
@@ -4610,13 +4610,17 @@
       // просит документ-пикер (Файлы/SAF, иначе Android схлопывает выбор обратно
       // в галерею), capture открывает камеру напрямую. Формат проверяем сами
       // в rsvpPhotoPick, поэтому «файлы» умышленно без фильтра по типу.
+      // инпуты живут ВНЕ win: программный inp.click() всплывает как обычный click,
+      // и из win он бы снова попал в обработчик «тап мимо кнопок» → галерея поверх
+      // любого выбора. Клик кнопки по той же причине глушим stopPropagation.
       function rsPhotoInput(accept, capture) {
         var inp = document.createElement('input');
         inp.type = 'file'; inp.style.display = 'none';
         if (accept) inp.setAttribute('accept', accept);
         if (capture) inp.setAttribute('capture', capture);
         inp.addEventListener('change', function () { if (inp.files && inp.files[0]) rsvpPhotoPick(s.which, inp.files[0]); inp.value = ''; });
-        win.appendChild(inp);
+        inp.addEventListener('click', function (e) { e.stopPropagation(); });
+        col.appendChild(inp);
         return inp;
       }
       var inGallery = rsPhotoInput('image/*', null);
@@ -4634,7 +4638,7 @@
       });
       win.appendChild(pickRow);
 
-      win.addEventListener('click', function () { inGallery.click(); });
+      win.addEventListener('click', function (e) { if (e.target !== win) return; inGallery.click(); });
       // drag&drop (ПК)
       win.addEventListener('dragover', function (e) { e.preventDefault(); win.classList.add('rs-drop-over'); });
       win.addEventListener('dragenter', function (e) { e.preventDefault(); win.classList.add('rs-drop-over'); });
