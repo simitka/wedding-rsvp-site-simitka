@@ -6,6 +6,7 @@ ENV RSVP_API_HOST=api
 
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY index.html /usr/share/nginx/html/index.html
+COPY index.en.html /usr/share/nginx/html/index.en.html
 COPY favicon.ico /usr/share/nginx/html/favicon.ico
 COPY assets/ /usr/share/nginx/html/assets/
 

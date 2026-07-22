@@ -5,3 +5,4 @@ Dockerfile
 *.md
 backend/
 docker-compose.yml
+scripts/

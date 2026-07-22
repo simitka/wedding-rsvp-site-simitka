@@ -8,6 +8,20 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
+    # Английская версия: отдельный артефакт index.en.html на /en и /en/rsvp
+    # (генерируется из index.html скриптом scripts/i18n/build_en.py). С русской
+    # версией не пересекается ничем, кроме /api/ и /assets/; ассеты там прописаны
+    # абсолютными путями — вложенный /en/rsvp не должен их искать относительно себя.
+    location = /en {
+        try_files /index.en.html =404;
+        add_header Cache-Control "no-cache";
+    }
+
+    location ^~ /en/ {
+        try_files /index.en.html =404;
+        add_header Cache-Control "no-cache";
+    }
+
     # RSVP API — контейнер бэкенда (backend/); имя сервиса подставляется из env
     # RSVP_API_HOST при старте nginx (шаблон обрабатывает docker-entrypoint envsubst).
     # resolver 127.0.0.11 + переменная в proxy_pass: nginx не падает на старте,
