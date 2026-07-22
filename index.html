@@ -4598,20 +4598,40 @@
     var src = (rsPhotoBlob[s.which] && rsPhotoBlob[s.which].preview) || slot.url;
 
     if (slot.status === 'empty') {
-      win.style.cssText += 'border:3px dashed #A31D4E;background:#FDF6EC;cursor:pointer;padding:10px;';
+      win.style.cssText += 'border:3px dashed #A31D4E;background:#FDF6EC;cursor:pointer;padding:10px 10px 46px;';
       win.innerHTML = '<div style="pointer-events:none;">'
         + '<div style="font-family:\'Rubik Mono One\',monospace;font-size:34px;color:#A31D4E;line-height:1;">＋</div>'
         + '<div style="font-family:\'Caveat\',cursive;font-weight:700;font-size:18px;color:#33291F;margin-top:6px;">перетащи фото сюда</div>'
-        + '<div style="font-family:\'Neucha\',cursive;font-size:12.5px;color:#6b5a49;margin-top:2px;">или нажми, чтобы выбрать</div>'
-        + '<div style="font-family:\'Neucha\',cursive;font-size:11px;color:#8a7967;margin-top:6px;">🖼 галерея · 📁 файлы</div>'
+        + '<div style="font-family:\'Neucha\',cursive;font-size:12.5px;color:#6b5a49;margin-top:2px;">или выбери, откуда взять</div>'
         + '</div>';
-      var input = document.createElement('input');
-      // без accept: на Android системный пикер предлагает и Галерею, и Файлы
-      // (с accept="image/*" Samsung/A35 открывал только галерею); формат проверяем сами
-      input.type = 'file'; input.style.display = 'none';
-      input.addEventListener('change', function () { if (input.files && input.files[0]) rsvpPhotoPick(s.which, input.files[0]); input.value = ''; });
-      win.appendChild(input);
-      win.addEventListener('click', function () { input.click(); });
+
+      // два инпута на слот: системные пикеры Android/iOS сильно зависят от accept —
+      // с accept="image/*" открывается галерея (Google Photos / Медиатека), без accept
+      // Android даёт только «Камера + Файлы». Даём обе двери явными кнопками; формат
+      // проверяем сами в rsvpPhotoPick, поэтому «файлы» умышленно без фильтра.
+      function rsPhotoInput(accept) {
+        var inp = document.createElement('input');
+        inp.type = 'file'; inp.style.display = 'none';
+        if (accept) inp.accept = accept;
+        inp.addEventListener('change', function () { if (inp.files && inp.files[0]) rsvpPhotoPick(s.which, inp.files[0]); inp.value = ''; });
+        win.appendChild(inp);
+        return inp;
+      }
+      var inGallery = rsPhotoInput('image/*');
+      var inFiles = rsPhotoInput('');
+
+      var pickRow = document.createElement('div');
+      pickRow.style.cssText = 'position:absolute;left:0;right:0;bottom:8px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;';
+      [['🖼 галерея', inGallery], ['📁 файлы', inFiles]].forEach(function (p) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'rs-press-s'; b.textContent = p[0];
+        b.style.cssText = "background:#FBF8EF;color:#33291F;border:2px solid #33291F;padding:5px 9px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;box-shadow:2px 3px 0 rgba(51,41,31,0.8);--rr:-1deg;transform:rotate(-1deg);";
+        b.addEventListener('click', function (e) { e.stopPropagation(); p[1].click(); });
+        pickRow.appendChild(b);
+      });
+      win.appendChild(pickRow);
+
+      win.addEventListener('click', function () { inGallery.click(); });
       // drag&drop (ПК)
       win.addEventListener('dragover', function (e) { e.preventDefault(); win.classList.add('rs-drop-over'); });
       win.addEventListener('dragenter', function (e) { e.preventDefault(); win.classList.add('rs-drop-over'); });
